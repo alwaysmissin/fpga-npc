@@ -13,3 +13,7 @@ case class RVConfig(
 ){
     val debug_enable = diff_enable | trace_enable
 }
+
+object Config{
+    val FPGAPlatform = true
+}

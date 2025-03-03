@@ -2,7 +2,7 @@ TOPNAME = ysyxSoCFull
 NXDC_FILEs = constr/top.nxdc
 INC_PATH = ./include /usr/lib/llvm-14/include
 VINC_PATH = vsrc vsrc/perip/uart16550/rtl vsrc/perip/spi/rtl
-FPGA_PATH = /mnt/e/coding/graduation/cpu/cpu.srcs/sources_1/new/core
+FPGA_CORE_PATH = /mnt/e/coding/graduation/cpu/cpu.srcs/sources_1/new/core
 
 -include $(NPC_HOME)/include/config/auto.conf
 -include $(NPC_HOME)/include/config/audo.conf.cmd
@@ -73,7 +73,7 @@ run: $(V_SOURCE) $(C_SOURCE) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CFLAGS)) -CFLAGS -DRUN $(addprefix -LDFLAGS , $(LDFLAGS))\
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(V_TARGET))
-	$(V_TARGET) $(ARGS) -e $(ELF) $(IMG)
+	$(V_TARGET) $(ARGS) -b -e $(ELF) $(IMG)
 
 perf: 
 	make -C ./npc_chisel npc gen_args="sta"
@@ -81,9 +81,9 @@ perf:
 
 fpga:
 	make -C ./npc_chisel npc gen_args="fpga"
-	rm -rf $(FPGA_PATH)
-	mkdir -pv $(FPGA_PATH)
-	cp ./vsrc/cpu/*.sv $(FPGA_PATH)
+	rm -rf $(FPGA_CORE_PATH)
+	mkdir -pv $(FPGA_CORE_PATH)
+	cp ./vsrc/cpu/*.sv $(FPGA_CORE_PATH)
 
 
 .PHONY: clean sim run perf
