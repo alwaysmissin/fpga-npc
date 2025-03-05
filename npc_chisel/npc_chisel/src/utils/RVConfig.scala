@@ -15,5 +15,5 @@ case class RVConfig(
 }
 
 object Config{
-    val FPGAPlatform = true
+    var FPGAPlatform = true
 }

@@ -132,7 +132,7 @@ class EXE(config: RVConfig) extends Module{
     ))
 
     // launch read request
-    val vaddr = alu.io.sum
+    val vaddr = opA + opB
     val vaddrLow2Bits = vaddr(1, 0)
     val align = PriorityMux(Seq(
         (byteWise(3)) -> (!vaddrLow2Bits.orR),

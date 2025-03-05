@@ -14,7 +14,7 @@
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 
-#define NR_GPR 16
+#define NR_GPR 32
 // include nvboard if target is RUN
 #ifdef RUN
 #include <nvboard.h>

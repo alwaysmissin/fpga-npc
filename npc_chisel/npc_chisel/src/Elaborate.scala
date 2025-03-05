@@ -5,6 +5,7 @@ import utils.exe.ALU
 import peripheral.XBar
 import peripheral.Arbiter
 import utils.bus.AXI4
+import utils.Config.FPGAPlatform
 
 
 object Elaborate extends App {
@@ -20,7 +21,7 @@ object Elaborate extends App {
   val config = RVConfig(
     PC_INIT = 0x30000000L.U,
     xlen = 32,
-    nr_reg = 16,
+    nr_reg = 32,
     csr_width = 12,
     diff_enable = true,
     trace_enable = true,
@@ -31,7 +32,14 @@ object Elaborate extends App {
     config.diff_enable = false
     config.trace_enable = false
     config.simulation = false
+  } else if (args.length > 0 && args(0) == "fpga") {
+    print("Generate for FPGA\n")
+    config.diff_enable = false
+    config.trace_enable = false
+    config.simulation = false
+    
   } else {
+    FPGAPlatform = false
     print("Generate for Simulation\n")
   }
 

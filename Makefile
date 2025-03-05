@@ -4,8 +4,8 @@ INC_PATH = ./include /usr/lib/llvm-14/include
 VINC_PATH = vsrc vsrc/perip/uart16550/rtl vsrc/perip/spi/rtl
 FPGA_CORE_PATH = /mnt/e/coding/graduation/cpu/cpu.srcs/sources_1/new/core
 
--include $(NPC_HOME)/include/config/auto.conf
--include $(NPC_HOME)/include/config/audo.conf.cmd
+-include $(FPGA_NPC_HOME)/include/config/auto.conf
+-include $(FPGA_NPC_HOME)/include/config/audo.conf.cmd
 
 # INC_PATH += $(wildcard $(shell find ./include -type d))
 # source code of cpp or v
@@ -30,14 +30,15 @@ CFLAGS_TRACE += -DMTRACE_COND=true
 CFLAGS += -g $(INCFLAGS) $(CFLAGS_TRACE) -DTOP_NAME="\"V$(TOPNAME)\"" -std=c++14 -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -fPIE
 LDFLAGS += -lSDL2 -lSDL2_image -lreadline $(shell llvm-config --libs)
 
-include $(NPC_HOME)/scripts/config.mk
+include $(FPGA_NPC_HOME)/scripts/config.mk
 
-ARGS ?= -w $(NPC_HOME)/waveforms/npc-wave.fst -l $(NPC_HOME)/logs/npc-log.txt -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so -b
-ELF ?= -e $(YSYX_HOME)/am-kernels/tests/cpu-tests/build/add-riscv32e-ysyxsoc.elf
-IMG ?= $(YSYX_HOME)/am-kernels/tests/cpu-tests/build/add-riscv32e-ysyxsoc.bin
+BATCH_MODE ?= ""
+ARGS ?= -w $(FPGA_NPC_HOME)/waveforms/npc-wave.fst -l $(FPGA_NPC_HOME)/logs/npc-log.txt -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
+ELF ?= $(YSYX_HOME)/am-kernels/tests/cpu-tests/build/add-riscv32-fpga.elf
+IMG ?= $(YSYX_HOME)/am-kernels/tests/cpu-tests/build/add-riscv32-fpga.bin
 
-WAVE ?= $(NPC_HOME)/waveforms/npc-wave.fst
-WAVECFG ?= $(NPC_HOME)/waveforms/npc-wave-config.gtkw
+WAVE ?= $(FPGA_NPC_HOME)/waveforms/npc-wave.fst
+WAVECFG ?= $(FPGA_NPC_HOME)/waveforms/npc-wave-config.gtkw
 
 #constraint file generation
 SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
@@ -59,7 +60,7 @@ sim: $(V_SOURCE) $(C_SOURCE)
 		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS))\
 	 	--Mdir $(OBJ_DIR) --exe -o $(abspath $(V_TARGET))
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	$(V_TARGET) $(ARGS) -e $(ELF) $(IMG)
+	$(V_TARGET) $(ARGS) $(BATCH_MODE) -e $(ELF) $(IMG)
 
 
 wave: sim
@@ -73,7 +74,7 @@ run: $(V_SOURCE) $(C_SOURCE) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CFLAGS)) -CFLAGS -DRUN $(addprefix -LDFLAGS , $(LDFLAGS))\
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(V_TARGET))
-	$(V_TARGET) $(ARGS) -b -e $(ELF) $(IMG)
+	$(V_TARGET) $(ARGS) $(BATCH_MODE) -e $(ELF) $(IMG)
 
 perf: 
 	make -C ./npc_chisel npc gen_args="sta"

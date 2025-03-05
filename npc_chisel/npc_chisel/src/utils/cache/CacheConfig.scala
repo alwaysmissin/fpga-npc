@@ -8,6 +8,7 @@ abstract class CacheBasicConfig {
   val blockSize: Int
   val ways: Int
   val offsetWidth = log2Up(blockSize)
+  val wordOffsetWidth = offsetWidth - 2
   val indexWidth = log2Up(blocks)
   val tagWidth = 32 - offsetWidth - indexWidth
   val offsetRangeLo = 0

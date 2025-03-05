@@ -9,6 +9,7 @@ import chisel3.util.switch
 import chisel3.util.circt.dpi.RawClockedVoidFunctionCall
 import utils.bus.SRAMLike.SRAMLikeReq
 import utils.bus.SRAMLike.SRAMLikeRResp
+import utils.memory.SDPRAM._
 
 final case class ICacheInfo(
   config: CacheBasicConfig,
@@ -36,10 +37,24 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
     val fencei = Input(Bool())
   })
   val valids = Reg(Vec(icache.blocks, Vec(icache.ways, Bool())))
-  val dataRams = Seq.fill(icache.ways)(
-    SyncReadMem(icache.blocks, Vec(icache.blockWords, UInt(config.xlen.W)))
-  )
-  val infoRams = SyncReadMem(icache.blocks, new ICacheInfo(icache))
+  // val dataRams = Seq.fill(icache.ways)(
+  //   // SyncReadMem(icache.blocks, Vec(icache.blockWords, UInt(config.xlen.W)))
+  //   Module(new SDPRAM_SYNC(icache.blocks, UInt(config.xlen.W), icache.blockWords))
+  // )
+  val dataRams = Module(new SDPRAM_SYNC(icache.ways * icache.blocks * icache.blockWords, UInt(config.xlen.W)))
+  // val infoRams = SyncReadMem(icache.blocks, new ICacheInfo(icache))
+  val infoRams = Module(new SDPRAM_SYNC(icache.blocks, new ICacheInfo(icache)))
+
+  val dataRams_wen = WireDefault(false.B)
+  val dataRams_waddr = WireDefault(0.U.asTypeOf(dataRams.io.waddr))
+  val dataRams_wdata = WireDefault(0.U.asTypeOf(dataRams.io.wdata))
+  val dataRams_wstrobe = WireDefault(1.U)
+  dataRams.write(dataRams_wen, dataRams_waddr, dataRams_wdata, dataRams_wstrobe)
+  val infoRams_wen = WireDefault(false.B)
+  val infoRams_waddr = WireDefault(0.U.asTypeOf(infoRams.io.waddr))
+  val infoRams_wdata = WireDefault(0.U.asTypeOf(infoRams.io.wdata))
+  val infoRams_wstrobe = WireDefault(1.U)
+  infoRams.write(infoRams_wen, infoRams_waddr, infoRams_wdata, infoRams_wstrobe)
 
   val reqValid = RegEnable(true.B, false.B, io.arFromIF.fire)
   when (io.rToIF.fire && !io.arFromIF.fire){
@@ -48,13 +63,14 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
   val req = RegEnable(io.arFromIF.bits, io.arFromIF.fire)
   val blockValids = Reg(Vec(icache.ways, Bool()))
   val indexPreIF = Wire(UInt(icache.indexWidth.W))
+  val wordOffsetPreIF = Wire(UInt(icache.wordOffsetWidth.W))
   val preIF = {
     val addr = io.arFromIF.bits.addr
     // get info from info ram
     indexPreIF := Mux(io.arFromIF.fire, addr(icache.indexRangeHi, icache.indexRangeLo), req.addr(icache.indexRangeHi, icache.indexRangeLo))
+    wordOffsetPreIF := Mux(io.arFromIF.fire, addr(icache.wordOffsetRangeHi, icache.wordOffsetRangeLo), req.addr(icache.wordOffsetRangeHi, icache.wordOffsetRangeLo))
     blockValids := valids(indexPreIF)
   }
-
   
   val dataResp = Seq.fill(icache.ways)(Wire(UInt(config.xlen.W)))
   val infoResp = Wire(new ICacheInfo(icache))
@@ -69,9 +85,9 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
   val hitData = Wire(UInt(config.xlen.W))
   val IF = {
     for (i <- 0 until icache.ways){
-      dataResp(i) := dataRams(i).read(indexPreIF)(wordOffset)
+      dataResp(i) := dataRams.read(Cat(i.U, indexPreIF, wordOffsetPreIF)).head
     }
-    infoResp := infoRams.read(indexPreIF)
+    infoResp := infoRams.read(indexPreIF).head
     val hits = blockValids.zip(infoResp.tags).map {case(valid, t) => valid && t === tag}
     hit := hits.reduce(_ || _)
     hitData := Mux1H(hits, dataResp)
@@ -80,7 +96,10 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
         val newInfo = Wire(infoResp.copy())
         newInfo.tags := infoResp.tags
         newInfo.lru := hits(0)
-        infoRams.write(index, newInfo)
+        infoRams_wen := true.B
+        infoRams_waddr := index
+        infoRams_wdata := newInfo.asTypeOf(infoRams.io.wdata)
+        // infoRams.write(index, newInfo.asTypeOf(infoRams.io.wdata))
       }
     }
   }
@@ -139,8 +158,12 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
       when (io.rFromMem.fire){
         for (i <- 0 until icache.ways){
           when (i.U === replaceWay){
-            val wPort = dataRams(i)(index)
-            wPort(respCounter) := io.rFromMem.bits.rdata
+            dataRams_wen := true.B
+            dataRams_waddr := Cat(replaceWay, index, respCounter)
+            dataRams_wdata := io.rFromMem.bits.rdata.asTypeOf(dataRams.io.wdata)
+            // dataRams.write(Cat(i.U, index, respCounter), io.rFromMem.bits.rdata.asTypeOf(dataRams.io.rdata))
+            // val wPort = dataRams(i)(index)
+            // wPort(respCounter) := io.rFromMem.bits.rdata
           }
         }
         respCounter := respCounter + 1.U
@@ -161,8 +184,13 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
       when (io.rFromMem.fire){
         for (i <- 0 until icache.ways){
           when (i.U === replaceWay){
-            val wPort = dataRams(i)(index)
-            wPort(respCounter) := io.rFromMem.bits.rdata
+            dataRams_wen := true.B
+            dataRams_waddr := Cat(replaceWay, index, respCounter)
+            dataRams_wdata := io.rFromMem.bits.rdata.asTypeOf(dataRams.io.wdata)
+            // dataRams(i).write(
+            //   index, 
+            //   Fill(icache.blockWords, io.rFromMem.bits.rdata).asTypeOf(dataRams(i).io.wdata), 
+            //   1.U << respCounter)
           }
         }
         respCounter := respCounter + 1.U
@@ -183,7 +211,7 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
         // newInfo.tags(replaceWay) := tag
         // set the valid bit
         valids(index)(replaceWay) := true.B
-        infoRams.write(index, newInfo)
+        infoRams.write(index, newInfo.asTypeOf(infoRams.io.wdata))
       }
     }
     is (FINISH) {

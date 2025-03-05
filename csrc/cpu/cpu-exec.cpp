@@ -273,7 +273,7 @@ void reset(int n)
 	#endif
 	}
 	cpu.pc = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__pc_done;
-	cpu.gpr = (word_t (*)[16])&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__regFiles__DOT__R_ext__DOT__Memory;
+	cpu.gpr = (word_t (*)[NR_GPR])&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__regFiles__DOT__R_ext__DOT__Memory;
 	cpu.mstatus = (mstatus_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mstatus;
 	cpu.mtvec = (mtvec_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mtvec;
 	cpu.mepc = (mepc_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mepc;
