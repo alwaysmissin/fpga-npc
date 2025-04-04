@@ -1,5 +1,10 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <string.h>
 #include <assert.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -7,21 +12,11 @@
 #include <macro.h>
 #include <generated/autoconf.h>
 
-// include verilator headers
-#include "VysyxSoCFull.h"
-#include "VysyxSoCFull__Dpi.h"
-#include "VysyxSoCFull___024root.h"
-#include <verilated.h>
-#include <verilated_vcd_c.h>
-
-#define NR_GPR 32
-// include nvboard if target is RUN
-#ifdef RUN
-#include <nvboard.h>
-void nvboard_bind_all_pins(VysyxSoCFull* top);
-#endif
 
 typedef __uint32_t word_t;
+typedef int32_t sword_t;
+typedef word_t vaddr_t;
+typedef uint32_t paddr_t;
 #include <debug.h>
 
 #define FMT_WORD "0x%08" PRIx32

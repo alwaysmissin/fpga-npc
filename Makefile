@@ -33,9 +33,10 @@ LDFLAGS += -lSDL2 -lSDL2_image -lreadline $(shell llvm-config --libs)
 include $(FPGA_NPC_HOME)/scripts/config.mk
 
 BATCH_MODE ?= ""
-ARGS ?= -w $(FPGA_NPC_HOME)/waveforms/npc-wave.fst -l $(FPGA_NPC_HOME)/logs/npc-log.txt -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
+ARGS ?= -w $(FPGA_NPC_HOME)/waveforms/npc-wave.fst -l $(FPGA_NPC_HOME)/logs/npc-log.txt -d $(FPGA_NPC_HOME)/tools/spike-diff/build/riscv32-spike-so
 ELF ?= $(YSYX_HOME)/am-kernels/tests/cpu-tests/build/add-riscv32-fpga.elf
 IMG ?= $(YSYX_HOME)/am-kernels/tests/cpu-tests/build/add-riscv32-fpga.bin
+NPC_FLAGS ?= ""
 
 WAVE ?= $(FPGA_NPC_HOME)/waveforms/npc-wave.fst
 WAVECFG ?= $(FPGA_NPC_HOME)/waveforms/npc-wave-config.gtkw
@@ -60,7 +61,7 @@ sim: $(V_SOURCE) $(C_SOURCE)
 		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS))\
 	 	--Mdir $(OBJ_DIR) --exe -o $(abspath $(V_TARGET))
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	$(V_TARGET) $(ARGS) $(BATCH_MODE) -e $(ELF) $(IMG)
+	$(V_TARGET) $(ARGS) $(NPC_FLAGS) -e $(ELF) $(IMG)
 
 
 wave: sim
@@ -74,7 +75,7 @@ run: $(V_SOURCE) $(C_SOURCE) $(NVBOARD_ARCHIVE) $(SRC_AUTO_BIND)
 		--top-module $(TOPNAME) $^ \
 		$(addprefix -CFLAGS , $(CFLAGS)) -CFLAGS -DRUN $(addprefix -LDFLAGS , $(LDFLAGS))\
 		--Mdir $(OBJ_DIR) --exe -o $(abspath $(V_TARGET))
-	$(V_TARGET) $(ARGS) $(BATCH_MODE) -e $(ELF) $(IMG)
+	$(V_TARGET) $(ARGS) $(NPC_FLAGS) -e $(ELF) $(IMG)
 
 perf: 
 	make -C ./npc_chisel npc gen_args="sta"
@@ -82,6 +83,12 @@ perf:
 
 fpga:
 	make -C ./npc_chisel npc gen_args="fpga"
+	rm -rf $(FPGA_CORE_PATH)
+	mkdir -pv $(FPGA_CORE_PATH)
+	cp ./vsrc/cpu/*.sv $(FPGA_CORE_PATH)
+
+npc:
+	make -C ./npc_chisel npc gen_args="sim"
 	rm -rf $(FPGA_CORE_PATH)
 	mkdir -pv $(FPGA_CORE_PATH)
 	cp ./vsrc/cpu/*.sv $(FPGA_CORE_PATH)

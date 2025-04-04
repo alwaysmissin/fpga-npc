@@ -13,7 +13,12 @@ import utils.bus.R
 import utils.bus.B
 import utils.bus.SRAMLike._
 import utils.bus.AXIBURST
+import chisel3.util.PriorityMux
+import os.write
 
+object WriteState extends ChiselEnum{
+    val WriteIDLE, WaitWChannel, WaitAWChannel = Value
+}
 class Arbiter(config: RVConfig, respCacheEnable: Boolean = true) extends Module {
     val io = IO(new Bundle{
         val ibus = new Bundle{
@@ -88,23 +93,58 @@ class Arbiter(config: RVConfig, respCacheEnable: Boolean = true) extends Module 
         selDBus := Mux(reqLock, selDBus, io.dbus.req.valid && !io.dbus.req.bits.wr)
     }
 
-    io.out.aw.valid := io.dbus.req.valid && io.dbus.req.bits.wr
     // avoid w channel to be handshaked before aw channel, asure the w channel and aw channel is launching the same request
-    val wFired = RegEnable(false.B, false.B, io.out.aw.fire)
-    when (io.out.w.fire && !io.out.aw.fire){
-        wFired := true.B
+    // val wFired = RegEnable(false.B, false.B, io.dbus.req.fire)
+    // val awFired = RegEnable(false.B, false.B, io.dbus.req.fire)
+    // when (io.out.w.fire && !wFired && !io.out.aw.fire && !awFired){
+    //     wFired := true.B
+    // }
+
+    // when (io.out.aw.fire && !awFired && !io.dbus.req.fire && !wFired){
+    //     awFired := true.B
+    // }
+
+    val writeState = RegInit(WriteState.WriteIDLE)
+    val dbusWReady = WireDefault(false.B)
+    switch (writeState){
+        is (WriteState.WriteIDLE){
+            when (io.out.aw.fire && io.out.w.fire){
+                dbusWReady := true.B
+                writeState := WriteState.WriteIDLE
+            }.elsewhen (io.out.aw.fire && !io.out.w.fire){
+                writeState := WriteState.WaitWChannel
+            }.elsewhen (!io.out.aw.fire && io.out.w.fire){
+                writeState := WriteState.WaitAWChannel
+            }
+        }
+        is (WriteState.WaitWChannel){
+            when (io.out.w.fire){
+                dbusWReady := true.B
+                writeState := WriteState.WriteIDLE
+            }
+        }
+        is (WriteState.WaitAWChannel){
+            when (io.out.aw.fire){
+                dbusWReady := true.B
+                writeState := WriteState.WriteIDLE
+            }
+        }
     }
 
     // 向外发起写请求
-    io.out.w .valid := io.dbus.req.valid && io.dbus.req.bits.wr
+    io.out.w .valid := io.dbus.req.valid && io.dbus.req.bits.wr && writeState =/= WriteState.WaitAWChannel
+    io.out.aw.valid := io.dbus.req.valid && io.dbus.req.bits.wr && writeState =/= WriteState.WaitWChannel
     io.out.aw.bits := DontCare
     io.out.aw.bits.addr := io.dbus.req.bits.addr
     io.out.w .bits.data := io.dbus.req.bits.wdata
     io.out.w .bits.strb := io.dbus.req.bits.wstrb
     io.out.w .bits.last := true.B
+    io.out.aw.bits.burst := AXIBURST.INCR
+    io.out.aw.bits.len   := 0.U
+    io.out.aw.bits.size := io.dbus.req.bits.size
 
     io.ibus.req.ready := io.out.ar.ready && ((reqLock && !selDBus) || (!reqLock && !(io.dbus.req.valid && !io.dbus.req.bits.wr)))
-    io.dbus.req.ready := Mux(io.dbus.req.bits.wr, io.out.aw.ready && (io.out.w.ready || wFired), io.out.ar.ready && ((reqLock && selDBus) || (!reqLock && io.out.ar.bits.addr =/= awReqBusy.addr)))
+    io.dbus.req.ready := Mux(io.dbus.req.bits.wr, dbusWReady, io.out.ar.ready && ((reqLock && selDBus) || (!reqLock && io.out.ar.bits.addr =/= awReqBusy.addr)))
     io.out.ar.valid   := ((io.dbus.req.valid && !io.dbus.req.bits.wr) || io.ibus.req.valid) && io.out.ar.bits.addr =/= awReqBusy.addr
     io.out.ar.bits.addr := Mux(reqLock, 
                                 Mux(selDBus, io.dbus.req.bits.addr, io.ibus.req.bits.addr), 

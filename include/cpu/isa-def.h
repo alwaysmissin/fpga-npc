@@ -6,14 +6,18 @@
 #include <cpu/isa-csr-def.h>
 
 typedef struct {
-  word_t *pc;
-  word_t (*gpr)[NR_GPR];
-  mstatus_t *mstatus;
-  mtvec_t *mtvec;
-  mepc_t *mepc;
-  mcause_t *mcause;
-  // mvendorid_t *mvendorid;
-  // marchid_t *marchid;
+  word_t *pc_if;
+  word_t *pc_exe;
+  bool *done;
+  word_t *pc_done;
+  word_t *inst;
+  word_t (*gpr)[NR_GPR - 1];
+  CSR_LIST(CSR_DEF)
+  // mstatus_t *mstatus;
+  // mtvec_t *mtvec;
+  // word_t *placeholder1;
+  // mepc_t *mepc;
+  // mcause_t *mcause;
 } cpu_state;
 
 #endif

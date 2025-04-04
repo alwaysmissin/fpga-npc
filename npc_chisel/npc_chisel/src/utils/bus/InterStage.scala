@@ -30,6 +30,12 @@ object InterStage {
       val exceptionCode = Output(ExceptionCodes())
   }
 
+  class FtraceBundle(config: RVConfig) extends Bundle{
+    val doFtrace = Bool()
+    val rd = UInt(log2Up(config.nr_reg).W)
+    val rs1 = UInt(log2Up(config.nr_reg).W)
+  }
+
   class IdExeBus(config: RVConfig) extends Bundle{
       val decodeBundle = Output(new DecodeBundle)
       val pc = Output(UInt(config.xlen.W))
@@ -46,6 +52,7 @@ object InterStage {
       val exceptionCode = Output(ExceptionCodes())
       // val jumped = if(config.diff_enable) Output(Bool()) else null
       val inst = if(config.trace_enable) Output(UInt(config.xlen.W)) else null
+      val ftrace = if(config.trace_enable) Output(new FtraceBundle(config)) else null
   }
 
   class ExeMemSignalsBundle(config: RVConfig) extends Bundle{

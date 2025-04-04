@@ -38,7 +38,7 @@ static std::queue<int> pcs_to_skip;
 
 void difftest_skip_ref(){
     // is_skip_ref = true;
-    pc_to_skip = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__exeStage_io_fromID_bits_rpc;
+    pc_to_skip = *cpu.pc_exe;
     pcs_to_skip.push(pc_to_skip);
     // printf("skip " FMT_WORD "\n", pc_to_skip);
     // skip_dut_nr_inst = 0;
@@ -72,46 +72,56 @@ void init_difftest(char *ref_so_file, long img_size, int port){
 
     ref_difftest_init(port);
     ref_difftest_memcpy(PC_INIT, pmem, img_size, DIFFTEST_TO_REF);
-    // diff_context_t *ctx = (diff_context_t *)malloc(sizeof(diff_context_t));
-    // ctx.gpr = &(top->rootp->top__DOT__cpu__DOT__rf__DOT__gpr[0]);
     for (int i = 0; i < NR_GPR; i ++){
         ctx.gpr[i] = (word_t)gpr(i);
     }
     ctx.pc  = PC_INIT;
+    ctx.mstatus = *cpu.mstatus;
+    ctx.mvendorid.val = 0x79737978;
+    ctx.marchid.val = 0x23060051;
     ref_difftest_regcpy(&ctx, DIFFTEST_TO_REF);
     printf("difftest init over!\n");
-    // ref_difftest_memcpy = dlsym(handle, "difftest_memcpy");
-    // assert(ref_difftest_memcpy);
 }
 
 
 char* reg_name(int i);
 char* csr_name(int i);
 
+#define SKIP_CSR(index, name, csr_base) ((index) == ((word_t*)&cpu.name - (csr_base)))
+
+inline bool skip_checkcsrs(const word_t *cpu_csrs, int index){
+  return SKIP_CSR(index, marchid, cpu_csrs) || 
+         SKIP_CSR(index, mvendorid, cpu_csrs) ||
+         SKIP_CSR(index, mscratch, cpu_csrs);
+}
+
 static word_t diff_npc = 0;
 bool difftest_checkregs(struct diff_context_t *ref_r, word_t pc){
+    bool check = true;
     // static word_t npc = 0;
     if (diff_npc != 0 && diff_npc != pc){
+        check = false;
         printf("[difftest] Error: pc is different at pc = " FMT_WORD " , REF = 0x%08x, DUT = 0x%08x\n", pc, diff_npc, pc);
-        return false;
     }
     for (int i = 1; i < NR_GPR; i ++){
-        if (ref_r -> gpr[i] != gpr(i - 1)){
-            printf("[difftest] Error: reg $%s is different at pc = " FMT_WORD " , REF = 0x%08x, DUT = 0x%08x\n", reg_name(i), pc, ref_r -> gpr[i], gpr(i - 1));
-            // printf("a2: " FMT_WORD ", a3: " FMT_WORD "\n", ref_r -> gpr[12], ref_r -> gpr[13]);
-            return false;
+        if (ref_r -> gpr[i] != gpr(i)){
+            check = false;
+            printf("[difftest] Error: reg $%s is different at pc = " FMT_WORD " , REF = 0x%08x, DUT = 0x%08x\n", reg_name(i), pc, ref_r -> gpr[i], gpr(i));
         }
     }
     word_t *ctx_csrs = (word_t *)&(ref_r->mstatus);
     word_t **cpu_csrs = (word_t **)&cpu.mstatus;
-    for (int i = 0;i < NR_CSR - 2;i ++){
-        if (ctx_csrs[i] != *cpu_csrs[i]){
+    for (int i = 0;i < NR_CSR;i ++){
+        if (!skip_checkcsrs(ctx_csrs, i) && ctx_csrs[i] != *cpu_csrs[i]){
+            check = false;
             printf("[difftest] Error: csr $%s is different at pc = " FMT_WORD ", REF = 0x%08x, DUT = 0x%08x\n", csr_name(i), pc, ctx_csrs[i], *cpu_csrs[i]);
-            return false;
+            for (int j = 0;j < NR_CSR;j ++){
+                printf("$%s = 0x%08x(ref: 0x%08x)\n", csr_name(j), *cpu_csrs[j], ctx_csrs[j]);
+            }
         }
     }
     diff_npc = ref_r -> pc;
-    return true;
+    return check;
 }
 
 static void checkregs(struct diff_context_t *ref, word_t pc){
@@ -122,30 +132,24 @@ static void checkregs(struct diff_context_t *ref, word_t pc){
 }
 
 void difftest_step(word_t pc){
-    word_t pc_done = *cpu.pc;
+    word_t pc_done = *cpu.pc_done;
     if (!pcs_to_skip.empty() && pc_done == pcs_to_skip.front()){
         for (int i = 1; i < NR_GPR; i ++){
-            ctx.gpr[i] = (word_t)gpr(i - 1);
+            ctx.gpr[i] = (word_t)gpr(i);
         }
         // TODO: NPC的判断在多周期取指不能这么计算
         // 暂且认为npc为pc+4, 因为目前需要跳过的指令都是访存访问外设的指令
-        // word_t pc_exe = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__memStage_io_fromEXE_bits_r_pc;
-        // word_t pc_mem = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage_io_fromMEM_bits_r_pc;
         word_t npc = pcs_to_skip.front() + 4;
         ctx.pc = pc_done + 4;
         diff_npc = npc;
         ref_difftest_regcpy(&ctx, DIFFTEST_TO_REF);
         pcs_to_skip.pop();
-        // is_skip_ref = false;
-        // pc_to_skip = 0;
         return;
     }
     struct diff_context_t ref_r;
     ref_difftest_exec(1);
     ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
-    // printf("pc = " FMT_WORD ", npc = " FMT_WORD "\n", pc, npc);
     checkregs(&ref_r, pc);
-    // printf("[difftest] difftest pass at pc = " FMT_WORD "\n", pc);
 }
 
 // #endif

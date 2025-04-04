@@ -184,7 +184,7 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   output        auto_anon_in_awready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_anon_in_awvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [3:0]  auto_anon_in_awid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [31:0] auto_anon_in_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [29:0] auto_anon_in_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [7:0]  auto_anon_in_awlen,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [2:0]  auto_anon_in_awsize,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [1:0]  auto_anon_in_awburst,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -204,7 +204,7 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   output        auto_anon_in_arready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_anon_in_arvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [3:0]  auto_anon_in_arid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [31:0] auto_anon_in_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [29:0] auto_anon_in_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [7:0]  auto_anon_in_arlen,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [2:0]  auto_anon_in_arsize,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [1:0]  auto_anon_in_arburst,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -221,7 +221,7 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   input         auto_anon_out_1_awready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_1_awvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [3:0]  auto_anon_out_1_awid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [31:0] auto_anon_out_1_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [28:0] auto_anon_out_1_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [7:0]  auto_anon_out_1_awlen,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [2:0]  auto_anon_out_1_awsize,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [1:0]  auto_anon_out_1_awburst,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -241,7 +241,7 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   input         auto_anon_out_1_arready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_1_arvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [3:0]  auto_anon_out_1_arid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [31:0] auto_anon_out_1_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [28:0] auto_anon_out_1_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [7:0]  auto_anon_out_1_arlen,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [2:0]  auto_anon_out_1_arsize,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [1:0]  auto_anon_out_1_arburst,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -488,75 +488,75 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   reg         awFIFOMap_15_last;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29
   wire        _awFIFOMap_15_T_21 = awFIFOMap_15_count != 3'h7;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:128:34, :132:43
   wire [15:0] _GEN =
-    {{(arFIFOMap_15_count == 3'h0 | arFIFOMap_15_last == auto_anon_in_araddr[31])
+    {{(arFIFOMap_15_count == 3'h0 | arFIFOMap_15_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_15_T_22},
-     {(arFIFOMap_14_count == 3'h0 | arFIFOMap_14_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_14_count == 3'h0 | arFIFOMap_14_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_14_T_22},
-     {(arFIFOMap_13_count == 3'h0 | arFIFOMap_13_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_13_count == 3'h0 | arFIFOMap_13_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_13_T_22},
-     {(arFIFOMap_12_count == 3'h0 | arFIFOMap_12_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_12_count == 3'h0 | arFIFOMap_12_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_12_T_22},
-     {(arFIFOMap_11_count == 3'h0 | arFIFOMap_11_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_11_count == 3'h0 | arFIFOMap_11_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_11_T_22},
-     {(arFIFOMap_10_count == 3'h0 | arFIFOMap_10_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_10_count == 3'h0 | arFIFOMap_10_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_10_T_22},
-     {(arFIFOMap_9_count == 3'h0 | arFIFOMap_9_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_9_count == 3'h0 | arFIFOMap_9_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_9_T_22},
-     {(arFIFOMap_8_count == 3'h0 | arFIFOMap_8_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_8_count == 3'h0 | arFIFOMap_8_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_8_T_22},
-     {(arFIFOMap_7_count == 3'h0 | arFIFOMap_7_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_7_count == 3'h0 | arFIFOMap_7_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_7_T_22},
-     {(arFIFOMap_6_count == 3'h0 | arFIFOMap_6_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_6_count == 3'h0 | arFIFOMap_6_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_6_T_22},
-     {(arFIFOMap_5_count == 3'h0 | arFIFOMap_5_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_5_count == 3'h0 | arFIFOMap_5_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_5_T_22},
-     {(arFIFOMap_4_count == 3'h0 | arFIFOMap_4_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_4_count == 3'h0 | arFIFOMap_4_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_4_T_22},
-     {(arFIFOMap_3_count == 3'h0 | arFIFOMap_3_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_3_count == 3'h0 | arFIFOMap_3_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_3_T_22},
-     {(arFIFOMap_2_count == 3'h0 | arFIFOMap_2_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_2_count == 3'h0 | arFIFOMap_2_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_2_T_22},
-     {(arFIFOMap_1_count == 3'h0 | arFIFOMap_1_last == auto_anon_in_araddr[31])
+     {(arFIFOMap_1_count == 3'h0 | arFIFOMap_1_last == ~(auto_anon_in_araddr[29]))
         & _arFIFOMap_1_T_22},
-     {(arFIFOMap_0_count == 3'h0 | arFIFOMap_0_last == auto_anon_in_araddr[31])
-        & _arFIFOMap_0_T_22}};	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :128:34, :129:29, :132:43, :135:71, :136:{22,30,44}, :153:45, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+     {(arFIFOMap_0_count == 3'h0 | arFIFOMap_0_last == ~(auto_anon_in_araddr[29]))
+        & _arFIFOMap_0_T_22}};	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :128:34, :129:29, :132:43, :135:71, :136:{22,30,44}, :153:45, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
   wire        in_0_arvalid = auto_anon_in_arvalid & _GEN[auto_anon_in_arid];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:153:45
   assign anonIn_arready = _portsAROI_in_0_arready_T_2 & _GEN[auto_anon_in_arid];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:153:45, :154:45, src/main/scala/chisel3/util/Mux.scala:30:73
   reg         latched;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:161:30
   wire        _anonIn_awready_T = latched | _awIn_0_io_enq_ready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:74:47, :161:30, :162:57
   wire [15:0] _GEN_0 =
-    {{(awFIFOMap_15_count == 3'h0 | awFIFOMap_15_last == auto_anon_in_awaddr[31])
+    {{(awFIFOMap_15_count == 3'h0 | awFIFOMap_15_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_15_T_21},
-     {(awFIFOMap_14_count == 3'h0 | awFIFOMap_14_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_14_count == 3'h0 | awFIFOMap_14_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_14_T_21},
-     {(awFIFOMap_13_count == 3'h0 | awFIFOMap_13_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_13_count == 3'h0 | awFIFOMap_13_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_13_T_21},
-     {(awFIFOMap_12_count == 3'h0 | awFIFOMap_12_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_12_count == 3'h0 | awFIFOMap_12_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_12_T_21},
-     {(awFIFOMap_11_count == 3'h0 | awFIFOMap_11_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_11_count == 3'h0 | awFIFOMap_11_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_11_T_21},
-     {(awFIFOMap_10_count == 3'h0 | awFIFOMap_10_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_10_count == 3'h0 | awFIFOMap_10_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_10_T_21},
-     {(awFIFOMap_9_count == 3'h0 | awFIFOMap_9_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_9_count == 3'h0 | awFIFOMap_9_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_9_T_21},
-     {(awFIFOMap_8_count == 3'h0 | awFIFOMap_8_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_8_count == 3'h0 | awFIFOMap_8_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_8_T_21},
-     {(awFIFOMap_7_count == 3'h0 | awFIFOMap_7_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_7_count == 3'h0 | awFIFOMap_7_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_7_T_21},
-     {(awFIFOMap_6_count == 3'h0 | awFIFOMap_6_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_6_count == 3'h0 | awFIFOMap_6_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_6_T_21},
-     {(awFIFOMap_5_count == 3'h0 | awFIFOMap_5_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_5_count == 3'h0 | awFIFOMap_5_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_5_T_21},
-     {(awFIFOMap_4_count == 3'h0 | awFIFOMap_4_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_4_count == 3'h0 | awFIFOMap_4_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_4_T_21},
-     {(awFIFOMap_3_count == 3'h0 | awFIFOMap_3_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_3_count == 3'h0 | awFIFOMap_3_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_3_T_21},
-     {(awFIFOMap_2_count == 3'h0 | awFIFOMap_2_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_2_count == 3'h0 | awFIFOMap_2_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_2_T_21},
-     {(awFIFOMap_1_count == 3'h0 | awFIFOMap_1_last == auto_anon_in_awaddr[31])
+     {(awFIFOMap_1_count == 3'h0 | awFIFOMap_1_last == ~(auto_anon_in_awaddr[29]))
         & _awFIFOMap_1_T_21},
-     {(awFIFOMap_0_count == 3'h0 | awFIFOMap_0_last == auto_anon_in_awaddr[31])
-        & _awFIFOMap_0_T_21}};	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :128:34, :129:29, :132:43, :135:71, :136:{22,30,44}, :162:82, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+     {(awFIFOMap_0_count == 3'h0 | awFIFOMap_0_last == ~(auto_anon_in_awaddr[29]))
+        & _awFIFOMap_0_T_21}};	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :128:34, :129:29, :132:43, :135:71, :136:{22,30,44}, :162:82, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
   wire        in_0_awvalid =
     auto_anon_in_awvalid & _anonIn_awready_T & _GEN_0[auto_anon_in_awid];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:162:{45,57,82}
   assign anonIn_awready =
@@ -564,11 +564,11 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   wire        awIn_0_io_enq_valid = auto_anon_in_awvalid & ~latched;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:161:30, :164:{51,54}
   wire        in_0_wvalid = auto_anon_in_wvalid & _awIn_0_io_deq_valid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:74:47, :169:43
   assign _portsAROI_in_0_arready_T_2 =
-    ~(auto_anon_in_araddr[31]) & auto_anon_out_0_arready
-    | auto_anon_in_araddr[31] & auto_anon_out_1_arready;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
+    auto_anon_in_araddr[29] & auto_anon_out_0_arready
+    | ~(auto_anon_in_araddr[29]) & auto_anon_out_1_arready;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59, src/main/scala/chisel3/util/Mux.scala:30:73
   assign _portsAWOI_in_0_awready_T_2 =
-    ~(auto_anon_in_awaddr[31]) & auto_anon_out_0_awready
-    | auto_anon_in_awaddr[31] & auto_anon_out_1_awready;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
+    auto_anon_in_awaddr[29] & auto_anon_out_0_awready
+    | ~(auto_anon_in_awaddr[29]) & auto_anon_out_1_awready;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59, src/main/scala/chisel3/util/Mux.scala:30:73
   assign _portsWOI_in_0_wready_T_2 =
     _awIn_0_io_deq_bits[0] & auto_anon_out_0_wready | _awIn_0_io_deq_bits[1]
     & auto_anon_out_1_wready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:74:47, :84:73, src/main/scala/chisel3/util/Mux.scala:30:73
@@ -1161,69 +1161,69 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
       end
     end
     if (_arFIFOMap_0_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_0_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_0_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_0_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_0_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_0_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_1_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_1_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_1_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_1_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_1_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_1_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_2_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_2_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_2_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_2_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_2_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_2_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_3_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_3_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_3_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_3_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_3_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_3_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_4_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_4_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_4_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_4_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_4_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_4_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_5_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_5_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_5_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_5_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_5_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_5_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_6_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_6_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_6_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_6_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_6_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_6_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_7_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_7_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_7_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_7_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_7_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_7_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_8_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_8_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_8_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_8_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_8_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_8_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_9_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_9_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_9_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_9_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_9_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_9_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_10_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_10_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_10_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_10_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_10_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_10_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_11_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_11_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_11_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_11_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_11_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_11_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_12_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_12_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_12_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_12_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_12_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_12_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_13_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_13_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_13_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_13_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_13_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_13_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_14_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_14_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_14_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_14_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_14_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_14_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_arFIFOMap_15_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:25
-      arFIFOMap_15_last <= auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      arFIFOMap_15_last <= ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     if (_awFIFOMap_15_T_2)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:147:25
-      awFIFOMap_15_last <= auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+      awFIFOMap_15_last <= ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:129:29, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
   end // always @(posedge)
   `ifdef ENABLE_INITIAL_REG_	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
     `ifdef FIRRTL_BEFORE_INITIAL	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
@@ -1322,7 +1322,7 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
     .reset        (reset),
     .io_enq_ready (_awIn_0_io_enq_ready),
     .io_enq_valid (awIn_0_io_enq_valid),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:164:51
-    .io_enq_bits  ({auto_anon_in_awaddr[31], ~(auto_anon_in_awaddr[31])}),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:83:75, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+    .io_enq_bits  ({~(auto_anon_in_awaddr[29]), auto_anon_in_awaddr[29]}),	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:83:75, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
     .io_deq_ready
       (auto_anon_in_wvalid & auto_anon_in_wlast & _portsWOI_in_0_wready_T_2),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:171:{50,74}, src/main/scala/chisel3/util/Mux.scala:30:73
     .io_deq_valid (_awIn_0_io_deq_valid),
@@ -1345,9 +1345,9 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
     (muxState_2_0 ? auto_anon_out_0_rresp : 2'h0)
     | (muxState_2_1 ? auto_anon_out_1_rresp : 2'h0);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :292:23, src/main/scala/chisel3/util/Mux.scala:30:73
   assign auto_anon_in_rlast = _in_0_rT_2;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, src/main/scala/chisel3/util/Mux.scala:30:73
-  assign auto_anon_out_1_awvalid = in_0_awvalid & auto_anon_in_awaddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :162:{45,82}, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+  assign auto_anon_out_1_awvalid = in_0_awvalid & ~(auto_anon_in_awaddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :162:{45,82}, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
   assign auto_anon_out_1_awid = auto_anon_in_awid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
-  assign auto_anon_out_1_awaddr = auto_anon_in_awaddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
+  assign auto_anon_out_1_awaddr = auto_anon_in_awaddr[28:0];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :182:37
   assign auto_anon_out_1_awlen = auto_anon_in_awlen;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_awsize = auto_anon_in_awsize;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_awburst = auto_anon_in_awburst;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
@@ -1361,9 +1361,9 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_wlast = auto_anon_in_wlast;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_bready =
     auto_anon_in_bready & (idle_3 ? readys_readys_1[1] : state_3_1);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :272:23, :278:73, :291:24, :300:24, :302:31, rocket-chip/src/main/scala/tilelink/Arbiter.scala:26:18
-  assign auto_anon_out_1_arvalid = in_0_arvalid & auto_anon_in_araddr[31];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :153:45, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+  assign auto_anon_out_1_arvalid = in_0_arvalid & ~(auto_anon_in_araddr[29]);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :153:45, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:59
   assign auto_anon_out_1_arid = auto_anon_in_arid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
-  assign auto_anon_out_1_araddr = auto_anon_in_araddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
+  assign auto_anon_out_1_araddr = auto_anon_in_araddr[28:0];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :182:37
   assign auto_anon_out_1_arlen = auto_anon_in_arlen;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_arsize = auto_anon_in_arsize;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_arburst = auto_anon_in_arburst;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
@@ -1373,9 +1373,9 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_arqos = auto_anon_in_arqos;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_rready =
     auto_anon_in_rready & (idle_2 ? readys_readys[1] : state_2_1);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :272:23, :278:73, :291:24, :300:24, :302:31, rocket-chip/src/main/scala/tilelink/Arbiter.scala:26:18
-  assign auto_anon_out_0_awvalid = in_0_awvalid & ~(auto_anon_in_awaddr[31]);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :162:{45,82}, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+  assign auto_anon_out_0_awvalid = in_0_awvalid & auto_anon_in_awaddr[29];	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :162:{45,82}, :252:40
   assign auto_anon_out_0_awid = auto_anon_in_awid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
-  assign auto_anon_out_0_awaddr = auto_anon_in_awaddr[29:0];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :182:37
+  assign auto_anon_out_0_awaddr = auto_anon_in_awaddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_awlen = auto_anon_in_awlen;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_awsize = auto_anon_in_awsize;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_awburst = auto_anon_in_awburst;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
@@ -1389,9 +1389,9 @@ module AXI4Xbar(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_wlast = auto_anon_in_wlast;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_bready =
     auto_anon_in_bready & (idle_3 ? readys_readys_1[0] : state_3_0);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :272:23, :278:73, :291:24, :300:24, :302:31, rocket-chip/src/main/scala/tilelink/Arbiter.scala:26:18
-  assign auto_anon_out_0_arvalid = in_0_arvalid & ~(auto_anon_in_araddr[31]);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :153:45, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+  assign auto_anon_out_0_arvalid = in_0_arvalid & auto_anon_in_araddr[29];	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :153:45, :252:40
   assign auto_anon_out_0_arid = auto_anon_in_arid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
-  assign auto_anon_out_0_araddr = auto_anon_in_araddr[29:0];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :182:37
+  assign auto_anon_out_0_araddr = auto_anon_in_araddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_arlen = auto_anon_in_arlen;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_arsize = auto_anon_in_arsize;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_arburst = auto_anon_in_arburst;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
@@ -1434,7 +1434,7 @@ module AXI4Xbar_1(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   input         auto_anon_out_1_awready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_1_awvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [3:0]  auto_anon_out_1_awid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [27:0] auto_anon_out_1_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [29:0] auto_anon_out_1_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_anon_out_1_wready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_1_wvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [31:0] auto_anon_out_1_wdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -1446,7 +1446,7 @@ module AXI4Xbar_1(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   input         auto_anon_out_1_arready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_1_arvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [3:0]  auto_anon_out_1_arid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [27:0] auto_anon_out_1_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [29:0] auto_anon_out_1_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_1_rready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_anon_out_1_rvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [3:0]  auto_anon_out_1_rid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -1489,14 +1489,6 @@ module AXI4Xbar_1(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   wire       _awIn_0_io_enq_ready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:74:47
   wire       _awIn_0_io_deq_valid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:74:47
   wire [1:0] _awIn_0_io_deq_bits;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:74:47
-  wire       requestARIO_0_0 =
-    {auto_anon_in_araddr[29], ~(auto_anon_in_araddr[28])} == 2'h0
-    | auto_anon_in_araddr[29];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :71:97, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{31,41,46,59}
-  wire       requestARIO_0_1 = auto_anon_in_araddr[29:28] == 2'h0;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
-  wire       requestAWIO_0_0 =
-    {auto_anon_in_awaddr[29], ~(auto_anon_in_awaddr[28])} == 2'h0
-    | auto_anon_in_awaddr[29];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :71:97, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{31,41,46,59}
-  wire       requestAWIO_0_1 = auto_anon_in_awaddr[29:28] == 2'h0;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
   wire       _arFIFOMap_15_T_1 = _portsAROI_in_0_arready_T_2 & auto_anon_in_arvalid;	// src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/Mux.scala:30:73
   wire       _arFIFOMap_0_T_2 = auto_anon_in_arid == 4'h0 & _arFIFOMap_15_T_1;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:143:{20,25}, src/main/scala/chisel3/util/Decoupled.scala:51:35
   wire       _arFIFOMap_15_T_4 = auto_anon_in_rready & in_0_rvalid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:308:22, src/main/scala/chisel3/util/Decoupled.scala:51:35
@@ -1620,11 +1612,11 @@ module AXI4Xbar_1(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   wire       awIn_0_io_enq_valid = auto_anon_in_awvalid & ~latched;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:161:30, :164:{51,54}
   wire       in_0_wvalid = auto_anon_in_wvalid & _awIn_0_io_deq_valid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:74:47, :169:43
   assign _portsAROI_in_0_arready_T_2 =
-    requestARIO_0_0 & auto_anon_out_0_arready | requestARIO_0_1
-    & auto_anon_out_1_arready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:71:97, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
+    ~(auto_anon_in_araddr[28]) & auto_anon_out_0_arready
+    | auto_anon_in_araddr[28] & auto_anon_out_1_arready;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
   assign _portsAWOI_in_0_awready_T_2 =
-    requestAWIO_0_0 & auto_anon_out_0_awready | requestAWIO_0_1
-    & auto_anon_out_1_awready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:71:97, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
+    ~(auto_anon_in_awaddr[28]) & auto_anon_out_0_awready
+    | auto_anon_in_awaddr[28] & auto_anon_out_1_awready;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
   assign _portsWOI_in_0_wready_T_2 =
     _awIn_0_io_deq_bits[0] & auto_anon_out_0_wready | _awIn_0_io_deq_bits[1]
     & auto_anon_out_1_wready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:74:47, :84:73, src/main/scala/chisel3/util/Mux.scala:30:73
@@ -2248,7 +2240,7 @@ module AXI4Xbar_1(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
     .reset        (reset),
     .io_enq_ready (_awIn_0_io_enq_ready),
     .io_enq_valid (awIn_0_io_enq_valid),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:164:51
-    .io_enq_bits  ({requestAWIO_0_1, requestAWIO_0_0}),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:71:97, :83:75, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+    .io_enq_bits  ({auto_anon_in_awaddr[28], ~(auto_anon_in_awaddr[28])}),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:83:75, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
     .io_deq_ready
       (auto_anon_in_wvalid & auto_anon_in_wlast & _portsWOI_in_0_wready_T_2),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:171:{50,74}, src/main/scala/chisel3/util/Mux.scala:30:73
     .io_deq_valid (_awIn_0_io_deq_valid),
@@ -2271,20 +2263,20 @@ module AXI4Xbar_1(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
     (muxState_2_0 ? auto_anon_out_0_rresp : 2'h0)
     | (muxState_2_1 ? auto_anon_out_1_rresp : 2'h0);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :292:23, src/main/scala/chisel3/util/Mux.scala:30:73
   assign auto_anon_in_rlast = _in_0_rT_2;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, src/main/scala/chisel3/util/Mux.scala:30:73
-  assign auto_anon_out_1_awvalid = in_0_awvalid & requestAWIO_0_1;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :162:45, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+  assign auto_anon_out_1_awvalid = in_0_awvalid & auto_anon_in_awaddr[28];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :162:45, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
   assign auto_anon_out_1_awid = auto_anon_in_awid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
-  assign auto_anon_out_1_awaddr = auto_anon_in_awaddr[27:0];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :182:37
+  assign auto_anon_out_1_awaddr = auto_anon_in_awaddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_wvalid = in_0_wvalid & _awIn_0_io_deq_bits[1];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :74:47, :84:73, :169:43, :252:40
   assign auto_anon_out_1_wdata = auto_anon_in_wdata;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_wstrb = auto_anon_in_wstrb;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_bready =
     auto_anon_in_bready & (idle_3 ? readys_readys_1[1] : state_3_1);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :272:23, :278:73, :291:24, :300:24, :302:31, rocket-chip/src/main/scala/tilelink/Arbiter.scala:26:18
-  assign auto_anon_out_1_arvalid = auto_anon_in_arvalid & requestARIO_0_1;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+  assign auto_anon_out_1_arvalid = auto_anon_in_arvalid & auto_anon_in_araddr[28];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
   assign auto_anon_out_1_arid = auto_anon_in_arid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
-  assign auto_anon_out_1_araddr = auto_anon_in_araddr[27:0];	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :182:37
+  assign auto_anon_out_1_araddr = auto_anon_in_araddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_1_rready =
     auto_anon_in_rready & (idle_2 ? readys_readys[1] : state_2_1);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :272:23, :278:73, :291:24, :300:24, :302:31, rocket-chip/src/main/scala/tilelink/Arbiter.scala:26:18
-  assign auto_anon_out_0_awvalid = in_0_awvalid & requestAWIO_0_0;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :71:97, :162:45, :252:40
+  assign auto_anon_out_0_awvalid = in_0_awvalid & ~(auto_anon_in_awaddr[28]);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :162:45, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
   assign auto_anon_out_0_awid = auto_anon_in_awid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_awaddr = auto_anon_in_awaddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_awsize = auto_anon_in_awsize;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
@@ -2293,7 +2285,8 @@ module AXI4Xbar_1(	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_wstrb = auto_anon_in_wstrb;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_bready =
     auto_anon_in_bready & (idle_3 ? readys_readys_1[0] : state_3_0);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :272:23, :278:73, :291:24, :300:24, :302:31, rocket-chip/src/main/scala/tilelink/Arbiter.scala:26:18
-  assign auto_anon_out_0_arvalid = auto_anon_in_arvalid & requestARIO_0_0;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :71:97, :252:40
+  assign auto_anon_out_0_arvalid =
+    auto_anon_in_arvalid & ~(auto_anon_in_araddr[28]);	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9, :252:40, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
   assign auto_anon_out_0_arid = auto_anon_in_arid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_araddr = auto_anon_in_araddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
   assign auto_anon_out_0_arsize = auto_anon_in_arsize;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:60:9
@@ -2311,29 +2304,21 @@ module APBFanout(	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
   output        auto_anon_in_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
                 auto_anon_in_pslverr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [31:0] auto_anon_in_prdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output        auto_anon_out_4_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-                auto_anon_out_4_pwrite,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [29:0] auto_anon_out_4_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [31:0] auto_anon_out_4_pwdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_3_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [28:0] auto_anon_out_3_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+                auto_anon_out_3_pwrite,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [29:0] auto_anon_out_3_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [31:0] auto_anon_out_3_pwdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_anon_out_3_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [31:0] auto_anon_out_3_prdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_2_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-                auto_anon_out_2_pwrite,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [28:0] auto_anon_out_2_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [31:0] auto_anon_out_2_pwdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [3:0]  auto_anon_out_2_pstrb,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [29:0] auto_anon_out_2_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_anon_out_2_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [31:0] auto_anon_out_2_prdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_1_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-                auto_anon_out_1_penable,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
                 auto_anon_out_1_pwrite,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [28:0] auto_anon_out_1_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [29:0] auto_anon_out_1_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [31:0] auto_anon_out_1_pwdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [3:0]  auto_anon_out_1_pstrb,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_anon_out_1_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-                auto_anon_out_1_pslverr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [31:0] auto_anon_out_1_prdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_anon_out_0_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
                 auto_anon_out_0_penable,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -2346,48 +2331,30 @@ module APBFanout(	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
   input  [31:0] auto_anon_out_0_prdata	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
 );
 
-  wire        sel_1 =
-    {auto_anon_in_paddr[29],
-     ~(auto_anon_in_paddr[28]),
-     auto_anon_in_paddr[16],
-     auto_anon_in_paddr[13]} == 4'h0;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{31,41,46,59}
-  wire [15:0] _GEN = auto_anon_in_paddr[28:13] ^ 16'h8001;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:31
-  wire        sel_2 =
-    {auto_anon_in_paddr[29], _GEN[15], auto_anon_in_paddr[16], _GEN[0]} == 4'h0;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{31,41,46,59}
-  wire [12:0] _GEN_0 = auto_anon_in_paddr[28:16] ^ 13'h1001;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:31
-  wire        sel_3 =
-    {auto_anon_in_paddr[29], _GEN_0[12], _GEN_0[0], auto_anon_in_paddr[13]} == 4'h0;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{31,41,46,59}
-  wire        sel_4 = auto_anon_in_paddr[29:28] == 2'h2;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+  wire sel_0 = {auto_anon_in_paddr[24], auto_anon_in_paddr[13:12]} == 3'h0;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+  wire sel_1 =
+    {auto_anon_in_paddr[24], auto_anon_in_paddr[13], ~(auto_anon_in_paddr[12])} == 3'h0;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{31,41,46,59}
+  wire sel_2 = {auto_anon_in_paddr[24], auto_anon_in_paddr[13:12] ^ 2'h2} == 3'h0;	// rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{31,41,46,59}
   assign auto_anon_in_pready =
-    ~((&(auto_anon_in_paddr[29:28])) & ~auto_anon_out_0_pready | sel_1
-      & ~auto_anon_out_1_pready | sel_2 & ~auto_anon_out_2_pready | sel_3
-      & ~auto_anon_out_3_pready | sel_4);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :55:{21,44}, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
-  assign auto_anon_in_pslverr =
-    (&(auto_anon_in_paddr[29:28])) & auto_anon_out_0_pslverr | sel_1
-    & auto_anon_out_1_pslverr;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
+    ~(sel_0 & ~auto_anon_out_0_pready | sel_1 & ~auto_anon_out_1_pready | sel_2
+      & ~auto_anon_out_2_pready | auto_anon_in_paddr[24] & ~auto_anon_out_3_pready);	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :55:{21,44}, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
+  assign auto_anon_in_pslverr = sel_0 & auto_anon_out_0_pslverr;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
   assign auto_anon_in_prdata =
-    ((&(auto_anon_in_paddr[29:28])) ? auto_anon_out_0_prdata : 32'h0)
-    | (sel_1 ? auto_anon_out_1_prdata : 32'h0) | (sel_2 ? auto_anon_out_2_prdata : 32'h0)
-    | (sel_3 ? auto_anon_out_3_prdata : 32'h0);	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
-  assign auto_anon_out_4_psel = sel_4 & auto_anon_in_psel;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :51:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
-  assign auto_anon_out_4_pwrite = auto_anon_in_pwrite;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
-  assign auto_anon_out_4_paddr = auto_anon_in_paddr;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
-  assign auto_anon_out_4_pwdata = auto_anon_in_pwdata;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
-  assign auto_anon_out_3_psel = sel_3 & auto_anon_in_psel;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :51:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
-  assign auto_anon_out_3_paddr = auto_anon_in_paddr[28:0];	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:31
+    (sel_0 ? auto_anon_out_0_prdata : 32'h0) | (sel_1 ? auto_anon_out_1_prdata : 32'h0)
+    | (sel_2 ? auto_anon_out_2_prdata : 32'h0);	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}, src/main/scala/chisel3/util/Mux.scala:30:73
+  assign auto_anon_out_3_psel = auto_anon_in_paddr[24] & auto_anon_in_psel;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :51:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46}
+  assign auto_anon_out_3_pwrite = auto_anon_in_pwrite;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
+  assign auto_anon_out_3_paddr = auto_anon_in_paddr;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
+  assign auto_anon_out_3_pwdata = auto_anon_in_pwdata;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
   assign auto_anon_out_2_psel = sel_2 & auto_anon_in_psel;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :51:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
-  assign auto_anon_out_2_pwrite = auto_anon_in_pwrite;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
-  assign auto_anon_out_2_paddr = auto_anon_in_paddr[28:0];	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:31
-  assign auto_anon_out_2_pwdata = auto_anon_in_pwdata;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
-  assign auto_anon_out_2_pstrb = auto_anon_in_pstrb;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
+  assign auto_anon_out_2_paddr = auto_anon_in_paddr;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
   assign auto_anon_out_1_psel = sel_1 & auto_anon_in_psel;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :51:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
-  assign auto_anon_out_1_penable = sel_1 & auto_anon_in_penable;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :52:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
   assign auto_anon_out_1_pwrite = auto_anon_in_pwrite;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
-  assign auto_anon_out_1_paddr = auto_anon_in_paddr[28:0];	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:31
+  assign auto_anon_out_1_paddr = auto_anon_in_paddr;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
   assign auto_anon_out_1_pwdata = auto_anon_in_pwdata;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
   assign auto_anon_out_1_pstrb = auto_anon_in_pstrb;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
-  assign auto_anon_out_0_psel = (&(auto_anon_in_paddr[29:28])) & auto_anon_in_psel;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :51:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
-  assign auto_anon_out_0_penable = (&(auto_anon_in_paddr[29:28])) & auto_anon_in_penable;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :52:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+  assign auto_anon_out_0_psel = sel_0 & auto_anon_in_psel;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :51:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+  assign auto_anon_out_0_penable = sel_0 & auto_anon_in_penable;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9, :52:28, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
   assign auto_anon_out_0_pwrite = auto_anon_in_pwrite;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
   assign auto_anon_out_0_paddr = auto_anon_in_paddr;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
   assign auto_anon_out_0_pwdata = auto_anon_in_pwdata;	// rocket-chip/src/main/scala/amba/apb/Xbar.scala:28:9
@@ -2402,7 +2369,7 @@ module CPU(	// src/CPU.scala:33:9
                 auto_master_out_awready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_master_out_awvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [3:0]  auto_master_out_awid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [31:0] auto_master_out_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [29:0] auto_master_out_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [7:0]  auto_master_out_awlen,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [2:0]  auto_master_out_awsize,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [1:0]  auto_master_out_awburst,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -2422,7 +2389,7 @@ module CPU(	// src/CPU.scala:33:9
   input         auto_master_out_arready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_master_out_arvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [3:0]  auto_master_out_arid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [31:0] auto_master_out_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [29:0] auto_master_out_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [7:0]  auto_master_out_arlen,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [2:0]  auto_master_out_arsize,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [1:0]  auto_master_out_arburst,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -2435,18 +2402,19 @@ module CPU(	// src/CPU.scala:33:9
   input  [3:0]  auto_master_out_rid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [31:0] auto_master_out_rdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [1:0]  auto_master_out_rresp,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input         auto_master_out_rlast,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-                interrupt	// src/CPU.scala:35:23
+  input         auto_master_out_rlast	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
 );
 
+  wire [31:0] _cpu_io_master_awaddr;	// src/CPU.scala:38:21
+  wire [31:0] _cpu_io_master_araddr;	// src/CPU.scala:38:21
   ysyx_23060051 cpu (	// src/CPU.scala:38:21
     .clock                   (clock),
     .reset                   (reset),
-    .io_interrupt            (interrupt),
+    .io_interrupt            (1'h0),	// src/CPU.scala:35:23, :36:19, :38:21
     .io_master_awready      (auto_master_out_awready),
     .io_master_awvalid      (auto_master_out_awvalid),
     .io_master_awid    (auto_master_out_awid),
-    .io_master_awaddr  (auto_master_out_awaddr),
+    .io_master_awaddr  (_cpu_io_master_awaddr),
     .io_master_awlen   (auto_master_out_awlen),
     .io_master_awsize  (auto_master_out_awsize),
     .io_master_awburst (auto_master_out_awburst),
@@ -2466,7 +2434,7 @@ module CPU(	// src/CPU.scala:33:9
     .io_master_arready      (auto_master_out_arready),
     .io_master_arvalid      (auto_master_out_arvalid),
     .io_master_arid    (auto_master_out_arid),
-    .io_master_araddr  (auto_master_out_araddr),
+    .io_master_araddr  (_cpu_io_master_araddr),
     .io_master_arlen   (auto_master_out_arlen),
     .io_master_arsize  (auto_master_out_arsize),
     .io_master_arburst (auto_master_out_arburst),
@@ -2481,43 +2449,45 @@ module CPU(	// src/CPU.scala:33:9
     .io_master_rresp   (auto_master_out_rresp),
     .io_master_rlast   (auto_master_out_rlast),
     .io_slave_awready       (/* unused */),
-    .io_slave_awvalid       (1'h0),	// src/CPU.scala:36:19, :38:21
+    .io_slave_awvalid       (1'h0),	// src/CPU.scala:35:23, :36:19, :38:21
     .io_slave_awid     (4'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_awaddr   (32'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_awlen    (8'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_awsize   (3'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_awburst  (2'h0),	// src/CPU.scala:36:19, :38:21
-    .io_slave_awlock   (1'h0),	// src/CPU.scala:36:19, :38:21
+    .io_slave_awlock   (1'h0),	// src/CPU.scala:35:23, :36:19, :38:21
     .io_slave_awcache  (4'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_awprot   (3'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_awqos    (4'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_wready        (/* unused */),
-    .io_slave_wvalid        (1'h0),	// src/CPU.scala:36:19, :38:21
+    .io_slave_wvalid        (1'h0),	// src/CPU.scala:35:23, :36:19, :38:21
     .io_slave_wdata    (32'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_wstrb    (4'h0),	// src/CPU.scala:36:19, :38:21
-    .io_slave_wlast    (1'h0),	// src/CPU.scala:36:19, :38:21
-    .io_slave_bready        (1'h0),	// src/CPU.scala:36:19, :38:21
+    .io_slave_wlast    (1'h0),	// src/CPU.scala:35:23, :36:19, :38:21
+    .io_slave_bready        (1'h0),	// src/CPU.scala:35:23, :36:19, :38:21
     .io_slave_bvalid        (/* unused */),
     .io_slave_bid      (/* unused */),
     .io_slave_bresp    (/* unused */),
     .io_slave_arready       (/* unused */),
-    .io_slave_arvalid       (1'h0),	// src/CPU.scala:36:19, :38:21
+    .io_slave_arvalid       (1'h0),	// src/CPU.scala:35:23, :36:19, :38:21
     .io_slave_arid     (4'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_araddr   (32'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_arlen    (8'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_arsize   (3'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_arburst  (2'h0),	// src/CPU.scala:36:19, :38:21
-    .io_slave_arlock   (1'h0),	// src/CPU.scala:36:19, :38:21
+    .io_slave_arlock   (1'h0),	// src/CPU.scala:35:23, :36:19, :38:21
     .io_slave_arcache  (4'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_arprot   (3'h0),	// src/CPU.scala:36:19, :38:21
     .io_slave_arqos    (4'h0),	// src/CPU.scala:36:19, :38:21
-    .io_slave_rready        (1'h0),	// src/CPU.scala:36:19, :38:21
+    .io_slave_rready        (1'h0),	// src/CPU.scala:35:23, :36:19, :38:21
     .io_slave_rvalid        (/* unused */),
     .io_slave_rid      (/* unused */),
     .io_slave_rdata    (/* unused */),
     .io_slave_rresp    (/* unused */),
     .io_slave_rlast    (/* unused */)
   );	// src/CPU.scala:38:21
+  assign auto_master_out_awaddr = _cpu_io_master_awaddr[29:0];	// src/CPU.scala:33:9, :38:21, :43:12
+  assign auto_master_out_araddr = _cpu_io_master_araddr[29:0];	// src/CPU.scala:33:9, :38:21, :43:12
 endmodule
 
 // external module uart_top_apb
@@ -2528,7 +2498,7 @@ module APBUart16550(	// src/device/Uart16550.scala:35:9
                 auto_in_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
                 auto_in_penable,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
                 auto_in_pwrite,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [28:0] auto_in_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [29:0] auto_in_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [31:0] auto_in_pwdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [3:0]  auto_in_pstrb,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_in_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -2544,7 +2514,7 @@ module APBUart16550(	// src/device/Uart16550.scala:35:9
     .in_psel    (auto_in_psel),
     .in_penable (auto_in_penable),
     .in_pwrite  (auto_in_pwrite),
-    .in_paddr   ({3'h0, auto_in_paddr}),	// src/device/Uart16550.scala:42:17
+    .in_paddr   ({2'h0, auto_in_paddr}),	// src/device/Uart16550.scala:42:17
     .in_pprot   (3'h1),	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, src/device/Uart16550.scala:39:23
     .in_pwdata  (auto_in_pwdata),
     .in_pstrb   (auto_in_pstrb),
@@ -2566,59 +2536,55 @@ module gpioChisel(	// src/device/GPIO.scala:53:7
   input  [3:0]  io_in_pstrb,	// src/device/GPIO.scala:54:14
   output        io_in_pready,	// src/device/GPIO.scala:54:14
   output [31:0] io_in_prdata,	// src/device/GPIO.scala:54:14
-  output [15:0] io_gpio_out,	// src/device/GPIO.scala:54:14
-  input  [15:0] io_gpio_in	// src/device/GPIO.scala:54:14
+  output [7:0]  io_gpio_out,	// src/device/GPIO.scala:54:14
+  input  [7:0]  io_gpio_in	// src/device/GPIO.scala:54:14
 );
 
-  reg  [15:0] gpioInReg;	// src/device/GPIO.scala:55:26
-  reg  [15:0] gpioOutReg;	// src/device/GPIO.scala:56:27
+  reg  [7:0]  gpioInReg;	// src/device/GPIO.scala:55:26
+  reg  [7:0]  gpioOutReg;	// src/device/GPIO.scala:56:27
   reg  [31:0] segReg;	// src/device/GPIO.scala:57:23
   reg         pready;	// src/device/GPIO.scala:67:23
   reg  [31:0] prdata;	// src/device/GPIO.scala:68:23
   wire        _GEN = io_in_psel & io_in_pwrite;	// src/device/GPIO.scala:70:16, :75:19, :77:23, :78:20
   always @(posedge clock) begin	// src/device/GPIO.scala:53:7
     if (reset) begin	// src/device/GPIO.scala:53:7
-      gpioInReg <= 16'h0;	// src/device/GPIO.scala:55:26
-      gpioOutReg <= 16'h0;	// src/device/GPIO.scala:56:27
+      gpioInReg <= 8'h0;	// src/device/GPIO.scala:55:26
+      gpioOutReg <= 8'h0;	// src/device/GPIO.scala:56:27
       segReg <= 32'h12345678;	// src/device/GPIO.scala:57:23
       pready <= 1'h0;	// src/device/GPIO.scala:67:23
       prdata <= 32'h0;	// src/device/GPIO.scala:68:23
     end
     else begin	// src/device/GPIO.scala:53:7
-      automatic logic [7:0]  _writeMask_T_5;	// src/device/GPIO.scala:66:77
-      automatic logic [7:0]  _writeMask_T_7;	// src/device/GPIO.scala:66:102
-      automatic logic        _GEN_0;	// src/device/GPIO.scala:72:26, :79:19
-      automatic logic [15:0] _GEN_1;	// src/device/GPIO.scala:66:22
-      automatic logic        _GEN_2;	// src/device/GPIO.scala:79:19
-      automatic logic        _GEN_3;	// src/device/GPIO.scala:79:19
-      _writeMask_T_5 = {8{io_in_pstrb[1]}};	// src/device/GPIO.scala:66:{77,92}
+      automatic logic [7:0] _writeMask_T_7;	// src/device/GPIO.scala:66:102
+      automatic logic       _GEN_0;	// src/device/GPIO.scala:72:26, :79:19
+      automatic logic       _GEN_1;	// src/device/GPIO.scala:79:19
+      automatic logic       _GEN_2;	// src/device/GPIO.scala:79:19
       _writeMask_T_7 = {8{io_in_pstrb[0]}};	// src/device/GPIO.scala:66:{102,117}
       _GEN_0 = io_in_paddr[3:0] == 4'h0;	// src/device/GPIO.scala:72:26, :79:19
-      _GEN_1 = {_writeMask_T_5, _writeMask_T_7};	// src/device/GPIO.scala:66:{22,77,102}
-      _GEN_2 = io_in_paddr[3:0] == 4'h4;	// src/device/GPIO.scala:72:26, :79:19
-      _GEN_3 = io_in_paddr[3:0] == 4'h8;	// src/device/GPIO.scala:72:26, :79:19
-      if (~_GEN | _GEN_0 | ~_GEN_2)	// src/device/GPIO.scala:60:13, :70:16, :72:26, :75:19, :77:23, :78:20, :79:19
+      _GEN_1 = io_in_paddr[3:0] == 4'h4;	// src/device/GPIO.scala:72:26, :79:19
+      _GEN_2 = io_in_paddr[3:0] == 4'h8;	// src/device/GPIO.scala:72:26, :79:19
+      if (~_GEN | _GEN_0 | ~_GEN_1)	// src/device/GPIO.scala:60:13, :70:16, :72:26, :75:19, :77:23, :78:20, :79:19
         gpioInReg <= io_gpio_in;	// src/device/GPIO.scala:55:26
       else	// src/device/GPIO.scala:60:13, :75:19, :77:23, :79:19
-        gpioInReg <= ~_GEN_1 & gpioInReg | io_in_pwdata[15:0] & _GEN_1;	// src/device/GPIO.scala:54:14, :55:26, :66:22, :84:{35,38,59,75}
+        gpioInReg <= ~_writeMask_T_7 & gpioInReg | io_in_pwdata[7:0] & _writeMask_T_7;	// src/device/GPIO.scala:54:14, :55:26, :66:102, :84:{35,38,59,75}
       if (io_in_psel & io_in_pwrite & _GEN_0)	// src/device/GPIO.scala:56:27, :72:26, :75:19, :77:23, :79:19, :81:22
-        gpioOutReg <= ~_GEN_1 & gpioOutReg | io_in_pwdata[15:0] & _GEN_1;	// src/device/GPIO.scala:54:14, :56:27, :66:22, :81:{37,40,61,77}
-      if (~_GEN | _GEN_0 | _GEN_2 | ~_GEN_3) begin	// src/device/GPIO.scala:57:23, :60:13, :70:16, :72:26, :75:19, :77:23, :78:20, :79:19
+        gpioOutReg <= ~_writeMask_T_7 & gpioOutReg | io_in_pwdata[7:0] & _writeMask_T_7;	// src/device/GPIO.scala:54:14, :56:27, :66:102, :81:{37,40,61,77}
+      if (~_GEN | _GEN_0 | _GEN_1 | ~_GEN_2) begin	// src/device/GPIO.scala:57:23, :60:13, :70:16, :72:26, :75:19, :77:23, :78:20, :79:19
       end
       else begin	// src/device/GPIO.scala:57:23, :75:19, :77:23, :79:19
         automatic logic [31:0] writeMask;	// src/device/GPIO.scala:66:22
         writeMask =
-          {{8{io_in_pstrb[3]}}, {8{io_in_pstrb[2]}}, _writeMask_T_5, _writeMask_T_7};	// src/device/GPIO.scala:66:{22,27,42,52,67,77,102}
+          {{8{io_in_pstrb[3]}}, {8{io_in_pstrb[2]}}, {8{io_in_pstrb[1]}}, _writeMask_T_7};	// src/device/GPIO.scala:66:{22,27,42,52,67,77,92,102}
         segReg <= segReg & ~writeMask | io_in_pwdata & writeMask;	// src/device/GPIO.scala:57:23, :66:22, :87:{29,32,53,69}
       end
       pready <= io_in_psel;	// src/device/GPIO.scala:67:23
       if (~io_in_psel | io_in_pwrite) begin	// src/device/GPIO.scala:68:23, :75:19, :77:23
       end
       else if (_GEN_0)	// src/device/GPIO.scala:72:26, :79:19
-        prdata <= {16'h0, gpioOutReg};	// src/device/GPIO.scala:56:27, :68:23, :93:24
+        prdata <= {24'h0, gpioOutReg};	// src/device/GPIO.scala:56:27, :68:23, :93:18
+      else if (_GEN_1)	// src/device/GPIO.scala:79:19
+        prdata <= {24'h0, gpioInReg};	// src/device/GPIO.scala:55:26, :68:23, :96:18
       else if (_GEN_2)	// src/device/GPIO.scala:79:19
-        prdata <= {16'h0, gpioInReg};	// src/device/GPIO.scala:55:26, :68:23, :96:24
-      else if (_GEN_3)	// src/device/GPIO.scala:79:19
         prdata <= segReg;	// src/device/GPIO.scala:57:23, :68:23
     end
   end // always @(posedge)
@@ -2627,19 +2593,19 @@ module gpioChisel(	// src/device/GPIO.scala:53:7
       `FIRRTL_BEFORE_INITIAL	// src/device/GPIO.scala:53:7
     `endif // FIRRTL_BEFORE_INITIAL
     initial begin	// src/device/GPIO.scala:53:7
-      automatic logic [31:0] _RANDOM[0:3];	// src/device/GPIO.scala:53:7
+      automatic logic [31:0] _RANDOM[0:2];	// src/device/GPIO.scala:53:7
       `ifdef INIT_RANDOM_PROLOG_	// src/device/GPIO.scala:53:7
         `INIT_RANDOM_PROLOG_	// src/device/GPIO.scala:53:7
       `endif // INIT_RANDOM_PROLOG_
       `ifdef RANDOMIZE_REG_INIT	// src/device/GPIO.scala:53:7
-        for (logic [2:0] i = 3'h0; i < 3'h4; i += 3'h1) begin
-          _RANDOM[i[1:0]] = `RANDOM;	// src/device/GPIO.scala:53:7
+        for (logic [1:0] i = 2'h0; i < 2'h3; i += 2'h1) begin
+          _RANDOM[i] = `RANDOM;	// src/device/GPIO.scala:53:7
         end	// src/device/GPIO.scala:53:7
-        gpioInReg = _RANDOM[2'h0][15:0];	// src/device/GPIO.scala:53:7, :55:26
-        gpioOutReg = _RANDOM[2'h0][31:16];	// src/device/GPIO.scala:53:7, :55:26, :56:27
-        segReg = _RANDOM[2'h1];	// src/device/GPIO.scala:53:7, :57:23
-        pready = _RANDOM[2'h2][0];	// src/device/GPIO.scala:53:7, :67:23
-        prdata = {_RANDOM[2'h2][31:1], _RANDOM[2'h3][0]};	// src/device/GPIO.scala:53:7, :67:23, :68:23
+        gpioInReg = _RANDOM[2'h0][7:0];	// src/device/GPIO.scala:53:7, :55:26
+        gpioOutReg = _RANDOM[2'h0][15:8];	// src/device/GPIO.scala:53:7, :55:26, :56:27
+        segReg = {_RANDOM[2'h0][31:16], _RANDOM[2'h1][15:0]};	// src/device/GPIO.scala:53:7, :55:26, :57:23
+        pready = _RANDOM[2'h1][16];	// src/device/GPIO.scala:53:7, :57:23, :67:23
+        prdata = {_RANDOM[2'h1][31:17], _RANDOM[2'h2][16:0]};	// src/device/GPIO.scala:53:7, :57:23, :68:23
       `endif // RANDOMIZE_REG_INIT
     end // initial
     `ifdef FIRRTL_AFTER_INITIAL	// src/device/GPIO.scala:53:7
@@ -2656,13 +2622,13 @@ module APBGPIO(	// src/device/GPIO.scala:118:9
                 reset,	// src/device/GPIO.scala:118:9
                 auto_in_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
                 auto_in_pwrite,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [28:0] auto_in_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [29:0] auto_in_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [31:0] auto_in_pwdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [3:0]  auto_in_pstrb,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_in_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [31:0] auto_in_prdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [15:0] gpio_bundle_out,	// src/device/GPIO.scala:120:25
-  input  [15:0] gpio_bundle_in	// src/device/GPIO.scala:120:25
+  output [7:0]  gpio_bundle_out,	// src/device/GPIO.scala:120:25
+  input  [7:0]  gpio_bundle_in	// src/device/GPIO.scala:120:25
 );
 
   gpioChisel mgpio (	// src/device/GPIO.scala:122:23
@@ -2670,7 +2636,7 @@ module APBGPIO(	// src/device/GPIO.scala:118:9
     .reset        (reset),
     .io_in_psel   (auto_in_psel),
     .io_in_pwrite (auto_in_pwrite),
-    .io_in_paddr  ({3'h0, auto_in_paddr}),	// src/device/GPIO.scala:125:17
+    .io_in_paddr  ({2'h0, auto_in_paddr}),	// src/device/GPIO.scala:125:17
     .io_in_pwdata (auto_in_pwdata),
     .io_in_pstrb  (auto_in_pstrb),
     .io_in_pready (auto_in_pready),
@@ -2744,283 +2710,486 @@ module ps2Chisel(	// src/device/Keyboard.scala:40:7
   assign io_in_prdata = {24'h0, prdata};	// src/device/Keyboard.scala:40:7, :48:23, :52:16
 endmodule
 
-module APBKeyboard(	// src/device/Keyboard.scala:78:9
-  input         clock,	// src/device/Keyboard.scala:78:9
-                reset,	// src/device/Keyboard.scala:78:9
-                auto_in_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [28:0] auto_in_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output        auto_in_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [31:0] auto_in_prdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input         ps2_bundle_clk,	// src/device/Keyboard.scala:80:24
-                ps2_bundle_data	// src/device/Keyboard.scala:80:24
+// VCS coverage exclude_file
+module ram_8x8(	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+  input  [2:0] R0_addr,
+  input        R0_en,
+               R0_clk,
+  output [7:0] R0_data,
+  input  [2:0] W0_addr,
+  input        W0_en,
+               W0_clk,
+  input  [7:0] W0_data
 );
 
-  ps2Chisel mps2 (	// src/device/Keyboard.scala:82:22
+  reg [7:0] Memory[0:7];	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+  always @(posedge W0_clk) begin	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+    if (W0_en & 1'h1)	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+      Memory[W0_addr] <= W0_data;	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+  end // always @(posedge)
+  `ifdef ENABLE_INITIAL_MEM_	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+    reg [31:0] _RANDOM_MEM;	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+    initial begin	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+      `INIT_RANDOM_PROLOG_	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+      `ifdef RANDOMIZE_MEM_INIT	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+        for (logic [3:0] i = 4'h0; i < 4'h8; i += 4'h1) begin
+          _RANDOM_MEM = `RANDOM;	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+          Memory[i[2:0]] = _RANDOM_MEM[7:0];	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+        end
+      `endif // RANDOMIZE_MEM_INIT
+    end // initial
+  `endif // ENABLE_INITIAL_MEM_
+  assign R0_data = R0_en ? Memory[R0_addr] : 8'bx;	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+endmodule
+
+module Queue8_UInt8(	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+  input        clock,	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+               reset,	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+               io_enq_valid,	// src/main/scala/chisel3/util/Decoupled.scala:255:14
+  input  [7:0] io_enq_bits,	// src/main/scala/chisel3/util/Decoupled.scala:255:14
+  input        io_deq_ready,	// src/main/scala/chisel3/util/Decoupled.scala:255:14
+  output       io_deq_valid,	// src/main/scala/chisel3/util/Decoupled.scala:255:14
+  output [7:0] io_deq_bits	// src/main/scala/chisel3/util/Decoupled.scala:255:14
+);
+
+  wire       io_enq_ready;	// src/main/scala/chisel3/util/Decoupled.scala:286:19
+  reg  [2:0] enq_ptr_value;	// src/main/scala/chisel3/util/Counter.scala:61:40
+  reg  [2:0] deq_ptr_value;	// src/main/scala/chisel3/util/Counter.scala:61:40
+  reg        maybe_full;	// src/main/scala/chisel3/util/Decoupled.scala:259:27
+  wire       ptr_match = enq_ptr_value == deq_ptr_value;	// src/main/scala/chisel3/util/Counter.scala:61:40, src/main/scala/chisel3/util/Decoupled.scala:260:33
+  wire       empty = ptr_match & ~maybe_full;	// src/main/scala/chisel3/util/Decoupled.scala:259:27, :260:33, :261:{25,28}
+  wire       do_enq = io_enq_ready & io_enq_valid;	// src/main/scala/chisel3/util/Decoupled.scala:51:35, :286:19
+  assign io_enq_ready = ~(ptr_match & maybe_full);	// src/main/scala/chisel3/util/Decoupled.scala:259:27, :260:33, :262:24, :286:19
+  always @(posedge clock) begin	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+    if (reset) begin	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+      enq_ptr_value <= 3'h0;	// src/main/scala/chisel3/util/Counter.scala:61:40
+      deq_ptr_value <= 3'h0;	// src/main/scala/chisel3/util/Counter.scala:61:40
+      maybe_full <= 1'h0;	// src/main/scala/chisel3/util/Decoupled.scala:243:7, :259:27
+    end
+    else begin	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+      automatic logic do_deq = io_deq_ready & ~empty;	// src/main/scala/chisel3/util/Decoupled.scala:51:35, :261:25, :285:19
+      if (do_enq)	// src/main/scala/chisel3/util/Decoupled.scala:51:35
+        enq_ptr_value <= enq_ptr_value + 3'h1;	// src/main/scala/chisel3/util/Counter.scala:61:40, :77:24
+      if (do_deq)	// src/main/scala/chisel3/util/Decoupled.scala:51:35
+        deq_ptr_value <= deq_ptr_value + 3'h1;	// src/main/scala/chisel3/util/Counter.scala:61:40, :77:24
+      if (~(do_enq == do_deq))	// src/main/scala/chisel3/util/Decoupled.scala:51:35, :259:27, :276:{15,27}, :277:16
+        maybe_full <= do_enq;	// src/main/scala/chisel3/util/Decoupled.scala:51:35, :259:27
+    end
+  end // always @(posedge)
+  `ifdef ENABLE_INITIAL_REG_	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+    `ifdef FIRRTL_BEFORE_INITIAL	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+      `FIRRTL_BEFORE_INITIAL	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+    `endif // FIRRTL_BEFORE_INITIAL
+    initial begin	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+      automatic logic [31:0] _RANDOM[0:0];	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+      `ifdef INIT_RANDOM_PROLOG_	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+        `INIT_RANDOM_PROLOG_	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+      `endif // INIT_RANDOM_PROLOG_
+      `ifdef RANDOMIZE_REG_INIT	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+        _RANDOM[/*Zero width*/ 1'b0] = `RANDOM;	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+        enq_ptr_value = _RANDOM[/*Zero width*/ 1'b0][2:0];	// src/main/scala/chisel3/util/Counter.scala:61:40, src/main/scala/chisel3/util/Decoupled.scala:243:7
+        deq_ptr_value = _RANDOM[/*Zero width*/ 1'b0][5:3];	// src/main/scala/chisel3/util/Counter.scala:61:40, src/main/scala/chisel3/util/Decoupled.scala:243:7
+        maybe_full = _RANDOM[/*Zero width*/ 1'b0][6];	// src/main/scala/chisel3/util/Counter.scala:61:40, src/main/scala/chisel3/util/Decoupled.scala:243:7, :259:27
+      `endif // RANDOMIZE_REG_INIT
+    end // initial
+    `ifdef FIRRTL_AFTER_INITIAL	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+      `FIRRTL_AFTER_INITIAL	// src/main/scala/chisel3/util/Decoupled.scala:243:7
+    `endif // FIRRTL_AFTER_INITIAL
+  `endif // ENABLE_INITIAL_REG_
+  ram_8x8 ram_ext (	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+    .R0_addr (deq_ptr_value),	// src/main/scala/chisel3/util/Counter.scala:61:40
+    .R0_en   (1'h1),
+    .R0_clk  (clock),
+    .R0_data (io_deq_bits),
+    .W0_addr (enq_ptr_value),	// src/main/scala/chisel3/util/Counter.scala:61:40
+    .W0_en   (do_enq),	// src/main/scala/chisel3/util/Decoupled.scala:51:35
+    .W0_clk  (clock),
+    .W0_data (io_enq_bits)
+  );	// src/main/scala/chisel3/util/Decoupled.scala:256:91
+  assign io_deq_valid = ~empty;	// src/main/scala/chisel3/util/Decoupled.scala:243:7, :261:25, :285:19
+endmodule
+
+module PS2Simulator(	// src/device/Keyboard.scala:68:7
+  input        clock,	// src/device/Keyboard.scala:68:7
+               reset,	// src/device/Keyboard.scala:68:7
+  input  [3:0] io_buttons,	// src/device/Keyboard.scala:69:14
+  output       io_ps2_clk,	// src/device/Keyboard.scala:69:14
+               io_ps2_data	// src/device/Keyboard.scala:69:14
+);
+
+  wire        _scanQueue_io_deq_valid;	// src/device/Keyboard.scala:95:25
+  wire [7:0]  _scanQueue_io_deq_bits;	// src/device/Keyboard.scala:95:25
+  reg  [2:0]  state;	// src/device/Keyboard.scala:76:22
+  reg  [3:0]  prevButtons;	// src/device/Keyboard.scala:79:28
+  wire [3:0]  _buttonEvents_T = io_buttons ^ prevButtons;	// src/device/Keyboard.scala:79:28, :80:34
+  wire        keyPress_1 = _buttonEvents_T[1] & io_buttons[1];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
+  wire        keyPress_2 = _buttonEvents_T[2] & io_buttons[2];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
+  wire        keyPress_3 = _buttonEvents_T[3] & io_buttons[3];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
+  wire        keyRelease_0 = _buttonEvents_T[0] & ~(io_buttons[0]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
+  wire        keyRelease_1 = _buttonEvents_T[1] & ~(io_buttons[1]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
+  wire        keyRelease_2 = _buttonEvents_T[2] & ~(io_buttons[2]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
+  wire        keyRelease_3 = _buttonEvents_T[3] & ~(io_buttons[3]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
+  reg  [3:0]  keyReleased;	// src/device/Keyboard.scala:83:28
+  reg  [11:0] clkDiv;	// src/device/Keyboard.scala:114:23
+  reg         ps2Clk;	// src/device/Keyboard.scala:115:23
+  reg         prevClk;	// src/device/Keyboard.scala:116:24
+  reg  [10:0] dataReg;	// src/device/Keyboard.scala:120:24
+  reg  [3:0]  bitCount;	// src/device/Keyboard.scala:121:25
+  wire        _io_ps2_data_T = state == 3'h0;	// src/device/Keyboard.scala:76:22, :125:17
+  always @(posedge clock) begin	// src/device/Keyboard.scala:68:7
+    if (reset) begin	// src/device/Keyboard.scala:68:7
+      state <= 3'h0;	// src/device/Keyboard.scala:76:22
+      clkDiv <= 12'h0;	// src/device/Keyboard.scala:114:23
+      ps2Clk <= 1'h1;	// src/device/Keyboard.scala:68:7, :115:23
+      dataReg <= 11'h0;	// src/device/Keyboard.scala:120:24
+      bitCount <= 4'h0;	// src/device/Keyboard.scala:121:25
+    end
+    else begin	// src/device/Keyboard.scala:68:7
+      automatic logic             _GEN;	// src/device/Keyboard.scala:172:17
+      automatic logic [7:0][11:0] _GEN_0;	// src/device/Keyboard.scala:114:23, :125:17, :172:28
+      _GEN = clkDiv == 12'h1F4;	// src/device/Keyboard.scala:114:23, :172:17
+      if (_io_ps2_data_T) begin	// src/device/Keyboard.scala:125:17
+        if (_scanQueue_io_deq_valid) begin	// src/device/Keyboard.scala:95:25
+          state <= 3'h1;	// src/device/Keyboard.scala:76:22
+          dataReg <= {1'h1, ~(^_scanQueue_io_deq_bits), _scanQueue_io_deq_bits, 1'h0};	// src/device/Keyboard.scala:68:7, :95:25, :120:24, :129:{22,35}, :130:23
+          bitCount <= 4'h0;	// src/device/Keyboard.scala:121:25
+        end
+      end
+      else begin	// src/device/Keyboard.scala:125:17
+        automatic logic risingEdge;	// src/device/Keyboard.scala:118:27
+        automatic logic _GEN_1;	// src/device/Keyboard.scala:115:23, :172:28, :173:14
+        risingEdge = ps2Clk & ~prevClk;	// src/device/Keyboard.scala:115:23, :116:24, :118:{27,30}
+        _GEN_1 = _GEN ^ ps2Clk;	// src/device/Keyboard.scala:115:23, :172:{17,28}, :173:14
+        if (state == 3'h1) begin	// src/device/Keyboard.scala:76:22, :125:17
+          if (risingEdge) begin	// src/device/Keyboard.scala:118:27
+            state <= 3'h2;	// src/device/Keyboard.scala:76:22
+            dataReg <= {1'h0, dataReg[10:1]};	// src/device/Keyboard.scala:68:7, :120:24, :141:{17,28}
+            bitCount <= bitCount + 4'h1;	// src/device/Keyboard.scala:121:25, :140:30
+          end
+          ps2Clk <= _GEN_1;	// src/device/Keyboard.scala:115:23, :172:28, :173:14
+        end
+        else if (state == 3'h2) begin	// src/device/Keyboard.scala:76:22, :125:17
+          if (risingEdge & bitCount == 4'h8)	// src/device/Keyboard.scala:76:22, :118:27, :121:25, :146:24, :149:{23,32}, :150:17
+            state <= 3'h3;	// src/device/Keyboard.scala:76:22
+          ps2Clk <= _GEN_1;	// src/device/Keyboard.scala:115:23, :172:28, :173:14
+          if (risingEdge) begin	// src/device/Keyboard.scala:118:27
+            dataReg <= {1'h0, dataReg[10:1]};	// src/device/Keyboard.scala:68:7, :120:24, :147:{17,28}
+            bitCount <= bitCount + 4'h1;	// src/device/Keyboard.scala:121:25, :148:30
+          end
+        end
+        else begin	// src/device/Keyboard.scala:125:17
+          automatic logic _GEN_2;	// src/device/Keyboard.scala:125:17
+          _GEN_2 = state == 3'h3;	// src/device/Keyboard.scala:76:22, :125:17
+          if (_GEN_2) begin	// src/device/Keyboard.scala:125:17
+            if (risingEdge)	// src/device/Keyboard.scala:118:27
+              state <= 3'h4;	// src/device/Keyboard.scala:76:22
+            ps2Clk <= _GEN_1;	// src/device/Keyboard.scala:115:23, :172:28, :173:14
+          end
+          else begin	// src/device/Keyboard.scala:125:17
+            automatic logic _GEN_3;	// src/device/Keyboard.scala:125:17
+            _GEN_3 = state == 3'h4;	// src/device/Keyboard.scala:76:22, :125:17
+            if (_GEN_3 & risingEdge)	// src/device/Keyboard.scala:76:22, :118:27, :125:17, :164:24, :165:15
+              state <= 3'h0;	// src/device/Keyboard.scala:76:22
+            ps2Clk <= _GEN_3 & _GEN ^ ps2Clk;	// src/device/Keyboard.scala:115:23, :125:17, :172:{17,28}, :173:14
+          end
+          if (_GEN_2 & risingEdge) begin	// src/device/Keyboard.scala:118:27, :120:24, :125:17, :156:24, :158:17
+            dataReg <= {1'h0, dataReg[10:1]};	// src/device/Keyboard.scala:68:7, :120:24, :158:{17,28}
+            bitCount <= bitCount + 4'h1;	// src/device/Keyboard.scala:121:25, :159:30
+          end
+        end
+      end
+      _GEN_0 =
+        {{clkDiv},
+         {clkDiv},
+         {clkDiv},
+         {_GEN ? 12'h0 : clkDiv + 12'h1},
+         {_GEN ? 12'h0 : clkDiv + 12'h1},
+         {_GEN ? 12'h0 : clkDiv + 12'h1},
+         {_GEN ? 12'h0 : clkDiv + 12'h1},
+         {clkDiv}};	// src/device/Keyboard.scala:114:23, :125:17, :171:{12,22}, :172:{17,28}, :174:14
+      clkDiv <= _GEN_0[state];	// src/device/Keyboard.scala:76:22, :114:23, :125:17, :172:28
+    end
+    prevButtons <= io_buttons;	// src/device/Keyboard.scala:79:28
+    keyReleased <= {keyRelease_3, keyRelease_2, keyRelease_1, keyRelease_0};	// rocket-chip/src/main/scala/util/package.scala:45:27, src/device/Keyboard.scala:82:69, :83:28
+    prevClk <= ps2Clk;	// src/device/Keyboard.scala:115:23, :116:24
+  end // always @(posedge)
+  `ifdef ENABLE_INITIAL_REG_	// src/device/Keyboard.scala:68:7
+    `ifdef FIRRTL_BEFORE_INITIAL	// src/device/Keyboard.scala:68:7
+      `FIRRTL_BEFORE_INITIAL	// src/device/Keyboard.scala:68:7
+    `endif // FIRRTL_BEFORE_INITIAL
+    initial begin	// src/device/Keyboard.scala:68:7
+      automatic logic [31:0] _RANDOM[0:1];	// src/device/Keyboard.scala:68:7
+      `ifdef INIT_RANDOM_PROLOG_	// src/device/Keyboard.scala:68:7
+        `INIT_RANDOM_PROLOG_	// src/device/Keyboard.scala:68:7
+      `endif // INIT_RANDOM_PROLOG_
+      `ifdef RANDOMIZE_REG_INIT	// src/device/Keyboard.scala:68:7
+        for (logic [1:0] i = 2'h0; i < 2'h2; i += 2'h1) begin
+          _RANDOM[i[0]] = `RANDOM;	// src/device/Keyboard.scala:68:7
+        end	// src/device/Keyboard.scala:68:7
+        state = _RANDOM[1'h0][2:0];	// src/device/Keyboard.scala:68:7, :76:22
+        prevButtons = _RANDOM[1'h0][6:3];	// src/device/Keyboard.scala:68:7, :76:22, :79:28
+        keyReleased = _RANDOM[1'h0][10:7];	// src/device/Keyboard.scala:68:7, :76:22, :83:28
+        clkDiv = _RANDOM[1'h0][22:11];	// src/device/Keyboard.scala:68:7, :76:22, :114:23
+        ps2Clk = _RANDOM[1'h0][23];	// src/device/Keyboard.scala:68:7, :76:22, :115:23
+        prevClk = _RANDOM[1'h0][24];	// src/device/Keyboard.scala:68:7, :76:22, :116:24
+        dataReg = {_RANDOM[1'h0][31:25], _RANDOM[1'h1][3:0]};	// src/device/Keyboard.scala:68:7, :76:22, :120:24
+        bitCount = _RANDOM[1'h1][7:4];	// src/device/Keyboard.scala:68:7, :120:24, :121:25
+      `endif // RANDOMIZE_REG_INIT
+    end // initial
+    `ifdef FIRRTL_AFTER_INITIAL	// src/device/Keyboard.scala:68:7
+      `FIRRTL_AFTER_INITIAL	// src/device/Keyboard.scala:68:7
+    `endif // FIRRTL_AFTER_INITIAL
+  `endif // ENABLE_INITIAL_REG_
+  Queue8_UInt8 scanQueue (	// src/device/Keyboard.scala:95:25
+    .clock        (clock),
+    .reset        (reset),
+    .io_enq_valid
+      (keyReleased[3] | keyRelease_3 | keyPress_3 | keyReleased[2] | keyRelease_2
+       | keyPress_2 | keyReleased[1] | keyRelease_1 | keyPress_1 | keyReleased[0]
+       | keyRelease_0 | _buttonEvents_T[0] & io_buttons[0]),	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}, :82:69, :83:28, :102:23, :105:25, :108:{21,25}, src/main/scala/chisel3/util/Decoupled.scala:58:20
+    .io_enq_bits
+      (keyReleased[3]
+         ? 8'h23
+         : keyRelease_3
+             ? 8'hF0
+             : keyPress_3
+                 ? 8'h23
+                 : keyReleased[2]
+                     ? 8'h21
+                     : keyRelease_2
+                         ? 8'hF0
+                         : keyPress_2
+                             ? 8'h21
+                             : keyReleased[1]
+                                 ? 8'h32
+                                 : keyRelease_1
+                                     ? 8'hF0
+                                     : keyPress_1
+                                         ? 8'h32
+                                         : keyReleased[0] | ~keyRelease_0
+                                             ? 8'h1C
+                                             : 8'hF0),	// src/device/Keyboard.scala:81:67, :82:69, :83:28, :102:23, :105:25, :108:{21,25}, src/main/scala/chisel3/util/Decoupled.scala:59:19
+    .io_deq_ready (_io_ps2_data_T & _scanQueue_io_deq_valid),	// src/device/Keyboard.scala:95:25, :98:26, :125:17, :127:36
+    .io_deq_valid (_scanQueue_io_deq_valid),
+    .io_deq_bits  (_scanQueue_io_deq_bits)
+  );	// src/device/Keyboard.scala:95:25
+  assign io_ps2_clk = _io_ps2_data_T | ps2Clk;	// src/device/Keyboard.scala:68:7, :115:23, :125:17, :179:20
+  assign io_ps2_data = _io_ps2_data_T | dataReg[0];	// src/device/Keyboard.scala:68:7, :120:24, :125:17, :185:{21,54}
+endmodule
+
+module APBKeyboard(	// src/device/Keyboard.scala:198:9
+  input         clock,	// src/device/Keyboard.scala:198:9
+                reset,	// src/device/Keyboard.scala:198:9
+                auto_in_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [29:0] auto_in_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output        auto_in_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [31:0] auto_in_prdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [3:0]  buttons	// src/device/Keyboard.scala:201:21
+);
+
+  wire _PS2Simulator_io_ps2_clk;	// src/device/Keyboard.scala:204:30
+  wire _PS2Simulator_io_ps2_data;	// src/device/Keyboard.scala:204:30
+  ps2Chisel mps2 (	// src/device/Keyboard.scala:203:22
     .clock        (clock),
     .reset        (reset),
     .io_clock     (clock),
     .io_reset     (reset),
     .io_in_psel   (auto_in_psel),
-    .io_in_paddr  ({3'h0, auto_in_paddr}),	// src/device/Keyboard.scala:85:16
+    .io_in_paddr  ({2'h0, auto_in_paddr}),	// src/device/Keyboard.scala:208:16
     .io_in_pready (auto_in_pready),
     .io_in_prdata (auto_in_prdata),
-    .io_ps2_clk   (ps2_bundle_clk),
-    .io_ps2_data  (ps2_bundle_data)
-  );	// src/device/Keyboard.scala:82:22
+    .io_ps2_clk   (_PS2Simulator_io_ps2_clk),	// src/device/Keyboard.scala:204:30
+    .io_ps2_data  (_PS2Simulator_io_ps2_data)	// src/device/Keyboard.scala:204:30
+  );	// src/device/Keyboard.scala:203:22
+  PS2Simulator PS2Simulator (	// src/device/Keyboard.scala:204:30
+    .clock       (clock),
+    .reset       (reset),
+    .io_buttons  (buttons),
+    .io_ps2_clk  (_PS2Simulator_io_ps2_clk),
+    .io_ps2_data (_PS2Simulator_io_ps2_data)
+  );	// src/device/Keyboard.scala:204:30
 endmodule
 
 // external module vga_ctrl
 
-// external module xpm_memory_sdpram
-
-module SDPRAM_SYNC_65535_24_1(	// src/device/SDPRAM.scala:8:7
-  input         clock,	// src/device/SDPRAM.scala:8:7
-  input  [15:0] io_raddr,	// src/device/SDPRAM.scala:11:14
-  output [23:0] io_rdata_0,	// src/device/SDPRAM.scala:11:14
-  input         io_wen,	// src/device/SDPRAM.scala:11:14
-  input  [15:0] io_waddr,	// src/device/SDPRAM.scala:11:14
-  input  [23:0] io_wdata_0	// src/device/SDPRAM.scala:11:14
+// VCS coverage exclude_file
+module mem_0_131071x12(	// src/device/SDPRAM.scala:50:26
+  input  [16:0] R0_addr,
+  input         R0_en,
+                R0_clk,
+  output [11:0] R0_data,
+  input  [16:0] W0_addr,
+  input         W0_en,
+                W0_clk,
+  input  [11:0] W0_data
 );
 
-  xpm_memory_sdpram #(
-    .ADDR_WIDTH_A(16),
-    .ADDR_WIDTH_B(16),
-    .AUTO_SLEEP_TIME(0),
-    .BYTE_WRITE_WIDTH_A(24),
-    .ECC_MODE("no_ecc"),
-    .MEMORY_INIT_FILE("none"),
-    .MEMORY_INIT_PARAM("0"),
-    .MEMORY_OPTIMIZATION("true"),
-    .MEMORY_PRIMITIVE("auto"),
-    .MEMORY_SIZE(1572864),
-    .MESSAGE_CONTROL(0),
-    .READ_DATA_WIDTH_B(24),
-    .READ_LATENCY_B(1),
-    .READ_RESET_VALUE_B("0"),
-    .RST_MODE_A("SYNC"),
-    .RST_MODE_B("SYNC"),
-    .USE_MEM_INIT(0),
-    .WAKEUP_TIME("disable_sleep"),
-    .WRITE_DATA_WIDTH_A(24),
-    .WRITE_MODE_B("no_change")
-  ) mems_0 (	// src/device/SDPRAM.scala:22:13
-    .clka           (clock),
-    .clkb           (clock),
-    .ena            (io_wen),
-    .enb            (1'h1),
-    .addra          (io_waddr),
-    .addrb          (io_raddr),
-    .wea            (1'h1),
-    .dina           (io_wdata_0),
-    .doutb          (io_rdata_0),
-    .regceb         (1'h1),
-    .rstb           (1'h0),
-    .sleep          (1'h0),
-    .injectdbiterra (1'h0),
-    .injectsbiterra (1'h0)
-  );	// src/device/SDPRAM.scala:22:13
+  reg [11:0] Memory[0:131070];	// src/device/SDPRAM.scala:50:26
+  reg        _R0_en_d0;	// src/device/SDPRAM.scala:50:26
+  reg [16:0] _R0_addr_d0;	// src/device/SDPRAM.scala:50:26
+  always @(posedge R0_clk) begin	// src/device/SDPRAM.scala:50:26
+    _R0_en_d0 <= R0_en;	// src/device/SDPRAM.scala:50:26
+    _R0_addr_d0 <= R0_addr;	// src/device/SDPRAM.scala:50:26
+  end // always @(posedge)
+  always @(posedge W0_clk) begin	// src/device/SDPRAM.scala:50:26
+    if (W0_en & 1'h1)	// src/device/SDPRAM.scala:50:26
+      Memory[W0_addr] <= W0_data;	// src/device/SDPRAM.scala:50:26
+  end // always @(posedge)
+  `ifdef ENABLE_INITIAL_MEM_	// src/device/SDPRAM.scala:50:26
+    `ifdef RANDOMIZE_REG_INIT	// src/device/SDPRAM.scala:50:26
+      reg [31:0] _RANDOM;	// src/device/SDPRAM.scala:50:26
+    `endif // RANDOMIZE_REG_INIT
+    reg [31:0] _RANDOM_MEM;	// src/device/SDPRAM.scala:50:26
+    initial begin	// src/device/SDPRAM.scala:50:26
+      `INIT_RANDOM_PROLOG_	// src/device/SDPRAM.scala:50:26
+      `ifdef RANDOMIZE_MEM_INIT	// src/device/SDPRAM.scala:50:26
+        for (logic [16:0] i = 17'h0; i < 17'h1FFFF; i += 17'h1) begin
+          _RANDOM_MEM = `RANDOM;	// src/device/SDPRAM.scala:50:26
+          Memory[i] = _RANDOM_MEM[11:0];	// src/device/SDPRAM.scala:50:26
+        end
+      `endif // RANDOMIZE_MEM_INIT
+      `ifdef RANDOMIZE_REG_INIT	// src/device/SDPRAM.scala:50:26
+        _RANDOM = {`RANDOM};	// src/device/SDPRAM.scala:50:26
+        _R0_en_d0 = _RANDOM[0];	// src/device/SDPRAM.scala:50:26
+        _R0_addr_d0 = _RANDOM[17:1];	// src/device/SDPRAM.scala:50:26
+      `endif // RANDOMIZE_REG_INIT
+    end // initial
+  `endif // ENABLE_INITIAL_MEM_
+  assign R0_data = _R0_en_d0 ? Memory[_R0_addr_d0] : 12'bx;	// src/device/SDPRAM.scala:50:26
 endmodule
 
-module vgaChisel(	// src/device/VGA.scala:48:7
-  input         io_clock,	// src/device/VGA.scala:49:14
-                io_reset,	// src/device/VGA.scala:49:14
-                io_in_psel,	// src/device/VGA.scala:49:14
-                io_in_pwrite,	// src/device/VGA.scala:49:14
-  input  [31:0] io_in_paddr,	// src/device/VGA.scala:49:14
-                io_in_pwdata,	// src/device/VGA.scala:49:14
-  output [7:0]  io_vga_r,	// src/device/VGA.scala:49:14
-                io_vga_g,	// src/device/VGA.scala:49:14
-                io_vga_b,	// src/device/VGA.scala:49:14
-  output        io_vga_hsync,	// src/device/VGA.scala:49:14
-                io_vga_vsync,	// src/device/VGA.scala:49:14
-                io_vga_valid	// src/device/VGA.scala:49:14
+module SDPRAM_SYNC_131071_12_1(	// src/device/SDPRAM.scala:9:7
+  input         clock,	// src/device/SDPRAM.scala:9:7
+  input  [16:0] io_raddr,	// src/device/SDPRAM.scala:12:14
+  output [11:0] io_rdata_0,	// src/device/SDPRAM.scala:12:14
+  input         io_wen,	// src/device/SDPRAM.scala:12:14
+  input  [16:0] io_waddr,	// src/device/SDPRAM.scala:12:14
+  input  [11:0] io_wdata_0	// src/device/SDPRAM.scala:12:14
 );
 
-  wire [23:0] _g_memory_io_rdata_0;	// src/device/VGA.scala:57:26
-  wire [9:0]  _vga_ctrl_h_addr;	// src/device/VGA.scala:52:26
-  wire [9:0]  _vga_ctrl_v_addr;	// src/device/VGA.scala:52:26
-  vga_ctrl vga_ctrl (	// src/device/VGA.scala:52:26
-    .pclk     (io_clock),
+  mem_0_131071x12 mem_0_ext (	// src/device/SDPRAM.scala:50:26
+    .R0_addr (io_raddr),
+    .R0_en   (1'h1),	// src/device/SDPRAM.scala:9:7
+    .R0_clk  (clock),
+    .R0_data (io_rdata_0),
+    .W0_addr (io_waddr),
+    .W0_en   (io_wen),
+    .W0_clk  (clock),
+    .W0_data (io_wdata_0)
+  );	// src/device/SDPRAM.scala:50:26
+endmodule
+
+module vgaChisel(	// src/device/VGA.scala:49:7
+  input         io_clock,	// src/device/VGA.scala:50:14
+                io_reset,	// src/device/VGA.scala:50:14
+                io_in_psel,	// src/device/VGA.scala:50:14
+                io_in_pwrite,	// src/device/VGA.scala:50:14
+  input  [31:0] io_in_paddr,	// src/device/VGA.scala:50:14
+                io_in_pwdata,	// src/device/VGA.scala:50:14
+  output        io_in_pready,	// src/device/VGA.scala:50:14
+  output [7:0]  io_vga_r,	// src/device/VGA.scala:50:14
+                io_vga_g,	// src/device/VGA.scala:50:14
+                io_vga_b,	// src/device/VGA.scala:50:14
+  output        io_vga_hsync,	// src/device/VGA.scala:50:14
+                io_vga_vsync,	// src/device/VGA.scala:50:14
+                io_vga_valid	// src/device/VGA.scala:50:14
+);
+
+  wire [11:0] _g_memory_io_rdata_0;	// src/device/VGA.scala:61:26
+  wire [9:0]  _vga_ctrl_h_addr;	// src/device/VGA.scala:53:26
+  wire [9:0]  _vga_ctrl_v_addr;	// src/device/VGA.scala:53:26
+  wire [3:0]  _vga_ctrl_vga_r;	// src/device/VGA.scala:53:26
+  wire [3:0]  _vga_ctrl_vga_g;	// src/device/VGA.scala:53:26
+  wire [3:0]  _vga_ctrl_vga_b;	// src/device/VGA.scala:53:26
+  reg         clk_div;	// src/device/VGA.scala:54:26
+  reg         pready;	// src/device/VGA.scala:65:25
+  always @(posedge io_clock) begin	// src/device/VGA.scala:50:14
+    if (io_reset) begin	// src/device/VGA.scala:50:14
+      clk_div <= 1'h0;	// src/device/VGA.scala:49:7, :54:26
+      pready <= 1'h0;	// src/device/VGA.scala:49:7, :65:25
+    end
+    else begin	// src/device/VGA.scala:50:14
+      clk_div <= ~clk_div;	// src/device/VGA.scala:54:26, :55:16
+      pready <= io_in_psel;	// src/device/VGA.scala:65:25
+    end
+  end // always @(posedge)
+  `ifdef ENABLE_INITIAL_REG_	// src/device/VGA.scala:49:7
+    `ifdef FIRRTL_BEFORE_INITIAL	// src/device/VGA.scala:49:7
+      `FIRRTL_BEFORE_INITIAL	// src/device/VGA.scala:49:7
+    `endif // FIRRTL_BEFORE_INITIAL
+    initial begin	// src/device/VGA.scala:49:7
+      automatic logic [31:0] _RANDOM[0:0];	// src/device/VGA.scala:49:7
+      `ifdef INIT_RANDOM_PROLOG_	// src/device/VGA.scala:49:7
+        `INIT_RANDOM_PROLOG_	// src/device/VGA.scala:49:7
+      `endif // INIT_RANDOM_PROLOG_
+      `ifdef RANDOMIZE_REG_INIT	// src/device/VGA.scala:49:7
+        _RANDOM[/*Zero width*/ 1'b0] = `RANDOM;	// src/device/VGA.scala:49:7
+        clk_div = _RANDOM[/*Zero width*/ 1'b0][0];	// src/device/VGA.scala:49:7, :54:26
+        pready = _RANDOM[/*Zero width*/ 1'b0][1];	// src/device/VGA.scala:49:7, :54:26, :65:25
+      `endif // RANDOMIZE_REG_INIT
+    end // initial
+    `ifdef FIRRTL_AFTER_INITIAL	// src/device/VGA.scala:49:7
+      `FIRRTL_AFTER_INITIAL	// src/device/VGA.scala:49:7
+    `endif // FIRRTL_AFTER_INITIAL
+  `endif // ENABLE_INITIAL_REG_
+  vga_ctrl vga_ctrl (	// src/device/VGA.scala:53:26
+    .pclk     (clk_div),	// src/device/VGA.scala:54:26
     .reset    (io_reset),
-    .vga_data (_g_memory_io_rdata_0),	// src/device/VGA.scala:57:26
+    .vga_data (_g_memory_io_rdata_0),	// src/device/VGA.scala:61:26
     .h_addr   (_vga_ctrl_h_addr),
     .v_addr   (_vga_ctrl_v_addr),
     .hsync    (io_vga_hsync),
     .vsync    (io_vga_vsync),
     .valid    (io_vga_valid),
-    .vga_r    (io_vga_r),
-    .vga_g    (io_vga_g),
-    .vga_b    (io_vga_b)
-  );	// src/device/VGA.scala:52:26
-  SDPRAM_SYNC_65535_24_1 g_memory (	// src/device/VGA.scala:57:26
+    .vga_r    (_vga_ctrl_vga_r),
+    .vga_g    (_vga_ctrl_vga_g),
+    .vga_b    (_vga_ctrl_vga_b)
+  );	// src/device/VGA.scala:53:26
+  SDPRAM_SYNC_131071_12_1 g_memory (	// src/device/VGA.scala:61:26
     .clock      (io_clock),
-    .io_raddr   ({_vga_ctrl_h_addr[5:0], _vga_ctrl_v_addr}),	// src/device/SDPRAM.scala:60:14, src/device/VGA.scala:52:26
+    .io_raddr   ({8'h0, _vga_ctrl_h_addr[9:1]} + {8'h0, _vga_ctrl_v_addr[9:1]} * 17'h140),	// src/device/VGA.scala:53:26, :91:{63,69,91,97}
     .io_rdata_0 (_g_memory_io_rdata_0),
-    .io_wen     (io_in_psel & io_in_pwrite),	// src/device/VGA.scala:71:31
-    .io_waddr   (io_in_paddr[17:2]),	// src/device/SDPRAM.scala:66:14, src/device/VGA.scala:71:59
-    .io_wdata_0 (io_in_pwdata[23:0])	// src/device/VGA.scala:71:80
-  );	// src/device/VGA.scala:57:26
+    .io_wen     (io_in_psel & io_in_pwrite),	// src/device/VGA.scala:79:31
+    .io_waddr   (io_in_paddr[18:2]),	// src/device/SDPRAM.scala:67:14, src/device/VGA.scala:79:59
+    .io_wdata_0 ({io_in_pwdata[23:20], io_in_pwdata[15:12], io_in_pwdata[7:4]})	// src/device/VGA.scala:76:{34,43}, :77:{34,43}, :78:{34,43}, :79:73
+  );	// src/device/VGA.scala:61:26
+  assign io_in_pready = pready;	// src/device/VGA.scala:49:7, :65:25
+  assign io_vga_r = {_vga_ctrl_vga_r, 4'h0};	// src/device/VGA.scala:49:7, :53:26, :95:61
+  assign io_vga_g = {_vga_ctrl_vga_g, 4'h0};	// src/device/VGA.scala:49:7, :53:26, :96:61
+  assign io_vga_b = {_vga_ctrl_vga_b, 4'h0};	// src/device/VGA.scala:49:7, :53:26, :97:61
 endmodule
 
-module APBVGA(	// src/device/VGA.scala:103:9
-  input         clock,	// src/device/VGA.scala:103:9
-                reset,	// src/device/VGA.scala:103:9
+module APBVGA(	// src/device/VGA.scala:111:9
+  input         clock,	// src/device/VGA.scala:111:9
+                reset,	// src/device/VGA.scala:111:9
                 auto_in_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
                 auto_in_pwrite,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [29:0] auto_in_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [31:0] auto_in_pwdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [7:0]  vga_bundle_r,	// src/device/VGA.scala:105:24
-                vga_bundle_g,	// src/device/VGA.scala:105:24
-                vga_bundle_b,	// src/device/VGA.scala:105:24
-  output        vga_bundle_hsync,	// src/device/VGA.scala:105:24
-                vga_bundle_vsync,	// src/device/VGA.scala:105:24
-                vga_bundle_valid	// src/device/VGA.scala:105:24
+  output        auto_in_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  output [7:0]  vga_bundle_r,	// src/device/VGA.scala:113:24
+                vga_bundle_g,	// src/device/VGA.scala:113:24
+                vga_bundle_b,	// src/device/VGA.scala:113:24
+  output        vga_bundle_hsync,	// src/device/VGA.scala:113:24
+                vga_bundle_vsync,	// src/device/VGA.scala:113:24
+                vga_bundle_valid	// src/device/VGA.scala:113:24
 );
 
-  vgaChisel mvga (	// src/device/VGA.scala:107:22
+  vgaChisel mvga (	// src/device/VGA.scala:115:22
     .io_clock     (clock),
     .io_reset     (reset),
     .io_in_psel   (auto_in_psel),
     .io_in_pwrite (auto_in_pwrite),
-    .io_in_paddr  ({2'h0, auto_in_paddr}),	// src/device/VGA.scala:110:16
+    .io_in_paddr  ({2'h0, auto_in_paddr}),	// src/device/VGA.scala:118:16
     .io_in_pwdata (auto_in_pwdata),
+    .io_in_pready (auto_in_pready),
     .io_vga_r     (vga_bundle_r),
     .io_vga_g     (vga_bundle_g),
     .io_vga_b     (vga_bundle_b),
     .io_vga_hsync (vga_bundle_hsync),
     .io_vga_vsync (vga_bundle_vsync),
     .io_vga_valid (vga_bundle_valid)
-  );	// src/device/VGA.scala:107:22
-endmodule
-
-// external module spi_top_apb
-
-module APBSPI(	// src/device/SPI.scala:47:9
-  input         clock,	// src/device/SPI.scala:47:9
-                reset,	// src/device/SPI.scala:47:9
-                auto_in_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-                auto_in_penable,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-                auto_in_pwrite,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [29:0] auto_in_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [31:0] auto_in_pwdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [3:0]  auto_in_pstrb,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output        auto_in_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-                auto_in_pslverr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output [31:0] auto_in_prdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  output        spi_bundle_sck,	// src/device/SPI.scala:50:24
-  output [7:0]  spi_bundle_ss,	// src/device/SPI.scala:50:24
-  output        spi_bundle_mosi,	// src/device/SPI.scala:50:24
-  input         spi_bundle_miso	// src/device/SPI.scala:50:24
-);
-
-  wire             _mspi_in_pready;	// src/device/SPI.scala:52:22
-  wire [31:0]      _mspi_in_prdata;	// src/device/SPI.scala:52:22
-  wire [7:0]       _mspi_spi_ss;	// src/device/SPI.scala:52:22
-  wire             _mspi_spi_irq_out;	// src/device/SPI.scala:52:22
-  reg  [2:0]       state;	// src/device/SPI.scala:59:24
-  reg  [31:0]      flashAddr;	// src/device/SPI.scala:60:28
-  wire             _GEN = state == 3'h1;	// src/device/SPI.scala:59:24, :61:18
-  wire             _GEN_0 = state == 3'h2;	// src/device/SPI.scala:59:24, :61:18
-  wire             _GEN_1 = state == 3'h4;	// src/device/SPI.scala:59:24, :61:18
-  wire             _GEN_2 = state == 3'h5;	// src/device/SPI.scala:59:24, :61:18
-  wire             _GEN_3 = _GEN | _GEN_0 | _GEN_1 | _GEN_2;	// src/device/SPI.scala:56:26, :61:18, :74:19, :87:19, :100:19, :112:19
-  wire             _GEN_4 = (|state) & _GEN_3;	// src/device/SPI.scala:56:26, :59:24, :61:18, :74:19, :87:19, :100:19, :112:19
-  wire             _GEN_5 = state == 3'h6;	// src/device/SPI.scala:59:24, :61:18
-  wire [29:0]      _GEN_6 = _GEN_5 | ~(&state) ? auto_in_paddr : 30'h10001000;	// src/device/SPI.scala:56:26, :59:24, :61:18
-  wire [7:0][29:0] _GEN_7 =
-    {{_GEN_6},
-     {auto_in_paddr},
-     {30'h10001010},
-     {30'h10001010},
-     {_GEN_6},
-     {30'h10001014},
-     {30'h10001004},
-     {_GEN_6}};	// src/device/SPI.scala:56:26, :61:18, :71:19, :83:19, :96:19, :100:19, :108:19, :112:19
-  wire             _GEN_8 = (|state) & (_GEN_3 | ~_GEN_5 & (&state));	// src/device/SPI.scala:56:26, :59:24, :61:18, :72:21, :74:19, :84:21, :87:19, :97:21, :100:19, :110:21, :112:19
-  always @(posedge clock) begin	// src/device/SPI.scala:47:9
-    if (reset) begin	// src/device/SPI.scala:47:9
-      state <= 3'h0;	// src/device/SPI.scala:59:24
-      flashAddr <= 32'h0;	// src/device/SPI.scala:60:28
-    end
-    else begin	// src/device/SPI.scala:47:9
-      automatic logic _GEN_9;	// src/device/SPI.scala:64:{25,36}
-      _GEN_9 = auto_in_penable & auto_in_psel & (&(auto_in_paddr[29:28]));	// src/device/SPI.scala:64:{25,36,49,65}
-      if (|state) begin	// src/device/SPI.scala:59:24, :61:18
-        automatic logic [2:0]      _GEN_10;	// src/device/SPI.scala:59:24, :61:18, :131:25, :132:17
-        automatic logic [7:0][2:0] _GEN_11;	// src/device/SPI.scala:61:18, :78:25, :90:25, :103:25, :115:25, :121:48
-        _GEN_10 = (&state) & _mspi_in_pready ? 3'h0 : state;	// src/device/SPI.scala:52:22, :59:24, :61:18, :131:25, :132:17
-        _GEN_11 =
-          {{_GEN_10},
-           {_mspi_spi_irq_out & _mspi_in_pready ? 3'h7 : state},
-           {_mspi_in_pready ? 3'h6 : state},
-           {_mspi_in_pready ? 3'h5 : state},
-           {_GEN_10},
-           {_mspi_in_pready ? 3'h4 : state},
-           {_mspi_in_pready ? 3'h2 : state},
-           {_GEN_10}};	// src/device/SPI.scala:52:22, :59:24, :61:18, :78:25, :79:17, :90:25, :91:17, :103:25, :104:17, :115:25, :116:17, :121:{34,48}, :122:17, :131:25, :132:17
-        state <= _GEN_11[state];	// src/device/SPI.scala:59:24, :61:18, :78:25, :90:25, :103:25, :115:25, :121:48
-      end
-      else if (_GEN_9)	// src/device/SPI.scala:64:{25,36}
-        state <= 3'h1;	// src/device/SPI.scala:59:24, :61:18
-      if (~(|state) & _GEN_9)	// src/device/SPI.scala:59:24, :60:28, :61:18, :64:{25,36,82}, :67:21
-        flashAddr <= {2'h0, auto_in_paddr};	// src/device/SPI.scala:47:9, :60:28, :67:21
-    end
-  end // always @(posedge)
-  `ifdef ENABLE_INITIAL_REG_	// src/device/SPI.scala:47:9
-    `ifdef FIRRTL_BEFORE_INITIAL	// src/device/SPI.scala:47:9
-      `FIRRTL_BEFORE_INITIAL	// src/device/SPI.scala:47:9
-    `endif // FIRRTL_BEFORE_INITIAL
-    initial begin	// src/device/SPI.scala:47:9
-      automatic logic [31:0] _RANDOM[0:1];	// src/device/SPI.scala:47:9
-      `ifdef INIT_RANDOM_PROLOG_	// src/device/SPI.scala:47:9
-        `INIT_RANDOM_PROLOG_	// src/device/SPI.scala:47:9
-      `endif // INIT_RANDOM_PROLOG_
-      `ifdef RANDOMIZE_REG_INIT	// src/device/SPI.scala:47:9
-        for (logic [1:0] i = 2'h0; i < 2'h2; i += 2'h1) begin
-          _RANDOM[i[0]] = `RANDOM;	// src/device/SPI.scala:47:9
-        end	// src/device/SPI.scala:47:9
-        state = _RANDOM[1'h0][2:0];	// src/device/SPI.scala:47:9, :59:24
-        flashAddr = {_RANDOM[1'h0][31:3], _RANDOM[1'h1][2:0]};	// src/device/SPI.scala:47:9, :59:24, :60:28
-      `endif // RANDOMIZE_REG_INIT
-    end // initial
-    `ifdef FIRRTL_AFTER_INITIAL	// src/device/SPI.scala:47:9
-      `FIRRTL_AFTER_INITIAL	// src/device/SPI.scala:47:9
-    `endif // FIRRTL_AFTER_INITIAL
-  `endif // ENABLE_INITIAL_REG_
-  spi_top_apb mspi (	// src/device/SPI.scala:52:22
-    .clock       (clock),
-    .reset       (reset),
-    .in_psel     (_GEN_8 | auto_in_psel),	// src/device/SPI.scala:56:26, :61:18
-    .in_penable  (_GEN_8 | auto_in_penable),	// src/device/SPI.scala:56:26, :61:18
-    .in_pwrite   (_GEN_4 | auto_in_pwrite),	// src/device/SPI.scala:56:26, :61:18
-    .in_paddr    ({2'h0, (|state) ? _GEN_7[state] : auto_in_paddr}),	// src/device/SPI.scala:47:9, :56:26, :59:24, :61:18, :71:19, :83:19, :96:19, :100:19, :108:19, :112:19, :137:16
-    .in_pprot    (3'h1),	// src/device/SPI.scala:61:18
-    .in_pwdata
-      ((|state)
-         ? (_GEN
-              ? {8'h3, flashAddr[23:0]}
-              : _GEN_0 ? 32'h1 : _GEN_1 ? 32'h1040 : _GEN_2 ? 32'h1140 : auto_in_pwdata)
-         : auto_in_pwdata),	// src/device/SPI.scala:56:26, :59:24, :60:28, :61:18, :73:{20,26,49}, :85:20, :98:20, :109:20
-    .in_pstrb    (_GEN_4 ? 4'hF : auto_in_pstrb),	// src/device/SPI.scala:56:26, :61:18
-    .in_pready   (_mspi_in_pready),
-    .in_pslverr  (auto_in_pslverr),
-    .in_prdata   (_mspi_in_prdata),
-    .spi_sck     (spi_bundle_sck),
-    .spi_ss      (_mspi_spi_ss),
-    .spi_mosi    (spi_bundle_mosi),
-    .spi_miso    (spi_bundle_miso),
-    .spi_irq_out (_mspi_spi_irq_out)
-  );	// src/device/SPI.scala:52:22
-  assign auto_in_pready =
-    (~(|state) | ~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_5)) & _mspi_in_pready;	// src/device/SPI.scala:47:9, :52:22, :57:29, :59:24, :61:18, :77:16, :89:16, :102:16, :114:16, :120:16
-  assign auto_in_prdata =
-    (&state)
-      ? {_mspi_in_prdata[7:0],
-         _mspi_in_prdata[15:8],
-         _mspi_in_prdata[23:16],
-         _mspi_in_prdata[31:24]}
-      : _mspi_in_prdata;	// src/device/SPI.scala:47:9, :52:22, :59:24, :139:{21,28}, :140:{26,44,69,95,122}
-  assign spi_bundle_ss = (|state) ? 8'hFE : _mspi_spi_ss;	// src/device/SPI.scala:47:9, :52:22, :59:24, :61:18, :144:25
+  );	// src/device/VGA.scala:115:22
 endmodule
 
 // VCS coverage exclude_file
@@ -3082,7 +3251,7 @@ module AXI4RAM(	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:58:9
   output        auto_in_awready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_in_awvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [3:0]  auto_in_awid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [27:0] auto_in_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [29:0] auto_in_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_in_wready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_in_wvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [31:0] auto_in_wdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -3094,7 +3263,7 @@ module AXI4RAM(	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:58:9
   output        auto_in_arready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_in_arvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [3:0]  auto_in_arid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [27:0] auto_in_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [29:0] auto_in_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_in_rready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_in_rvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [3:0]  auto_in_rid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -3105,7 +3274,7 @@ module AXI4RAM(	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:58:9
   wire        nodeIn_arready;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:122:31
   wire        nodeIn_awready;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:97:32
   wire [31:0] _mem_ext_R0_data;	// rocket-chip/src/main/scala/util/DescribedSRAM.scala:17:26
-  wire        w_sel0 = auto_in_awaddr[27:13] == 15'h7800;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+  wire        w_sel0 = auto_in_awaddr[29:13] == 17'h18000;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
   reg         w_full;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:75:25
   reg  [3:0]  w_id;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:76:21
   reg         r_sel1;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:78:25
@@ -3132,7 +3301,7 @@ module AXI4RAM(	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:58:9
     end
     if (_GEN)	// src/main/scala/chisel3/util/Decoupled.scala:51:35
       w_id <= auto_in_awid;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:76:21
-    r_sel1 <= auto_in_araddr[27:13] == 15'h7800;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/SRAM.scala:78:25, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
+    r_sel1 <= auto_in_araddr[29:13] == 17'h18000;	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25, rocket-chip/src/main/scala/amba/axi4/SRAM.scala:78:25, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
     w_sel1 <= w_sel0;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:79:25, rocket-chip/src/main/scala/diplomacy/Parameters.scala:137:{41,46,59}
     if (ren)	// src/main/scala/chisel3/util/Decoupled.scala:51:35
       r_id <= auto_in_arid;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:105:21
@@ -3203,13 +3372,13 @@ endmodule
 
 // external module sdram_top_axi
 
-module AXI4SDRAM(	// src/device/SDRAM.scala:240:9
-  input         clock,	// src/device/SDRAM.scala:240:9
-                reset,	// src/device/SDRAM.scala:240:9
+module AXI4SDRAM(	// src/device/SDRAM.scala:241:9
+  input         clock,	// src/device/SDRAM.scala:241:9
+                reset,	// src/device/SDRAM.scala:241:9
   output        auto_in_awready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_in_awvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [3:0]  auto_in_awid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [31:0] auto_in_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [28:0] auto_in_awaddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [7:0]  auto_in_awlen,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [2:0]  auto_in_awsize,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [1:0]  auto_in_awburst,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -3229,7 +3398,7 @@ module AXI4SDRAM(	// src/device/SDRAM.scala:240:9
   output        auto_in_arready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_in_arvalid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [3:0]  auto_in_arid,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [31:0] auto_in_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
+  input  [28:0] auto_in_araddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [7:0]  auto_in_arlen,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [2:0]  auto_in_arsize,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [1:0]  auto_in_arburst,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
@@ -3243,25 +3412,25 @@ module AXI4SDRAM(	// src/device/SDRAM.scala:240:9
   output [31:0] auto_in_rdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [1:0]  auto_in_rresp,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_in_rlast,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-                sdram_bundle_clk,	// src/device/SDRAM.scala:242:26
-                sdram_bundle_cke,	// src/device/SDRAM.scala:242:26
-                sdram_bundle_cs,	// src/device/SDRAM.scala:242:26
-                sdram_bundle_ras,	// src/device/SDRAM.scala:242:26
-                sdram_bundle_cas,	// src/device/SDRAM.scala:242:26
-                sdram_bundle_we,	// src/device/SDRAM.scala:242:26
-  output [12:0] sdram_bundle_a,	// src/device/SDRAM.scala:242:26
-  output [1:0]  sdram_bundle_ba,	// src/device/SDRAM.scala:242:26
-  output [3:0]  sdram_bundle_dqm,	// src/device/SDRAM.scala:242:26
-  inout  [31:0] sdram_bundle_dq	// src/device/SDRAM.scala:242:26
+                sdram_bundle_clk,	// src/device/SDRAM.scala:243:70
+                sdram_bundle_cke,	// src/device/SDRAM.scala:243:70
+                sdram_bundle_cs,	// src/device/SDRAM.scala:243:70
+                sdram_bundle_ras,	// src/device/SDRAM.scala:243:70
+                sdram_bundle_cas,	// src/device/SDRAM.scala:243:70
+                sdram_bundle_we,	// src/device/SDRAM.scala:243:70
+  output [12:0] sdram_bundle_a,	// src/device/SDRAM.scala:243:70
+  output [1:0]  sdram_bundle_ba,	// src/device/SDRAM.scala:243:70
+  output [3:0]  sdram_bundle_dqm,	// src/device/SDRAM.scala:243:70
+  inout  [31:0] sdram_bundle_dq	// src/device/SDRAM.scala:243:70
 );
 
-  sdram_top_axi msdram (	// src/device/SDRAM.scala:244:24
+  sdram_top_axi msdram (	// src/device/SDRAM.scala:247:26
     .clock            (clock),
     .reset            (reset),
     .in_awready      (auto_in_awready),
     .in_awvalid      (auto_in_awvalid),
     .in_awid    (auto_in_awid),
-    .in_awaddr  (auto_in_awaddr),
+    .in_awaddr  ({3'h0, auto_in_awaddr}),	// src/device/SDRAM.scala:250:20
     .in_awlen   (auto_in_awlen),
     .in_awsize  (auto_in_awsize),
     .in_awburst (auto_in_awburst),
@@ -3281,7 +3450,7 @@ module AXI4SDRAM(	// src/device/SDRAM.scala:240:9
     .in_arready      (auto_in_arready),
     .in_arvalid      (auto_in_arvalid),
     .in_arid    (auto_in_arid),
-    .in_araddr  (auto_in_araddr),
+    .in_araddr  ({3'h0, auto_in_araddr}),	// src/device/SDRAM.scala:250:20
     .in_arlen   (auto_in_arlen),
     .in_arsize  (auto_in_arsize),
     .in_arburst (auto_in_arburst),
@@ -3305,7 +3474,7 @@ module AXI4SDRAM(	// src/device/SDRAM.scala:240:9
     .sdram_ba         (sdram_bundle_ba),
     .sdram_dqm        (sdram_bundle_dqm),
     .sdram_dq         (sdram_bundle_dq)
-  );	// src/device/SDRAM.scala:244:24
+  );	// src/device/SDRAM.scala:247:26
 endmodule
 
 module AXI4ToAPB(	// src/amba/AXI4ToAPB.scala:45:25
@@ -4874,36 +5043,30 @@ module SynchronizerShiftReg_w1_d10(	// rocket-chip/src/main/scala/util/Synchroni
   );	// rocket-chip/src/main/scala/util/ShiftReg.scala:45:23
 endmodule
 
-module ysyxSoCASIC(	// src/SoC.scala:60:9
-  input         clock,	// src/SoC.scala:60:9
-                reset,	// src/SoC.scala:60:9
-                intr_from_chipSlave,	// src/SoC.scala:80:33
-  output        spi_sck,	// src/SoC.scala:87:17
-  output [7:0]  spi_ss,	// src/SoC.scala:87:17
-  output        spi_mosi,	// src/SoC.scala:87:17
-  input         spi_miso,	// src/SoC.scala:87:17
-                uart_rx,	// src/SoC.scala:88:18
-  output        uart_tx,	// src/SoC.scala:88:18
-                sdram_clk,	// src/SoC.scala:90:19
-                sdram_cke,	// src/SoC.scala:90:19
-                sdram_cs,	// src/SoC.scala:90:19
-                sdram_ras,	// src/SoC.scala:90:19
-                sdram_cas,	// src/SoC.scala:90:19
-                sdram_we,	// src/SoC.scala:90:19
-  output [12:0] sdram_a,	// src/SoC.scala:90:19
-  output [1:0]  sdram_ba,	// src/SoC.scala:90:19
-  output [3:0]  sdram_dqm,	// src/SoC.scala:90:19
-  inout  [31:0] sdram_dq,	// src/SoC.scala:90:19
-  output [15:0] gpio_out,	// src/SoC.scala:91:18
-  input  [15:0] gpio_in,	// src/SoC.scala:91:18
-  input         ps2_clk,	// src/SoC.scala:92:17
-                ps2_data,	// src/SoC.scala:92:17
-  output [7:0]  vga_r,	// src/SoC.scala:93:17
-                vga_g,	// src/SoC.scala:93:17
-                vga_b,	// src/SoC.scala:93:17
-  output        vga_hsync,	// src/SoC.scala:93:17
-                vga_vsync,	// src/SoC.scala:93:17
-                vga_valid	// src/SoC.scala:93:17
+module ysyxSoCASIC(	// src/SoC.scala:63:9
+  input         clock,	// src/SoC.scala:63:9
+                reset,	// src/SoC.scala:63:9
+                uart_rx,	// src/SoC.scala:91:18
+  output        uart_tx,	// src/SoC.scala:91:18
+                sdram_clk,	// src/SoC.scala:93:19
+                sdram_cke,	// src/SoC.scala:93:19
+                sdram_cs,	// src/SoC.scala:93:19
+                sdram_ras,	// src/SoC.scala:93:19
+                sdram_cas,	// src/SoC.scala:93:19
+                sdram_we,	// src/SoC.scala:93:19
+  output [12:0] sdram_a,	// src/SoC.scala:93:19
+  output [1:0]  sdram_ba,	// src/SoC.scala:93:19
+  output [3:0]  sdram_dqm,	// src/SoC.scala:93:19
+  inout  [31:0] sdram_dq,	// src/SoC.scala:93:19
+  output [7:0]  gpio_out,	// src/SoC.scala:94:18
+  input  [7:0]  gpio_in,	// src/SoC.scala:94:18
+  input  [3:0]  ps2,	// src/SoC.scala:95:17
+  output [7:0]  vga_r,	// src/SoC.scala:96:17
+                vga_g,	// src/SoC.scala:96:17
+                vga_b,	// src/SoC.scala:96:17
+  output        vga_hsync,	// src/SoC.scala:96:17
+                vga_vsync,	// src/SoC.scala:96:17
+                vga_valid	// src/SoC.scala:96:17
 );
 
   wire        _cpu_reset_chain_io_q;	// rocket-chip/src/main/scala/util/ShiftReg.scala:45:23
@@ -4977,17 +5140,17 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
   wire [29:0] _axi42apb_auto_out_paddr;	// src/amba/AXI4ToAPB.scala:103:30
   wire [31:0] _axi42apb_auto_out_pwdata;	// src/amba/AXI4ToAPB.scala:103:30
   wire [3:0]  _axi42apb_auto_out_pstrb;	// src/amba/AXI4ToAPB.scala:103:30
-  wire        _lsdram_axi_auto_in_awready;	// src/SoC.scala:48:60
-  wire        _lsdram_axi_auto_in_wready;	// src/SoC.scala:48:60
-  wire        _lsdram_axi_auto_in_bvalid;	// src/SoC.scala:48:60
-  wire [3:0]  _lsdram_axi_auto_in_bid;	// src/SoC.scala:48:60
-  wire [1:0]  _lsdram_axi_auto_in_bresp;	// src/SoC.scala:48:60
-  wire        _lsdram_axi_auto_in_arready;	// src/SoC.scala:48:60
-  wire        _lsdram_axi_auto_in_rvalid;	// src/SoC.scala:48:60
-  wire [3:0]  _lsdram_axi_auto_in_rid;	// src/SoC.scala:48:60
-  wire [31:0] _lsdram_axi_auto_in_rdata;	// src/SoC.scala:48:60
-  wire [1:0]  _lsdram_axi_auto_in_rresp;	// src/SoC.scala:48:60
-  wire        _lsdram_axi_auto_in_rlast;	// src/SoC.scala:48:60
+  wire        _lsdram_axi_auto_in_awready;	// src/SoC.scala:51:60
+  wire        _lsdram_axi_auto_in_wready;	// src/SoC.scala:51:60
+  wire        _lsdram_axi_auto_in_bvalid;	// src/SoC.scala:51:60
+  wire [3:0]  _lsdram_axi_auto_in_bid;	// src/SoC.scala:51:60
+  wire [1:0]  _lsdram_axi_auto_in_bresp;	// src/SoC.scala:51:60
+  wire        _lsdram_axi_auto_in_arready;	// src/SoC.scala:51:60
+  wire        _lsdram_axi_auto_in_rvalid;	// src/SoC.scala:51:60
+  wire [3:0]  _lsdram_axi_auto_in_rid;	// src/SoC.scala:51:60
+  wire [31:0] _lsdram_axi_auto_in_rdata;	// src/SoC.scala:51:60
+  wire [1:0]  _lsdram_axi_auto_in_rresp;	// src/SoC.scala:51:60
+  wire        _lsdram_axi_auto_in_rlast;	// src/SoC.scala:51:60
   wire        _axi4ram_auto_in_awready;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:144:29
   wire        _axi4ram_auto_in_wready;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:144:29
   wire        _axi4ram_auto_in_bvalid;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:144:29
@@ -4998,68 +5161,60 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
   wire [3:0]  _axi4ram_auto_in_rid;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:144:29
   wire [31:0] _axi4ram_auto_in_rdata;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:144:29
   wire [1:0]  _axi4ram_auto_in_rresp;	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:144:29
-  wire        _lspi_auto_in_pready;	// src/SoC.scala:38:25
-  wire        _lspi_auto_in_pslverr;	// src/SoC.scala:38:25
-  wire [31:0] _lspi_auto_in_prdata;	// src/SoC.scala:38:25
-  wire        _lkeyboard_auto_in_pready;	// src/SoC.scala:36:29
-  wire [31:0] _lkeyboard_auto_in_prdata;	// src/SoC.scala:36:29
-  wire        _lgpio_auto_in_pready;	// src/SoC.scala:35:25
-  wire [31:0] _lgpio_auto_in_prdata;	// src/SoC.scala:35:25
-  wire        _luart_auto_in_pready;	// src/SoC.scala:34:25
-  wire        _luart_auto_in_pslverr;	// src/SoC.scala:34:25
-  wire [31:0] _luart_auto_in_prdata;	// src/SoC.scala:34:25
-  wire        _cpu_auto_master_out_awvalid;	// src/SoC.scala:30:23
-  wire [3:0]  _cpu_auto_master_out_awid;	// src/SoC.scala:30:23
-  wire [31:0] _cpu_auto_master_out_awaddr;	// src/SoC.scala:30:23
-  wire [7:0]  _cpu_auto_master_out_awlen;	// src/SoC.scala:30:23
-  wire [2:0]  _cpu_auto_master_out_awsize;	// src/SoC.scala:30:23
-  wire [1:0]  _cpu_auto_master_out_awburst;	// src/SoC.scala:30:23
-  wire        _cpu_auto_master_out_awlock;	// src/SoC.scala:30:23
-  wire [3:0]  _cpu_auto_master_out_awcache;	// src/SoC.scala:30:23
-  wire [2:0]  _cpu_auto_master_out_awprot;	// src/SoC.scala:30:23
-  wire [3:0]  _cpu_auto_master_out_awqos;	// src/SoC.scala:30:23
-  wire        _cpu_auto_master_out_wvalid;	// src/SoC.scala:30:23
-  wire [31:0] _cpu_auto_master_out_wdata;	// src/SoC.scala:30:23
-  wire [3:0]  _cpu_auto_master_out_wstrb;	// src/SoC.scala:30:23
-  wire        _cpu_auto_master_out_wlast;	// src/SoC.scala:30:23
-  wire        _cpu_auto_master_out_bready;	// src/SoC.scala:30:23
-  wire        _cpu_auto_master_out_arvalid;	// src/SoC.scala:30:23
-  wire [3:0]  _cpu_auto_master_out_arid;	// src/SoC.scala:30:23
-  wire [31:0] _cpu_auto_master_out_araddr;	// src/SoC.scala:30:23
-  wire [7:0]  _cpu_auto_master_out_arlen;	// src/SoC.scala:30:23
-  wire [2:0]  _cpu_auto_master_out_arsize;	// src/SoC.scala:30:23
-  wire [1:0]  _cpu_auto_master_out_arburst;	// src/SoC.scala:30:23
-  wire        _cpu_auto_master_out_arlock;	// src/SoC.scala:30:23
-  wire [3:0]  _cpu_auto_master_out_arcache;	// src/SoC.scala:30:23
-  wire [2:0]  _cpu_auto_master_out_arprot;	// src/SoC.scala:30:23
-  wire [3:0]  _cpu_auto_master_out_arqos;	// src/SoC.scala:30:23
-  wire        _cpu_auto_master_out_rready;	// src/SoC.scala:30:23
-  wire        _apbxbar_auto_anon_in_pready;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_in_pslverr;	// src/SoC.scala:29:27
-  wire [31:0] _apbxbar_auto_anon_in_prdata;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_4_psel;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_4_pwrite;	// src/SoC.scala:29:27
-  wire [29:0] _apbxbar_auto_anon_out_4_paddr;	// src/SoC.scala:29:27
-  wire [31:0] _apbxbar_auto_anon_out_4_pwdata;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_3_psel;	// src/SoC.scala:29:27
-  wire [28:0] _apbxbar_auto_anon_out_3_paddr;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_2_psel;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_2_pwrite;	// src/SoC.scala:29:27
-  wire [28:0] _apbxbar_auto_anon_out_2_paddr;	// src/SoC.scala:29:27
-  wire [31:0] _apbxbar_auto_anon_out_2_pwdata;	// src/SoC.scala:29:27
-  wire [3:0]  _apbxbar_auto_anon_out_2_pstrb;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_1_psel;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_1_penable;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_1_pwrite;	// src/SoC.scala:29:27
-  wire [28:0] _apbxbar_auto_anon_out_1_paddr;	// src/SoC.scala:29:27
-  wire [31:0] _apbxbar_auto_anon_out_1_pwdata;	// src/SoC.scala:29:27
-  wire [3:0]  _apbxbar_auto_anon_out_1_pstrb;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_0_psel;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_0_penable;	// src/SoC.scala:29:27
-  wire        _apbxbar_auto_anon_out_0_pwrite;	// src/SoC.scala:29:27
-  wire [29:0] _apbxbar_auto_anon_out_0_paddr;	// src/SoC.scala:29:27
-  wire [31:0] _apbxbar_auto_anon_out_0_pwdata;	// src/SoC.scala:29:27
-  wire [3:0]  _apbxbar_auto_anon_out_0_pstrb;	// src/SoC.scala:29:27
+  wire        _lvga_auto_in_pready;	// src/SoC.scala:39:24
+  wire        _lkeyboard_auto_in_pready;	// src/SoC.scala:37:29
+  wire [31:0] _lkeyboard_auto_in_prdata;	// src/SoC.scala:37:29
+  wire        _lgpio_auto_in_pready;	// src/SoC.scala:36:25
+  wire [31:0] _lgpio_auto_in_prdata;	// src/SoC.scala:36:25
+  wire        _luart_auto_in_pready;	// src/SoC.scala:35:25
+  wire        _luart_auto_in_pslverr;	// src/SoC.scala:35:25
+  wire [31:0] _luart_auto_in_prdata;	// src/SoC.scala:35:25
+  wire        _cpu_auto_master_out_awvalid;	// src/SoC.scala:31:23
+  wire [3:0]  _cpu_auto_master_out_awid;	// src/SoC.scala:31:23
+  wire [29:0] _cpu_auto_master_out_awaddr;	// src/SoC.scala:31:23
+  wire [7:0]  _cpu_auto_master_out_awlen;	// src/SoC.scala:31:23
+  wire [2:0]  _cpu_auto_master_out_awsize;	// src/SoC.scala:31:23
+  wire [1:0]  _cpu_auto_master_out_awburst;	// src/SoC.scala:31:23
+  wire        _cpu_auto_master_out_awlock;	// src/SoC.scala:31:23
+  wire [3:0]  _cpu_auto_master_out_awcache;	// src/SoC.scala:31:23
+  wire [2:0]  _cpu_auto_master_out_awprot;	// src/SoC.scala:31:23
+  wire [3:0]  _cpu_auto_master_out_awqos;	// src/SoC.scala:31:23
+  wire        _cpu_auto_master_out_wvalid;	// src/SoC.scala:31:23
+  wire [31:0] _cpu_auto_master_out_wdata;	// src/SoC.scala:31:23
+  wire [3:0]  _cpu_auto_master_out_wstrb;	// src/SoC.scala:31:23
+  wire        _cpu_auto_master_out_wlast;	// src/SoC.scala:31:23
+  wire        _cpu_auto_master_out_bready;	// src/SoC.scala:31:23
+  wire        _cpu_auto_master_out_arvalid;	// src/SoC.scala:31:23
+  wire [3:0]  _cpu_auto_master_out_arid;	// src/SoC.scala:31:23
+  wire [29:0] _cpu_auto_master_out_araddr;	// src/SoC.scala:31:23
+  wire [7:0]  _cpu_auto_master_out_arlen;	// src/SoC.scala:31:23
+  wire [2:0]  _cpu_auto_master_out_arsize;	// src/SoC.scala:31:23
+  wire [1:0]  _cpu_auto_master_out_arburst;	// src/SoC.scala:31:23
+  wire        _cpu_auto_master_out_arlock;	// src/SoC.scala:31:23
+  wire [3:0]  _cpu_auto_master_out_arcache;	// src/SoC.scala:31:23
+  wire [2:0]  _cpu_auto_master_out_arprot;	// src/SoC.scala:31:23
+  wire [3:0]  _cpu_auto_master_out_arqos;	// src/SoC.scala:31:23
+  wire        _cpu_auto_master_out_rready;	// src/SoC.scala:31:23
+  wire        _apbxbar_auto_anon_in_pready;	// src/SoC.scala:30:27
+  wire        _apbxbar_auto_anon_in_pslverr;	// src/SoC.scala:30:27
+  wire [31:0] _apbxbar_auto_anon_in_prdata;	// src/SoC.scala:30:27
+  wire        _apbxbar_auto_anon_out_3_psel;	// src/SoC.scala:30:27
+  wire        _apbxbar_auto_anon_out_3_pwrite;	// src/SoC.scala:30:27
+  wire [29:0] _apbxbar_auto_anon_out_3_paddr;	// src/SoC.scala:30:27
+  wire [31:0] _apbxbar_auto_anon_out_3_pwdata;	// src/SoC.scala:30:27
+  wire        _apbxbar_auto_anon_out_2_psel;	// src/SoC.scala:30:27
+  wire [29:0] _apbxbar_auto_anon_out_2_paddr;	// src/SoC.scala:30:27
+  wire        _apbxbar_auto_anon_out_1_psel;	// src/SoC.scala:30:27
+  wire        _apbxbar_auto_anon_out_1_pwrite;	// src/SoC.scala:30:27
+  wire [29:0] _apbxbar_auto_anon_out_1_paddr;	// src/SoC.scala:30:27
+  wire [31:0] _apbxbar_auto_anon_out_1_pwdata;	// src/SoC.scala:30:27
+  wire [3:0]  _apbxbar_auto_anon_out_1_pstrb;	// src/SoC.scala:30:27
+  wire        _apbxbar_auto_anon_out_0_psel;	// src/SoC.scala:30:27
+  wire        _apbxbar_auto_anon_out_0_penable;	// src/SoC.scala:30:27
+  wire        _apbxbar_auto_anon_out_0_pwrite;	// src/SoC.scala:30:27
+  wire [29:0] _apbxbar_auto_anon_out_0_paddr;	// src/SoC.scala:30:27
+  wire [31:0] _apbxbar_auto_anon_out_0_pwdata;	// src/SoC.scala:30:27
+  wire [3:0]  _apbxbar_auto_anon_out_0_pstrb;	// src/SoC.scala:30:27
   wire        _axi4xbar_1_auto_anon_in_awready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_1_auto_anon_in_wready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_1_auto_anon_in_bvalid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
@@ -5073,14 +5228,14 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
   wire        _axi4xbar_1_auto_anon_in_rlast;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_1_auto_anon_out_1_awvalid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [3:0]  _axi4xbar_1_auto_anon_out_1_awid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
-  wire [27:0] _axi4xbar_1_auto_anon_out_1_awaddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
+  wire [29:0] _axi4xbar_1_auto_anon_out_1_awaddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_1_auto_anon_out_1_wvalid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [31:0] _axi4xbar_1_auto_anon_out_1_wdata;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [3:0]  _axi4xbar_1_auto_anon_out_1_wstrb;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_1_auto_anon_out_1_bready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_1_auto_anon_out_1_arvalid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [3:0]  _axi4xbar_1_auto_anon_out_1_arid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
-  wire [27:0] _axi4xbar_1_auto_anon_out_1_araddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
+  wire [29:0] _axi4xbar_1_auto_anon_out_1_araddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_1_auto_anon_out_1_rready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_1_auto_anon_out_0_awvalid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [3:0]  _axi4xbar_1_auto_anon_out_0_awid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
@@ -5108,7 +5263,7 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
   wire        _axi4xbar_auto_anon_in_rlast;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_auto_anon_out_1_awvalid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [3:0]  _axi4xbar_auto_anon_out_1_awid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
-  wire [31:0] _axi4xbar_auto_anon_out_1_awaddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
+  wire [28:0] _axi4xbar_auto_anon_out_1_awaddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [7:0]  _axi4xbar_auto_anon_out_1_awlen;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [2:0]  _axi4xbar_auto_anon_out_1_awsize;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [1:0]  _axi4xbar_auto_anon_out_1_awburst;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
@@ -5123,7 +5278,7 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
   wire        _axi4xbar_auto_anon_out_1_bready;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire        _axi4xbar_auto_anon_out_1_arvalid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [3:0]  _axi4xbar_auto_anon_out_1_arid;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
-  wire [31:0] _axi4xbar_auto_anon_out_1_araddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
+  wire [28:0] _axi4xbar_auto_anon_out_1_araddr;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [7:0]  _axi4xbar_auto_anon_out_1_arlen;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [2:0]  _axi4xbar_auto_anon_out_1_arsize;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
   wire [1:0]  _axi4xbar_auto_anon_out_1_arburst;	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
@@ -5162,43 +5317,43 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .clock                         (clock),
     .reset                         (reset),
     .auto_anon_in_awready         (_axi4xbar_auto_anon_in_awready),
-    .auto_anon_in_awvalid         (_cpu_auto_master_out_awvalid),	// src/SoC.scala:30:23
-    .auto_anon_in_awid       (_cpu_auto_master_out_awid),	// src/SoC.scala:30:23
-    .auto_anon_in_awaddr     (_cpu_auto_master_out_awaddr),	// src/SoC.scala:30:23
-    .auto_anon_in_awlen      (_cpu_auto_master_out_awlen),	// src/SoC.scala:30:23
-    .auto_anon_in_awsize     (_cpu_auto_master_out_awsize),	// src/SoC.scala:30:23
-    .auto_anon_in_awburst    (_cpu_auto_master_out_awburst),	// src/SoC.scala:30:23
-    .auto_anon_in_awlock     (_cpu_auto_master_out_awlock),	// src/SoC.scala:30:23
-    .auto_anon_in_awcache    (_cpu_auto_master_out_awcache),	// src/SoC.scala:30:23
-    .auto_anon_in_awprot     (_cpu_auto_master_out_awprot),	// src/SoC.scala:30:23
-    .auto_anon_in_awqos      (_cpu_auto_master_out_awqos),	// src/SoC.scala:30:23
+    .auto_anon_in_awvalid         (_cpu_auto_master_out_awvalid),	// src/SoC.scala:31:23
+    .auto_anon_in_awid       (_cpu_auto_master_out_awid),	// src/SoC.scala:31:23
+    .auto_anon_in_awaddr     (_cpu_auto_master_out_awaddr),	// src/SoC.scala:31:23
+    .auto_anon_in_awlen      (_cpu_auto_master_out_awlen),	// src/SoC.scala:31:23
+    .auto_anon_in_awsize     (_cpu_auto_master_out_awsize),	// src/SoC.scala:31:23
+    .auto_anon_in_awburst    (_cpu_auto_master_out_awburst),	// src/SoC.scala:31:23
+    .auto_anon_in_awlock     (_cpu_auto_master_out_awlock),	// src/SoC.scala:31:23
+    .auto_anon_in_awcache    (_cpu_auto_master_out_awcache),	// src/SoC.scala:31:23
+    .auto_anon_in_awprot     (_cpu_auto_master_out_awprot),	// src/SoC.scala:31:23
+    .auto_anon_in_awqos      (_cpu_auto_master_out_awqos),	// src/SoC.scala:31:23
     .auto_anon_in_wready          (_axi4xbar_auto_anon_in_wready),
-    .auto_anon_in_wvalid          (_cpu_auto_master_out_wvalid),	// src/SoC.scala:30:23
-    .auto_anon_in_wdata      (_cpu_auto_master_out_wdata),	// src/SoC.scala:30:23
-    .auto_anon_in_wstrb      (_cpu_auto_master_out_wstrb),	// src/SoC.scala:30:23
-    .auto_anon_in_wlast      (_cpu_auto_master_out_wlast),	// src/SoC.scala:30:23
-    .auto_anon_in_bready          (_cpu_auto_master_out_bready),	// src/SoC.scala:30:23
+    .auto_anon_in_wvalid          (_cpu_auto_master_out_wvalid),	// src/SoC.scala:31:23
+    .auto_anon_in_wdata      (_cpu_auto_master_out_wdata),	// src/SoC.scala:31:23
+    .auto_anon_in_wstrb      (_cpu_auto_master_out_wstrb),	// src/SoC.scala:31:23
+    .auto_anon_in_wlast      (_cpu_auto_master_out_wlast),	// src/SoC.scala:31:23
+    .auto_anon_in_bready          (_cpu_auto_master_out_bready),	// src/SoC.scala:31:23
     .auto_anon_in_bvalid          (_axi4xbar_auto_anon_in_bvalid),
     .auto_anon_in_bid        (_axi4xbar_auto_anon_in_bid),
     .auto_anon_in_bresp      (_axi4xbar_auto_anon_in_bresp),
     .auto_anon_in_arready         (_axi4xbar_auto_anon_in_arready),
-    .auto_anon_in_arvalid         (_cpu_auto_master_out_arvalid),	// src/SoC.scala:30:23
-    .auto_anon_in_arid       (_cpu_auto_master_out_arid),	// src/SoC.scala:30:23
-    .auto_anon_in_araddr     (_cpu_auto_master_out_araddr),	// src/SoC.scala:30:23
-    .auto_anon_in_arlen      (_cpu_auto_master_out_arlen),	// src/SoC.scala:30:23
-    .auto_anon_in_arsize     (_cpu_auto_master_out_arsize),	// src/SoC.scala:30:23
-    .auto_anon_in_arburst    (_cpu_auto_master_out_arburst),	// src/SoC.scala:30:23
-    .auto_anon_in_arlock     (_cpu_auto_master_out_arlock),	// src/SoC.scala:30:23
-    .auto_anon_in_arcache    (_cpu_auto_master_out_arcache),	// src/SoC.scala:30:23
-    .auto_anon_in_arprot     (_cpu_auto_master_out_arprot),	// src/SoC.scala:30:23
-    .auto_anon_in_arqos      (_cpu_auto_master_out_arqos),	// src/SoC.scala:30:23
-    .auto_anon_in_rready          (_cpu_auto_master_out_rready),	// src/SoC.scala:30:23
+    .auto_anon_in_arvalid         (_cpu_auto_master_out_arvalid),	// src/SoC.scala:31:23
+    .auto_anon_in_arid       (_cpu_auto_master_out_arid),	// src/SoC.scala:31:23
+    .auto_anon_in_araddr     (_cpu_auto_master_out_araddr),	// src/SoC.scala:31:23
+    .auto_anon_in_arlen      (_cpu_auto_master_out_arlen),	// src/SoC.scala:31:23
+    .auto_anon_in_arsize     (_cpu_auto_master_out_arsize),	// src/SoC.scala:31:23
+    .auto_anon_in_arburst    (_cpu_auto_master_out_arburst),	// src/SoC.scala:31:23
+    .auto_anon_in_arlock     (_cpu_auto_master_out_arlock),	// src/SoC.scala:31:23
+    .auto_anon_in_arcache    (_cpu_auto_master_out_arcache),	// src/SoC.scala:31:23
+    .auto_anon_in_arprot     (_cpu_auto_master_out_arprot),	// src/SoC.scala:31:23
+    .auto_anon_in_arqos      (_cpu_auto_master_out_arqos),	// src/SoC.scala:31:23
+    .auto_anon_in_rready          (_cpu_auto_master_out_rready),	// src/SoC.scala:31:23
     .auto_anon_in_rvalid          (_axi4xbar_auto_anon_in_rvalid),
     .auto_anon_in_rid        (_axi4xbar_auto_anon_in_rid),
     .auto_anon_in_rdata      (_axi4xbar_auto_anon_in_rdata),
     .auto_anon_in_rresp      (_axi4xbar_auto_anon_in_rresp),
     .auto_anon_in_rlast      (_axi4xbar_auto_anon_in_rlast),
-    .auto_anon_out_1_awready      (_lsdram_axi_auto_in_awready),	// src/SoC.scala:48:60
+    .auto_anon_out_1_awready      (_lsdram_axi_auto_in_awready),	// src/SoC.scala:51:60
     .auto_anon_out_1_awvalid      (_axi4xbar_auto_anon_out_1_awvalid),
     .auto_anon_out_1_awid    (_axi4xbar_auto_anon_out_1_awid),
     .auto_anon_out_1_awaddr  (_axi4xbar_auto_anon_out_1_awaddr),
@@ -5209,16 +5364,16 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .auto_anon_out_1_awcache (_axi4xbar_auto_anon_out_1_awcache),
     .auto_anon_out_1_awprot  (_axi4xbar_auto_anon_out_1_awprot),
     .auto_anon_out_1_awqos   (_axi4xbar_auto_anon_out_1_awqos),
-    .auto_anon_out_1_wready       (_lsdram_axi_auto_in_wready),	// src/SoC.scala:48:60
+    .auto_anon_out_1_wready       (_lsdram_axi_auto_in_wready),	// src/SoC.scala:51:60
     .auto_anon_out_1_wvalid       (_axi4xbar_auto_anon_out_1_wvalid),
     .auto_anon_out_1_wdata   (_axi4xbar_auto_anon_out_1_wdata),
     .auto_anon_out_1_wstrb   (_axi4xbar_auto_anon_out_1_wstrb),
     .auto_anon_out_1_wlast   (_axi4xbar_auto_anon_out_1_wlast),
     .auto_anon_out_1_bready       (_axi4xbar_auto_anon_out_1_bready),
-    .auto_anon_out_1_bvalid       (_lsdram_axi_auto_in_bvalid),	// src/SoC.scala:48:60
-    .auto_anon_out_1_bid     (_lsdram_axi_auto_in_bid),	// src/SoC.scala:48:60
-    .auto_anon_out_1_bresp   (_lsdram_axi_auto_in_bresp),	// src/SoC.scala:48:60
-    .auto_anon_out_1_arready      (_lsdram_axi_auto_in_arready),	// src/SoC.scala:48:60
+    .auto_anon_out_1_bvalid       (_lsdram_axi_auto_in_bvalid),	// src/SoC.scala:51:60
+    .auto_anon_out_1_bid     (_lsdram_axi_auto_in_bid),	// src/SoC.scala:51:60
+    .auto_anon_out_1_bresp   (_lsdram_axi_auto_in_bresp),	// src/SoC.scala:51:60
+    .auto_anon_out_1_arready      (_lsdram_axi_auto_in_arready),	// src/SoC.scala:51:60
     .auto_anon_out_1_arvalid      (_axi4xbar_auto_anon_out_1_arvalid),
     .auto_anon_out_1_arid    (_axi4xbar_auto_anon_out_1_arid),
     .auto_anon_out_1_araddr  (_axi4xbar_auto_anon_out_1_araddr),
@@ -5230,11 +5385,11 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .auto_anon_out_1_arprot  (_axi4xbar_auto_anon_out_1_arprot),
     .auto_anon_out_1_arqos   (_axi4xbar_auto_anon_out_1_arqos),
     .auto_anon_out_1_rready       (_axi4xbar_auto_anon_out_1_rready),
-    .auto_anon_out_1_rvalid       (_lsdram_axi_auto_in_rvalid),	// src/SoC.scala:48:60
-    .auto_anon_out_1_rid     (_lsdram_axi_auto_in_rid),	// src/SoC.scala:48:60
-    .auto_anon_out_1_rdata   (_lsdram_axi_auto_in_rdata),	// src/SoC.scala:48:60
-    .auto_anon_out_1_rresp   (_lsdram_axi_auto_in_rresp),	// src/SoC.scala:48:60
-    .auto_anon_out_1_rlast   (_lsdram_axi_auto_in_rlast),	// src/SoC.scala:48:60
+    .auto_anon_out_1_rvalid       (_lsdram_axi_auto_in_rvalid),	// src/SoC.scala:51:60
+    .auto_anon_out_1_rid     (_lsdram_axi_auto_in_rid),	// src/SoC.scala:51:60
+    .auto_anon_out_1_rdata   (_lsdram_axi_auto_in_rdata),	// src/SoC.scala:51:60
+    .auto_anon_out_1_rresp   (_lsdram_axi_auto_in_rresp),	// src/SoC.scala:51:60
+    .auto_anon_out_1_rlast   (_lsdram_axi_auto_in_rlast),	// src/SoC.scala:51:60
     .auto_anon_out_0_awready      (_axi4frag_auto_in_awready),	// rocket-chip/src/main/scala/amba/axi4/Fragmenter.scala:224:30
     .auto_anon_out_0_awvalid      (_axi4xbar_auto_anon_out_0_awvalid),
     .auto_anon_out_0_awid    (_axi4xbar_auto_anon_out_0_awid),
@@ -5346,7 +5501,7 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .auto_anon_out_0_rdata  (_axi42apb_auto_in_rdata),	// src/amba/AXI4ToAPB.scala:103:30
     .auto_anon_out_0_rresp  (_axi42apb_auto_in_rresp)	// src/amba/AXI4ToAPB.scala:103:30
   );	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
-  APBFanout apbxbar (	// src/SoC.scala:29:27
+  APBFanout apbxbar (	// src/SoC.scala:30:27
     .auto_anon_in_psel       (_axi42apb_auto_out_psel),	// src/amba/AXI4ToAPB.scala:103:30
     .auto_anon_in_penable    (_axi42apb_auto_out_penable),	// src/amba/AXI4ToAPB.scala:103:30
     .auto_anon_in_pwrite     (_axi42apb_auto_out_pwrite),	// src/amba/AXI4ToAPB.scala:103:30
@@ -5356,43 +5511,35 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .auto_anon_in_pready     (_apbxbar_auto_anon_in_pready),
     .auto_anon_in_pslverr    (_apbxbar_auto_anon_in_pslverr),
     .auto_anon_in_prdata     (_apbxbar_auto_anon_in_prdata),
-    .auto_anon_out_4_psel    (_apbxbar_auto_anon_out_4_psel),
-    .auto_anon_out_4_pwrite  (_apbxbar_auto_anon_out_4_pwrite),
-    .auto_anon_out_4_paddr   (_apbxbar_auto_anon_out_4_paddr),
-    .auto_anon_out_4_pwdata  (_apbxbar_auto_anon_out_4_pwdata),
     .auto_anon_out_3_psel    (_apbxbar_auto_anon_out_3_psel),
+    .auto_anon_out_3_pwrite  (_apbxbar_auto_anon_out_3_pwrite),
     .auto_anon_out_3_paddr   (_apbxbar_auto_anon_out_3_paddr),
-    .auto_anon_out_3_pready  (_lkeyboard_auto_in_pready),	// src/SoC.scala:36:29
-    .auto_anon_out_3_prdata  (_lkeyboard_auto_in_prdata),	// src/SoC.scala:36:29
+    .auto_anon_out_3_pwdata  (_apbxbar_auto_anon_out_3_pwdata),
+    .auto_anon_out_3_pready  (_lvga_auto_in_pready),	// src/SoC.scala:39:24
     .auto_anon_out_2_psel    (_apbxbar_auto_anon_out_2_psel),
-    .auto_anon_out_2_pwrite  (_apbxbar_auto_anon_out_2_pwrite),
     .auto_anon_out_2_paddr   (_apbxbar_auto_anon_out_2_paddr),
-    .auto_anon_out_2_pwdata  (_apbxbar_auto_anon_out_2_pwdata),
-    .auto_anon_out_2_pstrb   (_apbxbar_auto_anon_out_2_pstrb),
-    .auto_anon_out_2_pready  (_lgpio_auto_in_pready),	// src/SoC.scala:35:25
-    .auto_anon_out_2_prdata  (_lgpio_auto_in_prdata),	// src/SoC.scala:35:25
+    .auto_anon_out_2_pready  (_lkeyboard_auto_in_pready),	// src/SoC.scala:37:29
+    .auto_anon_out_2_prdata  (_lkeyboard_auto_in_prdata),	// src/SoC.scala:37:29
     .auto_anon_out_1_psel    (_apbxbar_auto_anon_out_1_psel),
-    .auto_anon_out_1_penable (_apbxbar_auto_anon_out_1_penable),
     .auto_anon_out_1_pwrite  (_apbxbar_auto_anon_out_1_pwrite),
     .auto_anon_out_1_paddr   (_apbxbar_auto_anon_out_1_paddr),
     .auto_anon_out_1_pwdata  (_apbxbar_auto_anon_out_1_pwdata),
     .auto_anon_out_1_pstrb   (_apbxbar_auto_anon_out_1_pstrb),
-    .auto_anon_out_1_pready  (_luart_auto_in_pready),	// src/SoC.scala:34:25
-    .auto_anon_out_1_pslverr (_luart_auto_in_pslverr),	// src/SoC.scala:34:25
-    .auto_anon_out_1_prdata  (_luart_auto_in_prdata),	// src/SoC.scala:34:25
+    .auto_anon_out_1_pready  (_lgpio_auto_in_pready),	// src/SoC.scala:36:25
+    .auto_anon_out_1_prdata  (_lgpio_auto_in_prdata),	// src/SoC.scala:36:25
     .auto_anon_out_0_psel    (_apbxbar_auto_anon_out_0_psel),
     .auto_anon_out_0_penable (_apbxbar_auto_anon_out_0_penable),
     .auto_anon_out_0_pwrite  (_apbxbar_auto_anon_out_0_pwrite),
     .auto_anon_out_0_paddr   (_apbxbar_auto_anon_out_0_paddr),
     .auto_anon_out_0_pwdata  (_apbxbar_auto_anon_out_0_pwdata),
     .auto_anon_out_0_pstrb   (_apbxbar_auto_anon_out_0_pstrb),
-    .auto_anon_out_0_pready  (_lspi_auto_in_pready),	// src/SoC.scala:38:25
-    .auto_anon_out_0_pslverr (_lspi_auto_in_pslverr),	// src/SoC.scala:38:25
-    .auto_anon_out_0_prdata  (_lspi_auto_in_prdata)	// src/SoC.scala:38:25
-  );	// src/SoC.scala:29:27
-  CPU cpu (	// src/SoC.scala:30:23
+    .auto_anon_out_0_pready  (_luart_auto_in_pready),	// src/SoC.scala:35:25
+    .auto_anon_out_0_pslverr (_luart_auto_in_pslverr),	// src/SoC.scala:35:25
+    .auto_anon_out_0_prdata  (_luart_auto_in_prdata)	// src/SoC.scala:35:25
+  );	// src/SoC.scala:30:27
+  CPU cpu (	// src/SoC.scala:31:23
     .clock                         (clock),
-    .reset                         (_cpu_reset_chain_io_q | reset),	// rocket-chip/src/main/scala/util/ShiftReg.scala:45:23, src/SoC.scala:63:64
+    .reset                         (_cpu_reset_chain_io_q | reset),	// rocket-chip/src/main/scala/util/ShiftReg.scala:45:23, src/SoC.scala:66:64
     .auto_master_out_awready      (_axi4xbar_auto_anon_in_awready),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
     .auto_master_out_awvalid      (_cpu_auto_master_out_awvalid),
     .auto_master_out_awid    (_cpu_auto_master_out_awid),
@@ -5429,78 +5576,60 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .auto_master_out_rid     (_axi4xbar_auto_anon_in_rid),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
     .auto_master_out_rdata   (_axi4xbar_auto_anon_in_rdata),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
     .auto_master_out_rresp   (_axi4xbar_auto_anon_in_rresp),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
-    .auto_master_out_rlast   (_axi4xbar_auto_anon_in_rlast),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
-    .interrupt                     (intr_from_chipSlave)
-  );	// src/SoC.scala:30:23
-  APBUart16550 luart (	// src/SoC.scala:34:25
+    .auto_master_out_rlast   (_axi4xbar_auto_anon_in_rlast)	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
+  );	// src/SoC.scala:31:23
+  APBUart16550 luart (	// src/SoC.scala:35:25
     .clock           (clock),
     .reset           (reset),
-    .auto_in_psel    (_apbxbar_auto_anon_out_1_psel),	// src/SoC.scala:29:27
-    .auto_in_penable (_apbxbar_auto_anon_out_1_penable),	// src/SoC.scala:29:27
-    .auto_in_pwrite  (_apbxbar_auto_anon_out_1_pwrite),	// src/SoC.scala:29:27
-    .auto_in_paddr   (_apbxbar_auto_anon_out_1_paddr),	// src/SoC.scala:29:27
-    .auto_in_pwdata  (_apbxbar_auto_anon_out_1_pwdata),	// src/SoC.scala:29:27
-    .auto_in_pstrb   (_apbxbar_auto_anon_out_1_pstrb),	// src/SoC.scala:29:27
+    .auto_in_psel    (_apbxbar_auto_anon_out_0_psel),	// src/SoC.scala:30:27
+    .auto_in_penable (_apbxbar_auto_anon_out_0_penable),	// src/SoC.scala:30:27
+    .auto_in_pwrite  (_apbxbar_auto_anon_out_0_pwrite),	// src/SoC.scala:30:27
+    .auto_in_paddr   (_apbxbar_auto_anon_out_0_paddr),	// src/SoC.scala:30:27
+    .auto_in_pwdata  (_apbxbar_auto_anon_out_0_pwdata),	// src/SoC.scala:30:27
+    .auto_in_pstrb   (_apbxbar_auto_anon_out_0_pstrb),	// src/SoC.scala:30:27
     .auto_in_pready  (_luart_auto_in_pready),
     .auto_in_pslverr (_luart_auto_in_pslverr),
     .auto_in_prdata  (_luart_auto_in_prdata),
     .uart_rx         (uart_rx),
     .uart_tx         (uart_tx)
-  );	// src/SoC.scala:34:25
-  APBGPIO lgpio (	// src/SoC.scala:35:25
+  );	// src/SoC.scala:35:25
+  APBGPIO lgpio (	// src/SoC.scala:36:25
     .clock           (clock),
     .reset           (reset),
-    .auto_in_psel    (_apbxbar_auto_anon_out_2_psel),	// src/SoC.scala:29:27
-    .auto_in_pwrite  (_apbxbar_auto_anon_out_2_pwrite),	// src/SoC.scala:29:27
-    .auto_in_paddr   (_apbxbar_auto_anon_out_2_paddr),	// src/SoC.scala:29:27
-    .auto_in_pwdata  (_apbxbar_auto_anon_out_2_pwdata),	// src/SoC.scala:29:27
-    .auto_in_pstrb   (_apbxbar_auto_anon_out_2_pstrb),	// src/SoC.scala:29:27
+    .auto_in_psel    (_apbxbar_auto_anon_out_1_psel),	// src/SoC.scala:30:27
+    .auto_in_pwrite  (_apbxbar_auto_anon_out_1_pwrite),	// src/SoC.scala:30:27
+    .auto_in_paddr   (_apbxbar_auto_anon_out_1_paddr),	// src/SoC.scala:30:27
+    .auto_in_pwdata  (_apbxbar_auto_anon_out_1_pwdata),	// src/SoC.scala:30:27
+    .auto_in_pstrb   (_apbxbar_auto_anon_out_1_pstrb),	// src/SoC.scala:30:27
     .auto_in_pready  (_lgpio_auto_in_pready),
     .auto_in_prdata  (_lgpio_auto_in_prdata),
     .gpio_bundle_out (gpio_out),
     .gpio_bundle_in  (gpio_in)
-  );	// src/SoC.scala:35:25
-  APBKeyboard lkeyboard (	// src/SoC.scala:36:29
-    .clock           (clock),
-    .reset           (reset),
-    .auto_in_psel    (_apbxbar_auto_anon_out_3_psel),	// src/SoC.scala:29:27
-    .auto_in_paddr   (_apbxbar_auto_anon_out_3_paddr),	// src/SoC.scala:29:27
-    .auto_in_pready  (_lkeyboard_auto_in_pready),
-    .auto_in_prdata  (_lkeyboard_auto_in_prdata),
-    .ps2_bundle_clk  (ps2_clk),
-    .ps2_bundle_data (ps2_data)
-  );	// src/SoC.scala:36:29
-  APBVGA lvga (	// src/SoC.scala:37:24
+  );	// src/SoC.scala:36:25
+  APBKeyboard lkeyboard (	// src/SoC.scala:37:29
+    .clock          (clock),
+    .reset          (reset),
+    .auto_in_psel   (_apbxbar_auto_anon_out_2_psel),	// src/SoC.scala:30:27
+    .auto_in_paddr  (_apbxbar_auto_anon_out_2_paddr),	// src/SoC.scala:30:27
+    .auto_in_pready (_lkeyboard_auto_in_pready),
+    .auto_in_prdata (_lkeyboard_auto_in_prdata),
+    .buttons        (ps2)
+  );	// src/SoC.scala:37:29
+  APBVGA lvga (	// src/SoC.scala:39:24
     .clock            (clock),
     .reset            (reset),
-    .auto_in_psel     (_apbxbar_auto_anon_out_4_psel),	// src/SoC.scala:29:27
-    .auto_in_pwrite   (_apbxbar_auto_anon_out_4_pwrite),	// src/SoC.scala:29:27
-    .auto_in_paddr    (_apbxbar_auto_anon_out_4_paddr),	// src/SoC.scala:29:27
-    .auto_in_pwdata   (_apbxbar_auto_anon_out_4_pwdata),	// src/SoC.scala:29:27
+    .auto_in_psel     (_apbxbar_auto_anon_out_3_psel),	// src/SoC.scala:30:27
+    .auto_in_pwrite   (_apbxbar_auto_anon_out_3_pwrite),	// src/SoC.scala:30:27
+    .auto_in_paddr    (_apbxbar_auto_anon_out_3_paddr),	// src/SoC.scala:30:27
+    .auto_in_pwdata   (_apbxbar_auto_anon_out_3_pwdata),	// src/SoC.scala:30:27
+    .auto_in_pready   (_lvga_auto_in_pready),
     .vga_bundle_r     (vga_r),
     .vga_bundle_g     (vga_g),
     .vga_bundle_b     (vga_b),
     .vga_bundle_hsync (vga_hsync),
     .vga_bundle_vsync (vga_vsync),
     .vga_bundle_valid (vga_valid)
-  );	// src/SoC.scala:37:24
-  APBSPI lspi (	// src/SoC.scala:38:25
-    .clock           (clock),
-    .reset           (reset),
-    .auto_in_psel    (_apbxbar_auto_anon_out_0_psel),	// src/SoC.scala:29:27
-    .auto_in_penable (_apbxbar_auto_anon_out_0_penable),	// src/SoC.scala:29:27
-    .auto_in_pwrite  (_apbxbar_auto_anon_out_0_pwrite),	// src/SoC.scala:29:27
-    .auto_in_paddr   (_apbxbar_auto_anon_out_0_paddr),	// src/SoC.scala:29:27
-    .auto_in_pwdata  (_apbxbar_auto_anon_out_0_pwdata),	// src/SoC.scala:29:27
-    .auto_in_pstrb   (_apbxbar_auto_anon_out_0_pstrb),	// src/SoC.scala:29:27
-    .auto_in_pready  (_lspi_auto_in_pready),
-    .auto_in_pslverr (_lspi_auto_in_pslverr),
-    .auto_in_prdata  (_lspi_auto_in_prdata),
-    .spi_bundle_sck  (spi_sck),
-    .spi_bundle_ss   (spi_ss),
-    .spi_bundle_mosi (spi_mosi),
-    .spi_bundle_miso (spi_miso)
-  );	// src/SoC.scala:38:25
+  );	// src/SoC.scala:39:24
   AXI4RAM axi4ram (	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:144:29
     .clock                (clock),
     .reset                (reset),
@@ -5526,7 +5655,7 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .auto_in_rdata  (_axi4ram_auto_in_rdata),
     .auto_in_rresp  (_axi4ram_auto_in_rresp)
   );	// rocket-chip/src/main/scala/amba/axi4/SRAM.scala:144:29
-  AXI4SDRAM lsdram_axi (	// src/SoC.scala:48:60
+  AXI4SDRAM lsdram_axi (	// src/SoC.scala:51:60
     .clock                 (clock),
     .reset                 (reset),
     .auto_in_awready      (_lsdram_axi_auto_in_awready),
@@ -5576,7 +5705,7 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .sdram_bundle_ba       (sdram_ba),
     .sdram_bundle_dqm      (sdram_dqm),
     .sdram_bundle_dq       (sdram_dq)
-  );	// src/SoC.scala:48:60
+  );	// src/SoC.scala:51:60
   AXI4ToAPB axi42apb (	// src/amba/AXI4ToAPB.scala:103:30
     .clock                (clock),
     .reset                (reset),
@@ -5609,9 +5738,9 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .auto_out_paddr       (_axi42apb_auto_out_paddr),
     .auto_out_pwdata      (_axi42apb_auto_out_pwdata),
     .auto_out_pstrb       (_axi42apb_auto_out_pstrb),
-    .auto_out_pready      (_apbxbar_auto_anon_in_pready),	// src/SoC.scala:29:27
-    .auto_out_pslverr     (_apbxbar_auto_anon_in_pslverr),	// src/SoC.scala:29:27
-    .auto_out_prdata      (_apbxbar_auto_anon_in_prdata)	// src/SoC.scala:29:27
+    .auto_out_pready      (_apbxbar_auto_anon_in_pready),	// src/SoC.scala:30:27
+    .auto_out_pslverr     (_apbxbar_auto_anon_in_pslverr),	// src/SoC.scala:30:27
+    .auto_out_prdata      (_apbxbar_auto_anon_in_prdata)	// src/SoC.scala:30:27
   );	// src/amba/AXI4ToAPB.scala:103:30
   AXI4UserYanker axi4yank (	// rocket-chip/src/main/scala/amba/axi4/UserYanker.scala:125:30
     .clock                          (clock),
@@ -5747,4 +5876,338 @@ module ysyxSoCASIC(	// src/SoC.scala:60:9
     .io_q  (_cpu_reset_chain_io_q)
   );	// rocket-chip/src/main/scala/util/ShiftReg.scala:45:23
 endmodule
+
+// external module SDRAM_ACTIVE_HELPER
+
+// external module SDRAM_READ_HELPER
+
+// external module SDRAM_WRITE_HELPER
+
+// external module TriStateInBuf
+
+module sdramChisel(	// src/device/SDRAM.scala:132:7
+  input        io_clk,	// src/device/SDRAM.scala:135:14
+               io_cke,	// src/device/SDRAM.scala:135:14
+               io_cs,	// src/device/SDRAM.scala:135:14
+               io_ras,	// src/device/SDRAM.scala:135:14
+               io_cas,	// src/device/SDRAM.scala:135:14
+               io_we,	// src/device/SDRAM.scala:135:14
+  input [12:0] io_a,	// src/device/SDRAM.scala:135:14
+  input [1:0]  io_ba,	// src/device/SDRAM.scala:135:14
+  input [3:0]  io_dqm,	// src/device/SDRAM.scala:135:14
+  inout [31:0] io_dq	// src/device/SDRAM.scala:135:14
+);
+
+  wire [31:0] _dqin_buf_din;	// src/util/TriState.scala:32:21
+  wire [31:0] _readHelper_rdata;	// src/device/SDRAM.scala:166:28
+  wire        _GEN = ~io_clk;	// src/device/SDRAM.scala:136:22
+  wire        _GEN_0 = ~io_cke;	// src/device/SDRAM.scala:136:41
+  reg  [12:0] modeReg;	// src/device/SDRAM.scala:138:26
+  wire [3:0]  cmd = {io_cs, io_ras, io_cas, io_we};	// src/device/SDRAM.scala:152:18
+  reg  [2:0]  state;	// src/device/SDRAM.scala:153:24
+  reg  [2:0]  casCounter;	// src/device/SDRAM.scala:154:29
+  reg  [2:0]  burstCounter;	// src/device/SDRAM.scala:155:31
+  reg  [12:0] a_r;	// src/device/SDRAM.scala:157:22
+  reg  [1:0]  ba_r;	// src/device/SDRAM.scala:158:23
+  wire [12:0] _writeHelper_io_a_T_1 = a_r + {10'h0, burstCounter};	// src/device/SDRAM.scala:155:31, :157:22, :175:33
+  wire        _GEN_1 = cmd == 4'h0;	// src/device/SDRAM.scala:152:18, :188:21
+  wire        _GEN_2 = cmd == 4'h3;	// src/device/SDRAM.scala:152:18, :188:21
+  wire        _GEN_3 = cmd == 4'h5;	// src/device/SDRAM.scala:152:18, :188:21
+  wire        _GEN_4 = cmd == 4'h4;	// src/device/SDRAM.scala:152:18, :188:21
+  wire        _GEN_5 = _GEN_1 | _GEN_2 | _GEN_3;	// src/device/SDRAM.scala:155:31, :188:21
+  wire        _GEN_6 = state == 3'h4;	// src/device/SDRAM.scala:153:24, :186:18
+  wire        _GEN_7 = state == 3'h2;	// src/device/SDRAM.scala:148:25, :153:24, :186:18
+  wire        readHelperEnable = ~(~(|state) | _GEN_6) & _GEN_7;	// src/device/SDRAM.scala:153:24, :167:39, :180:40, :186:18
+  wire        _GEN_8 = state == 3'h3;	// src/device/SDRAM.scala:153:24, :186:18
+  always @(posedge _GEN or posedge _GEN_0) begin	// src/device/SDRAM.scala:136:{22,31,41}
+    if (_GEN_0) begin	// src/device/SDRAM.scala:136:{31,41}
+      modeReg <= 13'h0;	// src/device/SDRAM.scala:138:26
+      state <= 3'h0;	// src/device/SDRAM.scala:153:24
+      casCounter <= 3'h0;	// src/device/SDRAM.scala:154:29
+      burstCounter <= 3'h0;	// src/device/SDRAM.scala:155:31
+      a_r <= 13'h0;	// src/device/SDRAM.scala:157:22
+      ba_r <= 2'h0;	// src/device/SDRAM.scala:132:7, :158:23
+    end
+    else begin	// src/device/SDRAM.scala:136:31
+      automatic logic [3:0] burstLength;	// src/main/scala/chisel3/util/Mux.scala:126:16
+      automatic logic       _GEN_9;	// src/device/SDRAM.scala:154:29, :188:21
+      automatic logic [3:0] _GEN_10;	// src/device/SDRAM.scala:204:39
+      burstLength =
+        modeReg[2:0] == 3'h0
+          ? 4'h1
+          : modeReg[2:0] == 3'h1
+              ? 4'h2
+              : modeReg[2:0] == 3'h2 ? 4'h4 : {modeReg[2:0] == 3'h3, 3'h0};	// src/device/SDRAM.scala:138:26, :139:35, :146:25, :147:25, :148:25, :149:25, :199:56, src/main/scala/chisel3/util/Mux.scala:126:16
+      _GEN_9 = _GEN_1 | _GEN_2;	// src/device/SDRAM.scala:154:29, :188:21
+      _GEN_10 = {1'h0, burstCounter};	// src/device/SDRAM.scala:132:7, :155:31, :204:39
+      if (~(|state) & _GEN_1)	// src/device/SDRAM.scala:138:26, :153:24, :180:40, :186:18, :188:21, :190:21
+        modeReg <= io_a;	// src/device/SDRAM.scala:138:26
+      if (|state) begin	// src/device/SDRAM.scala:153:24, :180:40
+        if (_GEN_6) begin	// src/device/SDRAM.scala:186:18
+          automatic logic [2:0] _state_T_4;	// src/device/SDRAM.scala:211:52
+          _state_T_4 = modeReg[6:4] - 3'h1;	// src/device/SDRAM.scala:138:26, :141:28, :211:52
+          state <= casCounter == _state_T_4 ? 3'h2 : 3'h4;	// src/device/SDRAM.scala:148:25, :153:24, :154:29, :211:52, :212:{21,33}
+          if (casCounter == _state_T_4)	// src/device/SDRAM.scala:154:29, :211:{38,52}
+            casCounter <= 3'h0;	// src/device/SDRAM.scala:154:29
+          else	// src/device/SDRAM.scala:211:38
+            casCounter <= casCounter + 3'h1;	// src/device/SDRAM.scala:154:29, :211:75
+        end
+        else if (_GEN_7) begin	// src/device/SDRAM.scala:186:18
+          automatic logic [3:0] _state_T_8;	// src/device/SDRAM.scala:215:58
+          _state_T_8 = burstLength - 4'h1;	// src/device/SDRAM.scala:215:58, src/main/scala/chisel3/util/Mux.scala:126:16
+          state <= {1'h0, _GEN_10 != _state_T_8, 1'h0};	// src/device/SDRAM.scala:132:7, :153:24, :204:39, :215:58, :216:{15,35}
+          if (_GEN_10 == _state_T_8)	// src/device/SDRAM.scala:204:39, :215:{42,58}
+            burstCounter <= 3'h0;	// src/device/SDRAM.scala:155:31
+          else	// src/device/SDRAM.scala:215:42
+            burstCounter <= burstCounter + 3'h1;	// src/device/SDRAM.scala:155:31, :215:83
+        end
+        else if (_GEN_8) begin	// src/device/SDRAM.scala:186:18
+          automatic logic [3:0] _state_T_12;	// src/device/SDRAM.scala:220:58
+          _state_T_12 = burstLength - 4'h1;	// src/device/SDRAM.scala:220:58, src/main/scala/chisel3/util/Mux.scala:126:16
+          state <= {1'h0, _GEN_10 == _state_T_12 ? 2'h0 : 2'h3};	// src/device/SDRAM.scala:132:7, :153:24, :204:39, :220:58, :221:{15,21,35}
+          if (_GEN_10 == _state_T_12)	// src/device/SDRAM.scala:204:39, :220:{42,58}
+            burstCounter <= 3'h0;	// src/device/SDRAM.scala:155:31
+          else	// src/device/SDRAM.scala:220:42
+            burstCounter <= burstCounter + 3'h1;	// src/device/SDRAM.scala:155:31, :220:83
+        end
+      end
+      else begin	// src/device/SDRAM.scala:180:40
+        automatic logic [3:0] _burstCounter_T;	// src/device/SDRAM.scala:204:55
+        _burstCounter_T = burstLength - 4'h1;	// src/device/SDRAM.scala:204:55, src/main/scala/chisel3/util/Mux.scala:126:16
+        if (~_GEN_9) begin	// src/device/SDRAM.scala:154:29, :188:21
+          if (_GEN_3)	// src/device/SDRAM.scala:188:21
+            state <= 3'h2;	// src/device/SDRAM.scala:148:25, :153:24
+          else if (_GEN_4)	// src/device/SDRAM.scala:188:21
+            state <= {1'h0, _GEN_10 == _burstCounter_T ? 2'h0 : 2'h3};	// src/device/SDRAM.scala:132:7, :153:24, :204:{19,25,39,55}
+        end
+        if (_GEN_9 | ~_GEN_3) begin	// src/device/SDRAM.scala:154:29, :188:21
+        end
+        else if (casCounter == modeReg[6:4] - 3'h1)	// src/device/SDRAM.scala:138:26, :141:28, :154:29, :199:{42,56}
+          casCounter <= 3'h0;	// src/device/SDRAM.scala:154:29
+        else	// src/device/SDRAM.scala:199:42
+          casCounter <= casCounter + 3'h1;	// src/device/SDRAM.scala:154:29, :199:79
+        if (_GEN_5 | ~_GEN_4) begin	// src/device/SDRAM.scala:155:31, :188:21
+        end
+        else if (_GEN_10 == _burstCounter_T)	// src/device/SDRAM.scala:204:{39,55}, :205:46
+          burstCounter <= 3'h0;	// src/device/SDRAM.scala:155:31
+        else	// src/device/SDRAM.scala:205:46
+          burstCounter <= burstCounter + 3'h1;	// src/device/SDRAM.scala:155:31, :205:87
+      end
+      if ((|state) | _GEN_9 | ~(_GEN_3 | _GEN_4)) begin	// src/device/SDRAM.scala:153:24, :154:29, :157:22, :158:23, :180:40, :186:18, :188:21, :196:17, :202:17
+      end
+      else begin	// src/device/SDRAM.scala:158:23, :186:18, :188:21
+        a_r <= io_a;	// src/device/SDRAM.scala:157:22
+        ba_r <= io_ba;	// src/device/SDRAM.scala:158:23
+      end
+    end
+  end // always @(posedge, posedge)
+  `ifdef ENABLE_INITIAL_REG_	// src/device/SDRAM.scala:132:7
+    `ifdef FIRRTL_BEFORE_INITIAL	// src/device/SDRAM.scala:132:7
+      `FIRRTL_BEFORE_INITIAL	// src/device/SDRAM.scala:132:7
+    `endif // FIRRTL_BEFORE_INITIAL
+    initial begin	// src/device/SDRAM.scala:132:7
+      automatic logic [31:0] _RANDOM[0:1];	// src/device/SDRAM.scala:132:7
+      `ifdef INIT_RANDOM_PROLOG_	// src/device/SDRAM.scala:132:7
+        `INIT_RANDOM_PROLOG_	// src/device/SDRAM.scala:132:7
+      `endif // INIT_RANDOM_PROLOG_
+      `ifdef RANDOMIZE_REG_INIT	// src/device/SDRAM.scala:132:7
+        for (logic [1:0] i = 2'h0; i < 2'h2; i += 2'h1) begin
+          _RANDOM[i[0]] = `RANDOM;	// src/device/SDRAM.scala:132:7
+        end	// src/device/SDRAM.scala:132:7
+        modeReg = _RANDOM[1'h0][12:0];	// src/device/SDRAM.scala:132:7, :138:26
+        state = _RANDOM[1'h0][15:13];	// src/device/SDRAM.scala:132:7, :138:26, :153:24
+        casCounter = _RANDOM[1'h0][18:16];	// src/device/SDRAM.scala:132:7, :138:26, :154:29
+        burstCounter = _RANDOM[1'h0][21:19];	// src/device/SDRAM.scala:132:7, :138:26, :155:31
+        a_r = {_RANDOM[1'h0][31:22], _RANDOM[1'h1][2:0]};	// src/device/SDRAM.scala:132:7, :138:26, :157:22
+        ba_r = _RANDOM[1'h1][4:3];	// src/device/SDRAM.scala:132:7, :157:22, :158:23
+      `endif // RANDOMIZE_REG_INIT
+      if (_GEN_0) begin	// src/device/SDRAM.scala:132:7, :136:41
+        modeReg = 13'h0;	// src/device/SDRAM.scala:138:26
+        state = 3'h0;	// src/device/SDRAM.scala:153:24
+        casCounter = 3'h0;	// src/device/SDRAM.scala:154:29
+        burstCounter = 3'h0;	// src/device/SDRAM.scala:155:31
+        a_r = 13'h0;	// src/device/SDRAM.scala:157:22
+        ba_r = 2'h0;	// src/device/SDRAM.scala:132:7, :158:23
+      end
+    end // initial
+    `ifdef FIRRTL_AFTER_INITIAL	// src/device/SDRAM.scala:132:7
+      `FIRRTL_AFTER_INITIAL	// src/device/SDRAM.scala:132:7
+    `endif // FIRRTL_AFTER_INITIAL
+  `endif // ENABLE_INITIAL_REG_
+  SDRAM_ACTIVE_HELPER activeHelper (	// src/device/SDRAM.scala:160:30
+    .ba     (io_ba),
+    .a      (io_a),
+    .enable (~(|state) & ~_GEN_1 & _GEN_2)	// src/device/SDRAM.scala:153:24, :161:41, :180:40, :186:18, :188:21
+  );	// src/device/SDRAM.scala:160:30
+  SDRAM_READ_HELPER readHelper (	// src/device/SDRAM.scala:166:28
+    .ba     (ba_r),	// src/device/SDRAM.scala:158:23
+    .a      (_writeHelper_io_a_T_1),	// src/device/SDRAM.scala:175:33
+    .enable (readHelperEnable),	// src/device/SDRAM.scala:167:39, :186:18
+    .rdata  (_readHelper_rdata)
+  );	// src/device/SDRAM.scala:166:28
+  SDRAM_WRITE_HELPER writeHelper (	// src/device/SDRAM.scala:168:29
+    .ba     (io_ba),
+    .a      ((|state) ? _writeHelper_io_a_T_1 : io_a),	// src/device/SDRAM.scala:153:24, :175:33, :180:{33,40}
+    .wdata  (_dqin_buf_din),	// src/util/TriState.scala:32:21
+    .dqm    (io_dqm),
+    .enable ((|state) ? ~(_GEN_6 | _GEN_7) & _GEN_8 : ~_GEN_5 & _GEN_4)	// src/device/SDRAM.scala:153:24, :155:31, :169:40, :180:40, :186:18, :188:21
+  );	// src/device/SDRAM.scala:168:29
+  TriStateInBuf #(
+    .width(32)
+  ) dqin_buf (	// src/util/TriState.scala:32:21
+    .dio    (io_dq),
+    .dout   (_readHelper_rdata),	// src/device/SDRAM.scala:166:28
+    .out_en (readHelperEnable),	// src/device/SDRAM.scala:167:39, :186:18
+    .din    (_dqin_buf_din)
+  );	// src/util/TriState.scala:32:21
+endmodule
+
+module ysyxSoCFull(	// src/SoC.scala:115:9
+  input        clock,	// src/SoC.scala:115:9
+               reset,	// src/SoC.scala:115:9
+  output [7:0] externalPins_gpio_out,	// src/SoC.scala:152:26
+  input  [7:0] externalPins_gpio_in,	// src/SoC.scala:152:26
+  input  [3:0] externalPins_ps2,	// src/SoC.scala:152:26
+  output [7:0] externalPins_vga_r,	// src/SoC.scala:152:26
+               externalPins_vga_g,	// src/SoC.scala:152:26
+               externalPins_vga_b,	// src/SoC.scala:152:26
+  output       externalPins_vga_hsync,	// src/SoC.scala:152:26
+               externalPins_vga_vsync,	// src/SoC.scala:152:26
+               externalPins_vga_valid,	// src/SoC.scala:152:26
+  input        externalPins_uart_rx,	// src/SoC.scala:152:26
+  output       externalPins_uart_tx	// src/SoC.scala:152:26
+);
+
+  wire        _asic_sdram_clk;	// src/SoC.scala:111:24
+  wire        _asic_sdram_cke;	// src/SoC.scala:111:24
+  wire        _asic_sdram_cs;	// src/SoC.scala:111:24
+  wire        _asic_sdram_ras;	// src/SoC.scala:111:24
+  wire        _asic_sdram_cas;	// src/SoC.scala:111:24
+  wire        _asic_sdram_we;	// src/SoC.scala:111:24
+  wire [12:0] _asic_sdram_a;	// src/SoC.scala:111:24
+  wire [1:0]  _asic_sdram_ba;	// src/SoC.scala:111:24
+  wire [3:0]  _asic_sdram_dqm;	// src/SoC.scala:111:24
+  wire [31:0] _io_dq_wire;	// src/SoC.scala:149:23
+  ysyxSoCASIC asic (	// src/SoC.scala:111:24
+    .clock     (clock),
+    .reset     (reset),
+    .uart_rx   (externalPins_uart_rx),
+    .uart_tx   (externalPins_uart_tx),
+    .sdram_clk (_asic_sdram_clk),
+    .sdram_cke (_asic_sdram_cke),
+    .sdram_cs  (_asic_sdram_cs),
+    .sdram_ras (_asic_sdram_ras),
+    .sdram_cas (_asic_sdram_cas),
+    .sdram_we  (_asic_sdram_we),
+    .sdram_a   (_asic_sdram_a),
+    .sdram_ba  (_asic_sdram_ba),
+    .sdram_dqm (_asic_sdram_dqm),
+    .sdram_dq  (_io_dq_wire),
+    .gpio_out  (externalPins_gpio_out),
+    .gpio_in   (externalPins_gpio_in),
+    .ps2       (externalPins_ps2),
+    .vga_r     (externalPins_vga_r),
+    .vga_g     (externalPins_vga_g),
+    .vga_b     (externalPins_vga_b),
+    .vga_hsync (externalPins_vga_hsync),
+    .vga_vsync (externalPins_vga_vsync),
+    .vga_valid (externalPins_vga_valid)
+  );	// src/SoC.scala:111:24
+  sdramChisel sdram (	// src/SoC.scala:149:23
+    .io_clk (_asic_sdram_clk),	// src/SoC.scala:111:24
+    .io_cke (_asic_sdram_cke),	// src/SoC.scala:111:24
+    .io_cs  (_asic_sdram_cs),	// src/SoC.scala:111:24
+    .io_ras (_asic_sdram_ras),	// src/SoC.scala:111:24
+    .io_cas (_asic_sdram_cas),	// src/SoC.scala:111:24
+    .io_we  (_asic_sdram_we),	// src/SoC.scala:111:24
+    .io_a   (_asic_sdram_a),	// src/SoC.scala:111:24
+    .io_ba  (_asic_sdram_ba),	// src/SoC.scala:111:24
+    .io_dqm (_asic_sdram_dqm),	// src/SoC.scala:111:24
+    .io_dq  (_io_dq_wire)
+  );	// src/SoC.scala:149:23
+endmodule
+
+module ysyxSoCTop(	// src/Top.scala:14:7
+  input clock,	// src/Top.scala:14:7
+        reset	// src/Top.scala:14:7
+);
+
+  ysyxSoCFull dut (	// src/Top.scala:19:20
+    .clock                  (clock),
+    .reset                  (reset),
+    .externalPins_gpio_out  (/* unused */),
+    .externalPins_gpio_in   (8'h0),
+    .externalPins_ps2       (4'h0),
+    .externalPins_vga_r     (/* unused */),
+    .externalPins_vga_g     (/* unused */),
+    .externalPins_vga_b     (/* unused */),
+    .externalPins_vga_hsync (/* unused */),
+    .externalPins_vga_vsync (/* unused */),
+    .externalPins_vga_valid (/* unused */),
+    .externalPins_uart_rx   (1'h0),
+    .externalPins_uart_tx   (/* unused */)
+  );	// src/Top.scala:19:20
+endmodule
+
+
+// ----- 8< ----- FILE "./sdram_active_helper.v" ----- 8< -----
+
+module SDRAM_ACTIVE_HELPER(
+  input [1 :0] ba,
+  input [12:0] a,
+  input enable
+);
+import "DPI-C" function void sdram_active(input bit[1 :0] ba, input bit[12 :0] a);
+always @(*) begin
+  if (enable) sdram_active(ba, a);
+end
+endmodule
+  
+
+// ----- 8< ----- FILE "./sdram_read_helper.v" ----- 8< -----
+
+
+module SDRAM_READ_HELPER(
+  input [1 :0] ba,
+  input [12:0] a,
+  input enable,
+  output reg [31:0] rdata
+);
+import "DPI-C" function void sdram_read(input bit[1 :0] ba, input bit[12 :0] a, output int rdata);
+always @(*) begin
+  if (enable) sdram_read(ba, a, rdata);
+  else rdata = 32'b0;
+end
+endmodule
+
+// ----- 8< ----- FILE "./sdram_write_helper.v" ----- 8< -----
+
+
+module SDRAM_WRITE_HELPER(
+  input [1 :0] ba,
+  input [12:0] a,
+  input [31:0] wdata,
+  input [3 :0] dqm,
+  input enable
+);
+import "DPI-C" function void sdram_write(input bit[1 :0] ba, input bit[12 :0] a, input int wdata, input bit[3 :0] dqm);
+always @(*) begin
+  if (enable) sdram_write(ba, a, wdata, dqm);
+end
+endmodule
+
+// ----- 8< ----- FILE "./TriStateInBuf.v" ----- 8< -----
+
+module TriStateInBuf #(
+  parameter width = 1
+)(
+    inout  [width-1:0] dio,
+    input  [width-1:0] dout,
+    input              out_en,
+    output [width-1:0] din
+);
+  assign din = dio;
+  assign dio = out_en ? dout : {width{1'bz}};
+endmodule
+    
 

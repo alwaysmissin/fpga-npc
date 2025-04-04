@@ -6,7 +6,7 @@ case class RVConfig(
     nr_reg: Int,
     csr_width: Int,
     memorySize: Int = 256,
-    staticBranchPrediction: Boolean = false,
+    staticBranchPrediction: Boolean = true,
     var diff_enable: Boolean = false,
     var trace_enable: Boolean = false,
     var simulation: Boolean = true

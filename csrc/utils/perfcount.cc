@@ -1,4 +1,5 @@
 #include <common.h>
+#include <cpu/cpu.h>
 #include <queue>
 uint64_t IFUCounter = 0;
 uint64_t ALUInstCounter = 0;

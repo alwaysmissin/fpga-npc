@@ -1,4 +1,5 @@
 #include <utils.h>
+#include <stdio.h>
 
 NPCState npc_state = {.state = NPC_STOP };
 

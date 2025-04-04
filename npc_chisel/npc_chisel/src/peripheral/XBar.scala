@@ -7,13 +7,11 @@ import chisel3.util.RegEnable
 import chisel3.util.Mux1H
 import chisel3.util.Irrevocable
 import utils.bus.SRAMLike._
+import chisel3.util.PriorityMux
 
 object XBarConfig {
-    def MASK = "he000_0000".U
-    def MEM  = "h8000_0000".U
-    def PERI = "ha000_0000".U
-    def RTC_L = "h0200_0000".U
-    def RTC_H = "h0200_ffff".U
+    def RTC_L = "h2004_0000".U
+    def RTC_H = "h2004_ffff".U
 }
 
 class XBar(config: RVConfig) extends Module {
@@ -49,17 +47,19 @@ class XBar(config: RVConfig) extends Module {
     io.toMem.w  <> arbiter.io.out.w
     io.toMem.b  <> arbiter.io.out.b
 
-    val read_sel_rtc  = arbiter.io.out.ar.bits.addr < XBarConfig.RTC_H && arbiter.io.out.ar.bits.addr >= XBarConfig.RTC_L
-    val read_sel_mem  = !read_sel_rtc
-    val read_sel_rtc_r  = RegEnable(read_sel_rtc , false.B, arbiter.io.out.ar.valid)
-    val read_sel_mem_r  = RegEnable(read_sel_mem , false.B, arbiter.io.out.ar.valid)
+    // TODO： 使用FIFO去记录事务
+    val read_sel_rtc = Wire(Bool())
+    val read_sel_mem = Wire(Bool())
+    read_sel_rtc := arbiter.io.out.ar.bits.addr < XBarConfig.RTC_H && arbiter.io.out.ar.bits.addr >= XBarConfig.RTC_L
+    read_sel_mem := !read_sel_rtc
+
 
     io.toMem.ar.valid := arbiter.io.out.ar.valid & read_sel_mem
     io.toMem.ar.bits  := arbiter.io.out.ar.bits
     clint.io.bus.ar.valid := arbiter.io.out.ar.valid & read_sel_rtc
     clint.io.bus.ar.bits := arbiter.io.out.ar.bits
-    io.toMem.r.ready := arbiter.io.out.r.ready & read_sel_mem_r
-    clint.io.bus.r.ready := arbiter.io.out.r.ready & read_sel_rtc_r
+    io.toMem.r.ready := arbiter.io.out.r.ready
+    clint.io.bus.r.ready := arbiter.io.out.r.ready
 
     // clint.io.bus.aw <> DontCare
     // clint.io.bus.w  <> DontCare
@@ -67,13 +67,10 @@ class XBar(config: RVConfig) extends Module {
 
 
     arbiter.io.out.ar.ready := Mux(read_sel_mem, io.toMem.ar.ready, clint.io.bus.ar.ready)
-    arbiter.io.out.r.valid := Mux1H(Seq(
-        read_sel_mem_r  -> io.toMem.r.valid,
-        read_sel_rtc_r  -> clint.io.bus.r.valid
-    ))
-    arbiter.io.out.r.bits := Mux1H(Seq(
-        read_sel_mem_r  -> io.toMem.r.bits,
-        read_sel_rtc_r  -> clint.io.bus.r.bits
+    arbiter.io.out.r.valid := io.toMem.r.valid || clint.io.bus.r.valid
+    arbiter.io.out.r.bits := PriorityMux(Seq(
+        io.toMem.r.valid      -> io.toMem.r.bits,
+        clint.io.bus.r.valid  -> clint.io.bus.r.bits
     ))
 
 }

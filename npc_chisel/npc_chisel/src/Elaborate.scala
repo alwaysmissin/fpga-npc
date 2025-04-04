@@ -19,7 +19,7 @@ object Elaborate extends App {
     ).reduce(_ + "," + _)) 
     
   val config = RVConfig(
-    PC_INIT = 0x30000000L.U,
+    PC_INIT = 0x10000000L.U,
     xlen = 32,
     nr_reg = 32,
     csr_width = 12,

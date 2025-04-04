@@ -26,6 +26,8 @@ import chisel3.util.Cat
 import chisel3.util.PriorityMux
 import utils.csr
 import chisel3.util.Irrevocable
+import utils.id.ControlSignals.FuType
+import utils.id.ControlSignals.BRUOp
 
 class ID(config: RVConfig) extends Module{
     val io = IO(new Bundle{
@@ -153,6 +155,17 @@ class ID(config: RVConfig) extends Module{
     }
     // trace 与 difftest 相关
     // if (config.diff_enable) io.toEXE.bits.jumped := io.jumpBus.fire
-    if (config.trace_enable) io.toEXE.bits.inst := inst
+    if (config.trace_enable) {
+        io.toEXE.bits.inst := inst
+        io.toEXE.bits.ftrace.doFtrace := decodeBundle.fuType === FuType.BRU && decodeBundle.bruOp === BRUOp.N
+        io.toEXE.bits.ftrace.rd := rdAddr
+        io.toEXE.bits.ftrace.rs1 := Mux(decodeBundle.aluSrc1 === OpASrc.PC, 0.U, rs1Addr)
+    }
+    // if (config.trace_enable) {
+    //     RawClockedVoidFunctionCall(
+    //         "ftrace", Option(Seq("pc", "target", "rd", "rs1"))
+    //     )(clock, enable = decodeBundle.fuType === FuType.BRU && decodeBundle.bruOp === BRUOp.N,
+    //     io.fromIF.bits.pc, )
+    // }
 
 }

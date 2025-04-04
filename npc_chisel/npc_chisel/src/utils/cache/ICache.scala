@@ -41,15 +41,21 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
   //   // SyncReadMem(icache.blocks, Vec(icache.blockWords, UInt(config.xlen.W)))
   //   Module(new SDPRAM_SYNC(icache.blocks, UInt(config.xlen.W), icache.blockWords))
   // )
-  val dataRams = Module(new SDPRAM_SYNC(icache.ways * icache.blocks * icache.blockWords, UInt(config.xlen.W)))
+  // val dataRams = Module(new SDPRAM_SYNC(icache.ways * icache.blocks * icache.blockWords, UInt(config.xlen.W)))
+  val dataRams = Seq.fill(icache.ways)(
+    Module(new SDPRAM_SYNC(icache.blocks * icache.blockWords, UInt(config.xlen.W)))
+  )
   // val infoRams = SyncReadMem(icache.blocks, new ICacheInfo(icache))
   val infoRams = Module(new SDPRAM_SYNC(icache.blocks, new ICacheInfo(icache)))
 
-  val dataRams_wen = WireDefault(false.B)
-  val dataRams_waddr = WireDefault(0.U.asTypeOf(dataRams.io.waddr))
-  val dataRams_wdata = WireDefault(0.U.asTypeOf(dataRams.io.wdata))
+  val dataRams_wen = Seq.fill(icache.ways)(WireDefault(false.B))
+  val dataRams_waddr = Seq.fill(icache.ways)(WireDefault(0.U.asTypeOf(dataRams(0).io.waddr)))
+  val dataRams_wdata = Seq.fill(icache.ways)(WireDefault(0.U.asTypeOf(dataRams(0).io.wdata)))
   val dataRams_wstrobe = WireDefault(1.U)
-  dataRams.write(dataRams_wen, dataRams_waddr, dataRams_wdata, dataRams_wstrobe)
+  for (i <- 0 until icache.ways){
+    dataRams(i).write(dataRams_wen(i), dataRams_waddr(i), dataRams_wdata(i), dataRams_wstrobe)
+  }
+  // dataRams.write(dataRams_wen, dataRams_waddr, dataRams_wdata, dataRams_wstrobe)
   val infoRams_wen = WireDefault(false.B)
   val infoRams_waddr = WireDefault(0.U.asTypeOf(infoRams.io.waddr))
   val infoRams_wdata = WireDefault(0.U.asTypeOf(infoRams.io.wdata))
@@ -60,7 +66,7 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
   when (io.rToIF.fire && !io.arFromIF.fire){
     reqValid := false.B
   }
-  val req = RegEnable(io.arFromIF.bits, io.arFromIF.fire)
+  val req = RegEnable(io.arFromIF.bits, 0.U.asTypeOf(io.arFromIF.bits), io.arFromIF.fire)
   val blockValids = Reg(Vec(icache.ways, Bool()))
   val indexPreIF = Wire(UInt(icache.indexWidth.W))
   val wordOffsetPreIF = Wire(UInt(icache.wordOffsetWidth.W))
@@ -74,7 +80,7 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
   
   val dataResp = Seq.fill(icache.ways)(Wire(UInt(config.xlen.W)))
   val infoResp = Wire(new ICacheInfo(icache))
-  val hit = Wire(Bool())
+  val hit = WireDefault(false.B)
   val index = req.addr(icache.indexRangeHi, icache.indexRangeLo)
   val offset = req.addr(icache.offsetRangeHi, icache.offsetRangeLo)
   val tag = req.addr(icache.tagRangeHi, icache.tagRangeLo)
@@ -83,13 +89,16 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
     else req.addr(icache.wordOffsetRangeHi, icache.wordOffsetRangeLo)
   }
   val hitData = Wire(UInt(config.xlen.W))
+  val state = RegInit(IDLE)
   val IF = {
     for (i <- 0 until icache.ways){
-      dataResp(i) := dataRams.read(Cat(i.U, indexPreIF, wordOffsetPreIF)).head
+      dataResp(i) := dataRams(i).read(Cat(indexPreIF, wordOffsetPreIF)).head
     }
     infoResp := infoRams.read(indexPreIF).head
     val hits = blockValids.zip(infoResp.tags).map {case(valid, t) => valid && t === tag}
-    hit := hits.reduce(_ || _)
+    when (state === IDLE){
+      hit := hits.reduce(_ || _)
+    }
     hitData := Mux1H(hits, dataResp)
     if (icache.ways != 1){
       when (hit){
@@ -106,7 +115,6 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
 
   val arToMemW = WireDefault(0.U.asTypeOf(io.arToMem))
 
-  val state = RegInit(IDLE)
   // val counter = RegInit(0.U(log2Ceil(icache.blockWords).W))
 
   val reqCounter = RegInit(0.U(log2Ceil(icache.blockWords).W))
@@ -128,7 +136,7 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
     IFSkipCache := false.B
   }
 
-  val burstable = if (burstEnable) req.addr >= 0xa0000000L.U && req.addr < (0xa2000000L + 0x2000000).U else false.B
+  val burstable = if (burstEnable) req.addr >= 0x10000000L.U && req.addr < 0x1fffffffL.U else false.B
   when (io.fencei){
     for (i <- 0 until icache.blocks){
       for (j <- 0 until icache.ways){
@@ -158,9 +166,9 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
       when (io.rFromMem.fire){
         for (i <- 0 until icache.ways){
           when (i.U === replaceWay){
-            dataRams_wen := true.B
-            dataRams_waddr := Cat(replaceWay, index, respCounter)
-            dataRams_wdata := io.rFromMem.bits.rdata.asTypeOf(dataRams.io.wdata)
+            dataRams_wen(i) := true.B
+            dataRams_waddr(i) := Cat(index, respCounter)
+            dataRams_wdata(i) := io.rFromMem.bits.rdata.asTypeOf(dataRams(0).io.wdata)
             // dataRams.write(Cat(i.U, index, respCounter), io.rFromMem.bits.rdata.asTypeOf(dataRams.io.rdata))
             // val wPort = dataRams(i)(index)
             // wPort(respCounter) := io.rFromMem.bits.rdata
@@ -184,9 +192,9 @@ class ICache(config: RVConfig, icache: CacheBasicConfig, skipSRAM: Boolean = tru
       when (io.rFromMem.fire){
         for (i <- 0 until icache.ways){
           when (i.U === replaceWay){
-            dataRams_wen := true.B
-            dataRams_waddr := Cat(replaceWay, index, respCounter)
-            dataRams_wdata := io.rFromMem.bits.rdata.asTypeOf(dataRams.io.wdata)
+            dataRams_wen(i) := true.B
+            dataRams_waddr(i) := Cat(index, respCounter)
+            dataRams_wdata(i) := io.rFromMem.bits.rdata.asTypeOf(dataRams(i).io.wdata)
             // dataRams(i).write(
             //   index, 
             //   Fill(icache.blockWords, io.rFromMem.bits.rdata).asTypeOf(dataRams(i).io.wdata), 

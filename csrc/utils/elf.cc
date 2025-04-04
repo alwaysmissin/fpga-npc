@@ -1,4 +1,5 @@
 #include <common.h>
+#include <cpu/cpu.h>
 #include <elf.h>
 
 FILE *elf_fp = NULL;
@@ -109,7 +110,7 @@ void init_elf(const char *elf_file)
     //     printf("Type: %d\n", ELF32_ST_TYPE(symtab[i].st_info));
     // }
     extract_functab(symtab, symtab_num, strtab);
-    printf("elf file loaded\n");
+    printf("elf file %s loaded\n", elf_file);
     // for (sym_functab *p = functab_head->next; p != NULL; p = p->next)
     // {
     //     printf("name: %s, value: 0x%x, size: %d\n", p->name, p->value, p->size);
@@ -129,7 +130,7 @@ void extract_functab(Elf32_Sym *symtab, int symtab_num, char *strtab)
     sym_functab *prev = functab_head;
     for (int i = 0; i < symtab_num; i++)
     {
-        if (ELF32_ST_TYPE(symtab[i].st_info) == STT_FUNC)
+        if (ELF32_ST_TYPE(symtab[i].st_info) == STT_FUNC || strncmp(strtab + symtab[i].st_name, "main", 4) == 0)
         {
             sym_functab *new_functab = (sym_functab *)malloc(sizeof(sym_functab));
             new_functab->name = (char *)malloc(strlen(strtab + symtab[i].st_name) + 1);
@@ -145,12 +146,12 @@ void extract_functab(Elf32_Sym *symtab, int symtab_num, char *strtab)
 
 char* query_funcname(word_t addr){
     for(sym_functab *p = functab_head -> next; p != NULL; p = p -> next){
-        if(addr >= p -> value && addr < p -> value + p -> size){
+        if((addr >= p -> value && addr < p -> value + p -> size) || (strcmp(p->name, "main") == 0)){
             return p -> name;
         }
     }
     // impossible to reach here
-    assert(0);
+    Assert(false, "Error query_funcname, addr is 0x%08x\n", addr);
 }
 
 // print the ftrace
@@ -194,12 +195,10 @@ extern "C" void ftrace(int pc, int target, int rd, int rs1){
         new_node -> next = NULL;
         ftrace_tail -> next = new_node;
         ftrace_tail = ftrace_tail -> next;
-        // show_ftrace();
     }
     // function call
     else if(rd != 0) {
         extern VysyxSoCFull *top;
-        // printf("pc: 0x%08x, target: 0x%08x, dnpc: 0x%08x\n", pc_u, target_u, top->rootp->top__DOT__cpu__DOT__id_stage__DOT__dnpc);
         ftrace_node *new_node = (ftrace_node *)malloc(sizeof(ftrace_node));
         new_node -> addr = pc_u;
         new_node -> type = CALL;
@@ -208,8 +207,6 @@ extern "C" void ftrace(int pc, int target, int rd, int rs1){
         new_node -> next = NULL;
         ftrace_tail -> next = new_node;
         ftrace_tail = ftrace_tail -> next;
-        // show ftrace
-        // show_ftrace();
     } else {
 
     }

@@ -48,7 +48,7 @@ class IF(config: RVConfig) extends Module {
         ))
     }
 
-    val instGetted = RegEnable(false.B, io.toID.fire)
+    val instGetted = RegEnable(false.B, false.B, io.toID.fire)
     val instReg = RegEnable(io.r.bits.rdata, 0.U(config.xlen.W), io.r.fire && !instGetted)
     when(io.r.fire && !instGetted && !io.toID.fire){
         instGetted := true.B
@@ -56,6 +56,9 @@ class IF(config: RVConfig) extends Module {
 
     val reqFired = RegEnable(false.B, false.B, io.toID.fire)
     io.ar.valid := (!reset.asBool && (!reqFired))
+    when(io.ar.fire && !reqFired && !io.toID.fire){
+        reqFired := true.B
+    }
     io.ar.bits.addr := npc
     io.ar.bits.wr := false.B
     io.ar.bits.len := 0.U
@@ -65,6 +68,7 @@ class IF(config: RVConfig) extends Module {
 
     io.r.ready := io.r.valid && !instGetted
     val instValid = io.r.fire || instGetted
+    val reqValid = io.ar.fire || reqFired
 
     io.toID.bits.inst := Mux(io.r.fire, io.r.bits.rdata, instReg)
     io.toID.bits.pc := PC
@@ -73,7 +77,7 @@ class IF(config: RVConfig) extends Module {
     io.toID.bits.hasException := PC(1, 0).orR && !io.toID.bits.nop
     io.toID.bits.exceptionCode := ExceptionCodes.InstructionAddressMisaligned
 
-    io.toID.valid := instValid
+    io.toID.valid := (instValid && reqValid) || PC === config.PC_INIT
 
     if (config.simulation){
         RawClockedVoidFunctionCall(

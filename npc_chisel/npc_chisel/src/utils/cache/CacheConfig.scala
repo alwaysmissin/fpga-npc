@@ -23,9 +23,9 @@ abstract class CacheBasicConfig {
 }
 
 final case class ICacheConfig(
-  blocks: Int = 2,
-  blockSize: Int = 32,
-  ways: Int = 1,
+  blocks: Int = 16,
+  blockSize: Int = 16,
+  ways: Int = 2,
 ) extends CacheBasicConfig{
   assert(blocks >= 2)
 }

@@ -13,11 +13,8 @@ const char *regs[] = {
     "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
 const char *csrs[] = {
-  "mstatus", "mtvec", "mepc", "mcause", "mvendorid", "marchid"
+  CSR_LIST(CSR_STR)
 };
-
-// #define NR_GPR ARRLEN(top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__regFiles__DOT__R_ext__DOT__Memory)
-// #define gpr(i) top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__regFiles__DOT__R_ext__DOT__Memory[i]
 
 void reg_display()
 {
@@ -25,7 +22,7 @@ void reg_display()
   int data;
   for (int i = 1; i < NR_GPR; i++)
   {
-    data = gpr(i - 1);
+    data = gpr(i);
     printf("%s\t\t0x%08x\t%-16d\n", regs[i], data, data);
   }
 }
@@ -35,12 +32,12 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   *success = false;
   if(strcmp(s, "pc") == 0){
     *success = true;
-    return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage_io_fromMEM_bits_rpc;
+    return *cpu.pc_if;
   }
   for(int i = 0;i < sizeof(regs) / sizeof(regs[0]);i++){
     if(strcmp(regs[i], s) == 0){
       *success = true;
-      return gpr(i - 1);
+      return gpr(i);
     }
   }
   return 0;

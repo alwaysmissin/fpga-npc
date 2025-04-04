@@ -116,7 +116,7 @@ object StageConnect{
     import chisel3.util.IrrevocableIO
     def apply[T <: Data](left: IrrevocableIO[T], right: IrrevocableIO[T]) = {
         left.ready := right.ready
-        right.bits := RegEnable(left.bits, left.fire)
+        right.bits := RegEnable(left.bits, 0.U.asTypeOf(left.bits), left.fire)
         right.valid := left.valid
     }
 }

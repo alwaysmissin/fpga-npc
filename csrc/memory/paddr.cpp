@@ -1,4 +1,5 @@
 #include <common.h>
+#include <cpu/cpu.h>
 #include <utils.h>
 #include <memory/paddr.h>
 #include <device/device.h>
@@ -35,36 +36,36 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
     return;
     // *data = 0x100073;
 }
-// extern "C" void pmem_read(int raddr, int* rdata)
-// {
-//     if (raddr == RTC_ADDR || raddr == RTC_ADDR + 4) {
-//         difftest_skip_ref();        
-//         *rdata = get_time() >> ((raddr - RTC_ADDR) * 8);
-//         return;
-//     }
-//     if (raddr == SERIAL_PORT) {
-//         difftest_skip_ref();
-//         *rdata = 0;
-//         return;
-//     }
-//     Assert(in_pmem(raddr), "illegal memmory read!!!(read address: 0x%08x)", raddr);
-//     word_t paddr = v_to_p(raddr);
-// 	*rdata = *(int *)(&pmem[paddr]);
-// #ifdef CONFIG_MTRACE
-//     snprintf(mtrace_buffer, sizeof(mtrace_buffer), 
-//                 "memory read : addr = " FMT_WORD ", data = " FMT_WORD, raddr, *rdata);
-//     if (MTRACE_COND) log_write("%s\n", mtrace_buffer);
-//     puts(mtrace_buffer);
-// #endif
-// }
+extern "C" void pmem_read(int raddr, int* rdata)
+{
+    if (raddr == RTC_ADDR || raddr == RTC_ADDR + 4) {
+        difftest_skip_ref();        
+        *rdata = get_time() >> ((raddr - RTC_ADDR) * 8);
+        return;
+    }
+    if (raddr == SERIAL_PORT) {
+        difftest_skip_ref();
+        *rdata = 0;
+        return;
+    }
+    Assert(in_pmem(raddr), "illegal memmory read!!!(read address: 0x%08x)", raddr);
+    word_t paddr = v_to_p(raddr);
+	*rdata = *(int *)(&pmem[paddr]);
+#ifdef CONFIG_MTRACE
+    snprintf(mtrace_buffer, sizeof(mtrace_buffer), 
+                "memory read : addr = " FMT_WORD ", data = " FMT_WORD, raddr, *rdata);
+    if (MTRACE_COND) log_write("%s\n", mtrace_buffer);
+    puts(mtrace_buffer);
+#endif
+}
 
-// extern "C" void inst_read(int addr, int* inst)
-// {
-//     // printf("mtrace %d: inst_read 0x%08x\n", main_time, addr);
-//     Assert(in_pmem(addr), "illegal inst memmory read!!!(read address: 0x%08x)", addr);
-//     word_t paddr = v_to_p(addr & ~0x3u);
-//     *inst = *(int *)(&pmem[paddr]);
-// }
+extern "C" void inst_read(int addr, int* inst)
+{
+    // printf("mtrace %d: inst_read 0x%08x\n", main_time, addr);
+    Assert(in_pmem(addr), "illegal inst memmory read!!!(read address: 0x%08x)", addr);
+    word_t paddr = v_to_p(addr & ~0x3u);
+    *inst = *(int *)(&pmem[paddr]);
+}
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask, svBit* bresp){
     if (waddr == SERIAL_PORT) {
@@ -113,6 +114,7 @@ long load_img(const char *img_file)
     // void init_psram();
     // init_psram();
     init_flash(fp, size);
+    init_ddr(fp, size);
 
     fclose(fp);
     return size;

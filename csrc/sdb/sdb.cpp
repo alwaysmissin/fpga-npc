@@ -12,7 +12,7 @@ void init_regex();
 void show_ftrace();
 word_t expr(char *e, bool *success);
 
-static int is_batch_mode = false;
+int is_batch_mode = false;
 
 static int cmd_help(char *args); 
 

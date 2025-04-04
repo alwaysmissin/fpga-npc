@@ -1,5 +1,7 @@
+#include "utils.h"
 #include <cpu/cpu.h>
 #include <cpu/difftest.h>
+#include <cstdio>
 #include <memory/paddr.h>
 #include <debug.h>
 #include <watchpoint.h>
@@ -18,6 +20,8 @@ vluint64_t main_time = 0;
 extern VerilatedContext *contextp;
 extern VysyxSoCFull *top;
 extern VerilatedFstC *tfp;
+
+word_t placeholder = 0;
 cpu_state cpu;
 
 char logbuf[128];
@@ -45,12 +49,12 @@ extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int
 
 static bool diff_ok()
 {
-	return top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__done;
+	return *cpu.done;
 }
 
 static void trace_and_difftest()
 {
-	word_t pc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__pc_done;
+	word_t pc = *cpu.pc_done;
 	// if (diff_ok())
 #ifdef CONFIG_DIFFTEST
 	// printf("pc: %x, npc: %x\n", pc, npc);
@@ -166,7 +170,7 @@ static bool divide_condition(){
 
 static bool dump_condition(){
 	#ifdef CONFIG_DUMP_WHEN_SDRAM
-	uint32_t pc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__ifStage__DOT__PC;
+	uint32_t pc = *cpu.pc_if;
 	return (pc >= SDRAM_BASE && pc < SDRAM_BASE + SDRAM_SIZE);
 	#endif
 	return true;
@@ -214,13 +218,11 @@ static void dump_wave(){
 
 static void exec_once()
 {
+	uint32_t death_loop_counter = 15000;
 	do{
 		top->clock = 0;
 		top->eval();
 		dump_wave();
-	// #ifdef RUN
-	// 	nvboard_update();
-	// #endif
 
 		top->clock = 1;
 		top->eval();
@@ -229,13 +231,18 @@ static void exec_once()
 		nvboard_update();
 	#endif
 		g_nr_cycle ++;
-	} while(!top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__done);
+		if (--death_loop_counter == 0){
+			npc_state.state = NPC_STOP;
+			printf("NPC: death loop detected\n");
+			break;
+		}
+	} while(!diff_ok());
 #ifdef CONFIG_ITRACE
 	char *p = logbuf;
-	uint32_t pc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__pc_done;
+	uint32_t pc = *cpu.pc_done;
 	p += snprintf(p, sizeof(logbuf), FMT_WORD ":", pc);
 	int i;
-	uint8_t *inst = (uint8_t *)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__inst;
+	uint8_t *inst = (uint8_t *)cpu.inst;
 	for (i = ilen - 1; i >= 0; i--)
 	{
 		p += snprintf(p, 4, " %02x", inst[i]);
@@ -258,6 +265,18 @@ static void exec_once()
 
 void reset(int n)
 {
+	cpu.pc_if = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__ifStage__DOT__PC;
+	cpu.pc_done = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__pc_done;
+	cpu.inst = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__inst;
+	cpu.pc_exe = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__exeStage_io_fromID_bits_rpc;
+	cpu.done = (bool*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__done;
+	cpu.gpr = (word_t (*)[NR_GPR - 1])&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__regFiles__DOT__R_ext__DOT__Memory;
+	CSR_LIST(CSR_INIT)
+	// cpu.mstatus = (mstatus_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mstatus;
+	// cpu.mtvec = (mtvec_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mtvec;
+	// cpu.mepc = (mepc_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mepc;
+	// cpu.mcause = (mcause_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mcause;
+	// cpu.placeholder1 = &placeholder;
 	top->reset = 1;
 	// cpu_exec(n);
 	while (n--)
@@ -272,14 +291,6 @@ void reset(int n)
 		nvboard_update();
 	#endif
 	}
-	cpu.pc = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__pc_done;
-	cpu.gpr = (word_t (*)[NR_GPR])&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__regFiles__DOT__R_ext__DOT__Memory;
-	cpu.mstatus = (mstatus_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mstatus;
-	cpu.mtvec = (mtvec_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mtvec;
-	cpu.mepc = (mepc_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mepc;
-	cpu.mcause = (mcause_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mcause;
-	// cpu.mvendorid = (mvendorid_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__mvendorid;
-	// cpu.marchid = (marchid_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__marchid;
 
 	top->reset = 0;
 }
@@ -288,13 +299,12 @@ void ebreak(int inst)
 {
 	if (inst == 0x100073)
 	{
-		int exit_code = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__regFiles__DOT__R_ext__DOT__Memory[10 - 1];
+		int exit_code = gpr(10);
 		printf("exit code = %d\n", exit_code);
-		// printf(exit_code == 0 ? "HIT GOOD TRAP\n" : "HIT BAD TRAP\n");
 		// exit(exit_code);
 		npc_state.state = NPC_END;
 		npc_state.halt_ret = exit_code;
-		npc_state.halt_pc = top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__ifStage__DOT__PC;
+		npc_state.halt_pc = *cpu.pc_if;
 	}
 }
 
@@ -304,11 +314,11 @@ static void excute(uint64_t n)
 	{
 		exec_once();
 		g_nr_guest_inst++;
-		trace_and_difftest();
 		if (npc_state.state != NPC_RUNNING)
 		{
 			break;
 		}
+		trace_and_difftest();
 	}
 }
 
@@ -344,6 +354,11 @@ void intSignalHandler(int signum){
 		delete(contextp);
 	}
 	raise(SIGINT);
+}
+
+void intSignalHandlerWhenSDB(int signum){
+	signal(SIGINT, SIG_DFL);
+	npc_state.state = NPC_STOP;
 }
 
 void abrtSignalHandler(int signum){
@@ -400,7 +415,12 @@ void cpu_exec(uint64_t n)
 	default:
 		npc_state.state = NPC_RUNNING;
 	}
-	signal(SIGINT, intSignalHandler);
+	extern bool is_batch_mode;
+	if (is_batch_mode){
+		signal(SIGINT, intSignalHandler);
+	} else {
+		signal(SIGINT, intSignalHandlerWhenSDB);
+	}
 	signal(SIGABRT, abrtSignalHandler);
 	signal(SIGSEGV, segvSignalHandler);
 	excute(n);

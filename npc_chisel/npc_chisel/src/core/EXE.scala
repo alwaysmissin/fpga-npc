@@ -31,6 +31,7 @@ import utils.bus.InterStage.JumpBus
 import utils.exe.BRU
 import utils.id.ControlSignals.BRUOp
 import utils.bus.SRAMLike.SRAMLikeReq
+import chisel3.util.log2Up
 
 class EXE(config: RVConfig) extends Module{
     val io = IO(new Bundle{
@@ -120,7 +121,7 @@ class EXE(config: RVConfig) extends Module{
     // for lsu
     // ------------- LSU -------------
     // ------------- READ -------------
-    val reqFired = RegEnable(false.B, io.fromID.fire)
+    val reqFired = RegEnable(false.B, false.B, io.fromID.fire)
     val ren = io.fromID.bits.decodeBundle.memRead.orR && !io.toMEM.bits.nop // MemRead.N
     val wen = io.fromID.bits.decodeBundle.memWrite.orR && !io.toMEM.bits.nop // MemWrite.N
     io.req.valid := (ren || wen) && !reqFired
@@ -228,10 +229,7 @@ class EXE(config: RVConfig) extends Module{
     // DPI-C
     // skip: uart gpio keyboard
     if (config.diff_enable){
-        val addrRangesToSkip = (vaddr >= 0x02000000L.U && vaddr < 0x02000008L.U) ||  // clint
-                               (vaddr >= 0x10000000L.U && vaddr < 0x10002010L.U) ||  // uart & gpio
-                               (vaddr >= 0x10011000L.U && vaddr < 0x10011008L.U) ||  // keyboard
-                               (vaddr >= 0x21000000L.U && vaddr < 0x211fffffL.U)     // gpu(vga)
+        val addrRangesToSkip = (vaddr >= 0x20000000L.U && vaddr < 0x21ffffffL.U) // skip device area and vga
         val skip_enable = addrRangesToSkip && ((ren || wen) && io.req.fire) && !io.toMEM.bits.nop
         dontTouch(skip_enable)
         RawClockedVoidFunctionCall(
@@ -248,5 +246,13 @@ class EXE(config: RVConfig) extends Module{
         RawClockedVoidFunctionCall(
             "LSULaunchAWReq"
         )(clock, enable = io.req.fire && io.req.bits.wr)
+    }
+    if (config.trace_enable){
+        RawClockedVoidFunctionCall(
+            "ftrace", Option(Seq("pc", "target", "rd", "rs1"))
+        )(clock, enable = io.fromID.bits.ftrace.doFtrace && !io.toMEM.bits.nop && io.toMEM.fire, 
+          io.fromID.bits.pc, alu.io.sum, 
+          Cat(0.U((config.xlen - log2Up(config.nr_reg)).W), io.fromID.bits.ftrace.rd), 
+          Cat(0.U((config.xlen - log2Up(config.nr_reg)).W), io.fromID.bits.ftrace.rs1))
     }
 }

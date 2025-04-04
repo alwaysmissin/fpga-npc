@@ -17,8 +17,7 @@ extern NPCState npc_state;
 
 uint64_t get_time();
 
-// #define gpr(i) top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__regFiles__DOT__R_ext__DOT__Memory[i]
-#define gpr(i) (*cpu.gpr)[i]
+#define gpr(i) (*cpu.gpr)[i - 1]
 
 // ----------- log -----------
 
