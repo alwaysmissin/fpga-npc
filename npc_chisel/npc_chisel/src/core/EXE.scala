@@ -32,6 +32,10 @@ import utils.exe.BRU
 import utils.id.ControlSignals.BRUOp
 import utils.bus.SRAMLike.SRAMLikeReq
 import chisel3.util.log2Up
+import utils.exe.Multiplier
+import utils.id.ControlSignals.MULOp
+import utils.id.ControlSignals.DIVOp
+import utils.exe.Divider
 
 class EXE(config: RVConfig) extends Module{
     val io = IO(new Bundle{
@@ -72,6 +76,60 @@ class EXE(config: RVConfig) extends Module{
     alu.io.opB := opB
     val aluRes = alu.io.res
     // ------------- ALU -------------
+
+    // ------------- MUL & DIV -------------
+    val multiplier = Module(new Multiplier(config))
+    val divider = Module(new Divider(config))
+    multiplier.io.req.valid := decodeBundle.fuType === FuType.MUL
+    multiplier.io.resp.ready := decodeBundle.fuType === FuType.MUL
+    val mulSignedOpA = (decodeBundle.mulOp === MULOp.MUL) || 
+                    (decodeBundle.mulOp === MULOp.MULH) ||
+                    (decodeBundle.mulOp === MULOp.MULHSU)
+    val mulSignedOpB = (decodeBundle.mulOp === MULOp.MUL) ||
+                    (decodeBundle.mulOp === MULOp.MULH)
+    val mulSigned = mulSignedOpA || mulSignedOpB
+    val mulAbsOpA = Mux(mulSignedOpA, opA.asSInt.abs.asUInt, opA)
+    val mulAbsOpB = Mux(mulSignedOpB, opB.asSInt.abs.asUInt, opB)
+    multiplier.io.req.bits.A := mulAbsOpA
+    multiplier.io.req.bits.B := mulAbsOpB
+    val isMultResultNeg = Mux(mulSigned && decodeBundle.mulOp === MULOp.MULHSU, opA(opA.getWidth - 1), opA(opA.getWidth - 1) ^ opB(opB.getWidth - 1))
+    val multTwoCompEnable = mulSigned && isMultResultNeg
+    val mulResOrigin = multiplier.io.resp.bits.P
+    val mulResFinal = (Cat(multTwoCompEnable, Mux(multTwoCompEnable, ~mulResOrigin, mulResOrigin)) + multTwoCompEnable)
+    val mulRes = Mux(decodeBundle.mulOp === MULOp.MUL, mulResFinal(31, 0), mulResFinal(63, 32))
+
+    val divResFinal = Wire(UInt(config.xlen.W))
+    val remainderFinal = Wire(UInt(config.xlen.W))
+    val divRes = Mux(decodeBundle.divOp === DIVOp.DIV || decodeBundle.divOp === DIVOp.DIVU, 
+            divResFinal, remainderFinal)
+    val divSigned = decodeBundle.divOp === DIVOp.DIV || decodeBundle.divOp === DIVOp.REM
+    val divAbsOpA = Mux(divSigned, opA.asSInt.abs.asUInt, opA)
+    val divAbsOpB = Mux(divSigned, opB.asSInt.abs.asUInt, opB)
+    divider.io.req.bits.dividend := divAbsOpA
+    divider.io.req.bits.divisor := divAbsOpB
+    when (opB === 0.U){
+        divider.io.req.valid  := false.B
+        divider.io.resp.ready := false.B
+        divResFinal := 0xFFFFFFFFL.U
+        remainderFinal := opA
+    }.otherwise{
+        when (divSigned && opA === 0x80000000L.U && opB === 0xFFFFFFFFL.U){
+            divider.io.req.valid  := false.B
+            divider.io.resp.ready := false.B
+            divResFinal := 0x80000000L.U
+            remainderFinal := 0.U
+        }.otherwise{
+            divider.io.req.valid := decodeBundle.fuType === FuType.DIV
+            divider.io.resp.ready := decodeBundle.fuType === FuType.DIV
+            val divResOrigin = divider.io.resp.bits.quotient
+            val divTowCompEnable = divSigned && (opA(opA.getWidth - 1) ^ opB(opB.getWidth - 1))
+            divResFinal := (Cat(divTowCompEnable, Mux(divTowCompEnable, ~divResOrigin, divResOrigin)) + divTowCompEnable)
+            val remainderOrigin = divider.io.resp.bits.remainder
+            val remainderTowCompEnable = divSigned && opA(opA.getWidth - 1)
+            remainderFinal := (Cat(remainderTowCompEnable, Mux(remainderTowCompEnable, ~remainderOrigin, remainderOrigin)) + remainderTowCompEnable)
+        }
+    }
+    // ------------- MUL -------------
 
     // ------------- BRU -------------
     val bru = Module(new BRU(config))
@@ -194,7 +252,9 @@ class EXE(config: RVConfig) extends Module{
         (decodeBundle.fuType === FuType.ALU) -> aluRes,
         (decodeBundle.fuType === FuType.CSR) -> io.fromID.bits.csrData,
         (decodeBundle.fuType === FuType.BRU) -> (io.fromID.bits.pc + 4.U),
-        (decodeBundle.fuType === FuType.LSU) -> aluRes
+        (decodeBundle.fuType === FuType.LSU) -> aluRes,
+        (decodeBundle.fuType === FuType.MUL) -> mulRes,
+        (decodeBundle.fuType === FuType.DIV) -> divRes
     ))
 
     // pass the pipeline signal to next stage
@@ -222,6 +282,7 @@ class EXE(config: RVConfig) extends Module{
                    (!(ren || wen)) || 
                    (((ren || wen) && (io.req.fire || reqFired)))
     val jumpValid = (io.jumpBus.valid && io.jumpBus.fire) || jumpBusFired || (!io.jumpBus.valid)
+    val mulValid = multiplier.io.resp.fire
 
     io.toMEM.valid := lsuValid && jumpValid
     io.fromID.ready := io.toMEM.ready && lsuValid && jumpValid

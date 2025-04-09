@@ -25,6 +25,8 @@ object ControlSignals {
     def LSU = BitPat("b0001")
     def BRU = BitPat("b0010")
     def CSR = BitPat("b0011")
+    def MUL = BitPat("b0100")
+    def DIV = BitPat("b0101")
     def X = BitPat("b????")
     def WIDTH = X.getWidth
   }
@@ -78,22 +80,29 @@ object ControlSignals {
     // def DIVS = BitPat("b01100")
     // // less than unsign
     def SRL = BitPat("b1000")
-    // // greater equal unsign
-    // def GEU = BitPat("b01110")
-    // // lest than sign
     def SRA = BitPat("b1001")
-    // // greater equal sign
-    // def GES = BitPat("b10000")
-    // // equal
-    // def EQ  = BitPat("b10001")
-    // // not equal
-    // def NEQ = BitPat("b10010")
-    // def RW  = BitPat("b10011")
-    // def RC  = BitPat("b10100")
-    // def RS  = BitPat("b10101")
     def X = BitPat("b????")
     def WIDTH = X.getWidth
   }
+
+  object MULOp{
+    def MUL = BitPat("b00")
+    def MULHU = BitPat("b01")
+    def MULH = BitPat("b10")
+    def MULHSU = BitPat("b11")
+    def X = BitPat("b??")
+    def WIDTH = X.getWidth
+  }
+
+  object DIVOp{
+    def DIVU = BitPat("b00")
+    def DIV = BitPat("b01")
+    def REMU = BitPat("b10")
+    def REM = BitPat("b11")
+    def X = BitPat("b??")
+    def WIDTH = X.getWidth
+  }
+
   
   object BRUOp{
     def LTU = BitPat("b000")

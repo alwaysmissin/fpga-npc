@@ -2812,89 +2812,97 @@ endmodule
 module PS2Simulator(	// src/device/Keyboard.scala:68:7
   input        clock,	// src/device/Keyboard.scala:68:7
                reset,	// src/device/Keyboard.scala:68:7
-  input  [3:0] io_buttons,	// src/device/Keyboard.scala:69:14
+  input  [7:0] io_buttons,	// src/device/Keyboard.scala:69:14
   output       io_ps2_clk,	// src/device/Keyboard.scala:69:14
                io_ps2_data	// src/device/Keyboard.scala:69:14
 );
 
-  wire        _scanQueue_io_deq_valid;	// src/device/Keyboard.scala:95:25
-  wire [7:0]  _scanQueue_io_deq_bits;	// src/device/Keyboard.scala:95:25
+  wire        _scanQueue_io_deq_valid;	// src/device/Keyboard.scala:99:25
+  wire [7:0]  _scanQueue_io_deq_bits;	// src/device/Keyboard.scala:99:25
   reg  [2:0]  state;	// src/device/Keyboard.scala:76:22
-  reg  [3:0]  prevButtons;	// src/device/Keyboard.scala:79:28
-  wire [3:0]  _buttonEvents_T = io_buttons ^ prevButtons;	// src/device/Keyboard.scala:79:28, :80:34
+  reg  [7:0]  prevButtons;	// src/device/Keyboard.scala:79:28
+  wire [7:0]  _buttonEvents_T = io_buttons ^ prevButtons;	// src/device/Keyboard.scala:79:28, :80:34
   wire        keyPress_1 = _buttonEvents_T[1] & io_buttons[1];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
   wire        keyPress_2 = _buttonEvents_T[2] & io_buttons[2];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
   wire        keyPress_3 = _buttonEvents_T[3] & io_buttons[3];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
+  wire        keyPress_4 = _buttonEvents_T[4] & io_buttons[4];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
+  wire        keyPress_5 = _buttonEvents_T[5] & io_buttons[5];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
+  wire        keyPress_6 = _buttonEvents_T[6] & io_buttons[6];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
+  wire        keyPress_7 = _buttonEvents_T[7] & io_buttons[7];	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}
   wire        keyRelease_0 = _buttonEvents_T[0] & ~(io_buttons[0]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
   wire        keyRelease_1 = _buttonEvents_T[1] & ~(io_buttons[1]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
   wire        keyRelease_2 = _buttonEvents_T[2] & ~(io_buttons[2]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
   wire        keyRelease_3 = _buttonEvents_T[3] & ~(io_buttons[3]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
-  reg  [3:0]  keyReleased;	// src/device/Keyboard.scala:83:28
-  reg  [11:0] clkDiv;	// src/device/Keyboard.scala:114:23
-  reg         ps2Clk;	// src/device/Keyboard.scala:115:23
-  reg         prevClk;	// src/device/Keyboard.scala:116:24
-  reg  [10:0] dataReg;	// src/device/Keyboard.scala:120:24
-  reg  [3:0]  bitCount;	// src/device/Keyboard.scala:121:25
-  wire        _io_ps2_data_T = state == 3'h0;	// src/device/Keyboard.scala:76:22, :125:17
+  wire        keyRelease_4 = _buttonEvents_T[4] & ~(io_buttons[4]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
+  wire        keyRelease_5 = _buttonEvents_T[5] & ~(io_buttons[5]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
+  wire        keyRelease_6 = _buttonEvents_T[6] & ~(io_buttons[6]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
+  wire        keyRelease_7 = _buttonEvents_T[7] & ~(io_buttons[7]);	// src/device/Keyboard.scala:80:{34,70}, :81:80, :82:{69,72}
+  reg  [7:0]  keyReleased;	// src/device/Keyboard.scala:83:28
+  reg  [11:0] clkDiv;	// src/device/Keyboard.scala:118:23
+  reg         ps2Clk;	// src/device/Keyboard.scala:119:23
+  reg         prevClk;	// src/device/Keyboard.scala:120:24
+  reg  [10:0] dataReg;	// src/device/Keyboard.scala:124:24
+  reg  [3:0]  bitCount;	// src/device/Keyboard.scala:125:25
+  wire        _io_ps2_data_T = state == 3'h0;	// src/device/Keyboard.scala:76:22, :129:17
   always @(posedge clock) begin	// src/device/Keyboard.scala:68:7
     if (reset) begin	// src/device/Keyboard.scala:68:7
       state <= 3'h0;	// src/device/Keyboard.scala:76:22
-      clkDiv <= 12'h0;	// src/device/Keyboard.scala:114:23
-      ps2Clk <= 1'h1;	// src/device/Keyboard.scala:68:7, :115:23
-      dataReg <= 11'h0;	// src/device/Keyboard.scala:120:24
-      bitCount <= 4'h0;	// src/device/Keyboard.scala:121:25
+      clkDiv <= 12'h0;	// src/device/Keyboard.scala:118:23
+      ps2Clk <= 1'h1;	// src/device/Keyboard.scala:68:7, :119:23
+      dataReg <= 11'h0;	// src/device/Keyboard.scala:124:24
+      bitCount <= 4'h0;	// src/device/Keyboard.scala:125:25
     end
     else begin	// src/device/Keyboard.scala:68:7
-      automatic logic             _GEN;	// src/device/Keyboard.scala:172:17
-      automatic logic [7:0][11:0] _GEN_0;	// src/device/Keyboard.scala:114:23, :125:17, :172:28
-      _GEN = clkDiv == 12'h1F4;	// src/device/Keyboard.scala:114:23, :172:17
-      if (_io_ps2_data_T) begin	// src/device/Keyboard.scala:125:17
-        if (_scanQueue_io_deq_valid) begin	// src/device/Keyboard.scala:95:25
+      automatic logic             _GEN;	// src/device/Keyboard.scala:176:17
+      automatic logic [7:0][11:0] _GEN_0;	// src/device/Keyboard.scala:118:23, :129:17, :176:28
+      _GEN = clkDiv == 12'h1F4;	// src/device/Keyboard.scala:118:23, :176:17
+      if (_io_ps2_data_T) begin	// src/device/Keyboard.scala:129:17
+        if (_scanQueue_io_deq_valid) begin	// src/device/Keyboard.scala:99:25
           state <= 3'h1;	// src/device/Keyboard.scala:76:22
-          dataReg <= {1'h1, ~(^_scanQueue_io_deq_bits), _scanQueue_io_deq_bits, 1'h0};	// src/device/Keyboard.scala:68:7, :95:25, :120:24, :129:{22,35}, :130:23
-          bitCount <= 4'h0;	// src/device/Keyboard.scala:121:25
+          dataReg <= {1'h1, ~(^_scanQueue_io_deq_bits), _scanQueue_io_deq_bits, 1'h0};	// src/device/Keyboard.scala:68:7, :99:25, :124:24, :133:{22,35}, :134:23
+          bitCount <= 4'h0;	// src/device/Keyboard.scala:125:25
         end
       end
-      else begin	// src/device/Keyboard.scala:125:17
-        automatic logic risingEdge;	// src/device/Keyboard.scala:118:27
-        automatic logic _GEN_1;	// src/device/Keyboard.scala:115:23, :172:28, :173:14
-        risingEdge = ps2Clk & ~prevClk;	// src/device/Keyboard.scala:115:23, :116:24, :118:{27,30}
-        _GEN_1 = _GEN ^ ps2Clk;	// src/device/Keyboard.scala:115:23, :172:{17,28}, :173:14
-        if (state == 3'h1) begin	// src/device/Keyboard.scala:76:22, :125:17
-          if (risingEdge) begin	// src/device/Keyboard.scala:118:27
+      else begin	// src/device/Keyboard.scala:129:17
+        automatic logic risingEdge;	// src/device/Keyboard.scala:122:27
+        automatic logic _GEN_1;	// src/device/Keyboard.scala:119:23, :176:28, :177:14
+        risingEdge = ps2Clk & ~prevClk;	// src/device/Keyboard.scala:119:23, :120:24, :122:{27,30}
+        _GEN_1 = _GEN ^ ps2Clk;	// src/device/Keyboard.scala:119:23, :176:{17,28}, :177:14
+        if (state == 3'h1) begin	// src/device/Keyboard.scala:76:22, :129:17
+          if (risingEdge) begin	// src/device/Keyboard.scala:122:27
             state <= 3'h2;	// src/device/Keyboard.scala:76:22
-            dataReg <= {1'h0, dataReg[10:1]};	// src/device/Keyboard.scala:68:7, :120:24, :141:{17,28}
-            bitCount <= bitCount + 4'h1;	// src/device/Keyboard.scala:121:25, :140:30
+            dataReg <= {1'h0, dataReg[10:1]};	// src/device/Keyboard.scala:68:7, :124:24, :145:{17,28}
+            bitCount <= bitCount + 4'h1;	// src/device/Keyboard.scala:125:25, :144:30
           end
-          ps2Clk <= _GEN_1;	// src/device/Keyboard.scala:115:23, :172:28, :173:14
+          ps2Clk <= _GEN_1;	// src/device/Keyboard.scala:119:23, :176:28, :177:14
         end
-        else if (state == 3'h2) begin	// src/device/Keyboard.scala:76:22, :125:17
-          if (risingEdge & bitCount == 4'h8)	// src/device/Keyboard.scala:76:22, :118:27, :121:25, :146:24, :149:{23,32}, :150:17
+        else if (state == 3'h2) begin	// src/device/Keyboard.scala:76:22, :129:17
+          if (risingEdge & bitCount == 4'h8)	// src/device/Keyboard.scala:76:22, :122:27, :125:25, :150:24, :153:{23,32}, :154:17
             state <= 3'h3;	// src/device/Keyboard.scala:76:22
-          ps2Clk <= _GEN_1;	// src/device/Keyboard.scala:115:23, :172:28, :173:14
-          if (risingEdge) begin	// src/device/Keyboard.scala:118:27
-            dataReg <= {1'h0, dataReg[10:1]};	// src/device/Keyboard.scala:68:7, :120:24, :147:{17,28}
-            bitCount <= bitCount + 4'h1;	// src/device/Keyboard.scala:121:25, :148:30
+          ps2Clk <= _GEN_1;	// src/device/Keyboard.scala:119:23, :176:28, :177:14
+          if (risingEdge) begin	// src/device/Keyboard.scala:122:27
+            dataReg <= {1'h0, dataReg[10:1]};	// src/device/Keyboard.scala:68:7, :124:24, :151:{17,28}
+            bitCount <= bitCount + 4'h1;	// src/device/Keyboard.scala:125:25, :152:30
           end
         end
-        else begin	// src/device/Keyboard.scala:125:17
-          automatic logic _GEN_2;	// src/device/Keyboard.scala:125:17
-          _GEN_2 = state == 3'h3;	// src/device/Keyboard.scala:76:22, :125:17
-          if (_GEN_2) begin	// src/device/Keyboard.scala:125:17
-            if (risingEdge)	// src/device/Keyboard.scala:118:27
+        else begin	// src/device/Keyboard.scala:129:17
+          automatic logic _GEN_2;	// src/device/Keyboard.scala:129:17
+          _GEN_2 = state == 3'h3;	// src/device/Keyboard.scala:76:22, :129:17
+          if (_GEN_2) begin	// src/device/Keyboard.scala:129:17
+            if (risingEdge)	// src/device/Keyboard.scala:122:27
               state <= 3'h4;	// src/device/Keyboard.scala:76:22
-            ps2Clk <= _GEN_1;	// src/device/Keyboard.scala:115:23, :172:28, :173:14
+            ps2Clk <= _GEN_1;	// src/device/Keyboard.scala:119:23, :176:28, :177:14
           end
-          else begin	// src/device/Keyboard.scala:125:17
-            automatic logic _GEN_3;	// src/device/Keyboard.scala:125:17
-            _GEN_3 = state == 3'h4;	// src/device/Keyboard.scala:76:22, :125:17
-            if (_GEN_3 & risingEdge)	// src/device/Keyboard.scala:76:22, :118:27, :125:17, :164:24, :165:15
+          else begin	// src/device/Keyboard.scala:129:17
+            automatic logic _GEN_3;	// src/device/Keyboard.scala:129:17
+            _GEN_3 = state == 3'h4;	// src/device/Keyboard.scala:76:22, :129:17
+            if (_GEN_3 & risingEdge)	// src/device/Keyboard.scala:76:22, :122:27, :129:17, :168:24, :169:15
               state <= 3'h0;	// src/device/Keyboard.scala:76:22
-            ps2Clk <= _GEN_3 & _GEN ^ ps2Clk;	// src/device/Keyboard.scala:115:23, :125:17, :172:{17,28}, :173:14
+            ps2Clk <= _GEN_3 & _GEN ^ ps2Clk;	// src/device/Keyboard.scala:119:23, :129:17, :176:{17,28}, :177:14
           end
-          if (_GEN_2 & risingEdge) begin	// src/device/Keyboard.scala:118:27, :120:24, :125:17, :156:24, :158:17
-            dataReg <= {1'h0, dataReg[10:1]};	// src/device/Keyboard.scala:68:7, :120:24, :158:{17,28}
-            bitCount <= bitCount + 4'h1;	// src/device/Keyboard.scala:121:25, :159:30
+          if (_GEN_2 & risingEdge) begin	// src/device/Keyboard.scala:122:27, :124:24, :129:17, :160:24, :162:17
+            dataReg <= {1'h0, dataReg[10:1]};	// src/device/Keyboard.scala:68:7, :124:24, :162:{17,28}
+            bitCount <= bitCount + 4'h1;	// src/device/Keyboard.scala:125:25, :163:30
           end
         end
       end
@@ -2906,12 +2914,20 @@ module PS2Simulator(	// src/device/Keyboard.scala:68:7
          {_GEN ? 12'h0 : clkDiv + 12'h1},
          {_GEN ? 12'h0 : clkDiv + 12'h1},
          {_GEN ? 12'h0 : clkDiv + 12'h1},
-         {clkDiv}};	// src/device/Keyboard.scala:114:23, :125:17, :171:{12,22}, :172:{17,28}, :174:14
-      clkDiv <= _GEN_0[state];	// src/device/Keyboard.scala:76:22, :114:23, :125:17, :172:28
+         {clkDiv}};	// src/device/Keyboard.scala:118:23, :129:17, :175:{12,22}, :176:{17,28}, :178:14
+      clkDiv <= _GEN_0[state];	// src/device/Keyboard.scala:76:22, :118:23, :129:17, :176:28
     end
     prevButtons <= io_buttons;	// src/device/Keyboard.scala:79:28
-    keyReleased <= {keyRelease_3, keyRelease_2, keyRelease_1, keyRelease_0};	// rocket-chip/src/main/scala/util/package.scala:45:27, src/device/Keyboard.scala:82:69, :83:28
-    prevClk <= ps2Clk;	// src/device/Keyboard.scala:115:23, :116:24
+    keyReleased <=
+      {keyRelease_7,
+       keyRelease_6,
+       keyRelease_5,
+       keyRelease_4,
+       keyRelease_3,
+       keyRelease_2,
+       keyRelease_1,
+       keyRelease_0};	// rocket-chip/src/main/scala/util/package.scala:45:27, src/device/Keyboard.scala:82:69, :83:28
+    prevClk <= ps2Clk;	// src/device/Keyboard.scala:119:23, :120:24
   end // always @(posedge)
   `ifdef ENABLE_INITIAL_REG_	// src/device/Keyboard.scala:68:7
     `ifdef FIRRTL_BEFORE_INITIAL	// src/device/Keyboard.scala:68:7
@@ -2927,87 +2943,114 @@ module PS2Simulator(	// src/device/Keyboard.scala:68:7
           _RANDOM[i[0]] = `RANDOM;	// src/device/Keyboard.scala:68:7
         end	// src/device/Keyboard.scala:68:7
         state = _RANDOM[1'h0][2:0];	// src/device/Keyboard.scala:68:7, :76:22
-        prevButtons = _RANDOM[1'h0][6:3];	// src/device/Keyboard.scala:68:7, :76:22, :79:28
-        keyReleased = _RANDOM[1'h0][10:7];	// src/device/Keyboard.scala:68:7, :76:22, :83:28
-        clkDiv = _RANDOM[1'h0][22:11];	// src/device/Keyboard.scala:68:7, :76:22, :114:23
-        ps2Clk = _RANDOM[1'h0][23];	// src/device/Keyboard.scala:68:7, :76:22, :115:23
-        prevClk = _RANDOM[1'h0][24];	// src/device/Keyboard.scala:68:7, :76:22, :116:24
-        dataReg = {_RANDOM[1'h0][31:25], _RANDOM[1'h1][3:0]};	// src/device/Keyboard.scala:68:7, :76:22, :120:24
-        bitCount = _RANDOM[1'h1][7:4];	// src/device/Keyboard.scala:68:7, :120:24, :121:25
+        prevButtons = _RANDOM[1'h0][10:3];	// src/device/Keyboard.scala:68:7, :76:22, :79:28
+        keyReleased = _RANDOM[1'h0][18:11];	// src/device/Keyboard.scala:68:7, :76:22, :83:28
+        clkDiv = _RANDOM[1'h0][30:19];	// src/device/Keyboard.scala:68:7, :76:22, :118:23
+        ps2Clk = _RANDOM[1'h0][31];	// src/device/Keyboard.scala:68:7, :76:22, :119:23
+        prevClk = _RANDOM[1'h1][0];	// src/device/Keyboard.scala:68:7, :120:24
+        dataReg = _RANDOM[1'h1][11:1];	// src/device/Keyboard.scala:68:7, :120:24, :124:24
+        bitCount = _RANDOM[1'h1][15:12];	// src/device/Keyboard.scala:68:7, :120:24, :125:25
       `endif // RANDOMIZE_REG_INIT
     end // initial
     `ifdef FIRRTL_AFTER_INITIAL	// src/device/Keyboard.scala:68:7
       `FIRRTL_AFTER_INITIAL	// src/device/Keyboard.scala:68:7
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  Queue8_UInt8 scanQueue (	// src/device/Keyboard.scala:95:25
+  Queue8_UInt8 scanQueue (	// src/device/Keyboard.scala:99:25
     .clock        (clock),
     .reset        (reset),
     .io_enq_valid
-      (keyReleased[3] | keyRelease_3 | keyPress_3 | keyReleased[2] | keyRelease_2
-       | keyPress_2 | keyReleased[1] | keyRelease_1 | keyPress_1 | keyReleased[0]
-       | keyRelease_0 | _buttonEvents_T[0] & io_buttons[0]),	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}, :82:69, :83:28, :102:23, :105:25, :108:{21,25}, src/main/scala/chisel3/util/Decoupled.scala:58:20
+      (keyReleased[7] | keyRelease_7 | keyPress_7 | keyReleased[6] | keyRelease_6
+       | keyPress_6 | keyReleased[5] | keyRelease_5 | keyPress_5 | keyReleased[4]
+       | keyRelease_4 | keyPress_4 | keyReleased[3] | keyRelease_3 | keyPress_3
+       | keyReleased[2] | keyRelease_2 | keyPress_2 | keyReleased[1] | keyRelease_1
+       | keyPress_1 | keyReleased[0] | keyRelease_0 | _buttonEvents_T[0] & io_buttons[0]),	// src/device/Keyboard.scala:80:{34,70}, :81:{67,80}, :82:69, :83:28, :106:23, :109:25, :112:{21,25}, src/main/scala/chisel3/util/Decoupled.scala:58:20
     .io_enq_bits
-      (keyReleased[3]
-         ? 8'h23
-         : keyRelease_3
+      (keyReleased[7]
+         ? 8'h42
+         : keyRelease_7
              ? 8'hF0
-             : keyPress_3
-                 ? 8'h23
-                 : keyReleased[2]
-                     ? 8'h21
-                     : keyRelease_2
+             : keyPress_7
+                 ? 8'h42
+                 : keyReleased[6]
+                     ? 8'h3B
+                     : keyRelease_6
                          ? 8'hF0
-                         : keyPress_2
-                             ? 8'h21
-                             : keyReleased[1]
-                                 ? 8'h32
-                                 : keyRelease_1
+                         : keyPress_6
+                             ? 8'h3B
+                             : keyReleased[5]
+                                 ? 8'h43
+                                 : keyRelease_5
                                      ? 8'hF0
-                                     : keyPress_1
-                                         ? 8'h32
-                                         : keyReleased[0] | ~keyRelease_0
-                                             ? 8'h1C
-                                             : 8'hF0),	// src/device/Keyboard.scala:81:67, :82:69, :83:28, :102:23, :105:25, :108:{21,25}, src/main/scala/chisel3/util/Decoupled.scala:59:19
-    .io_deq_ready (_io_ps2_data_T & _scanQueue_io_deq_valid),	// src/device/Keyboard.scala:95:25, :98:26, :125:17, :127:36
+                                     : keyPress_5
+                                         ? 8'h43
+                                         : keyReleased[4]
+                                             ? 8'h3C
+                                             : keyRelease_4
+                                                 ? 8'hF0
+                                                 : keyPress_4
+                                                     ? 8'h3C
+                                                     : keyReleased[3]
+                                                         ? 8'h1C
+                                                         : keyRelease_3
+                                                             ? 8'hF0
+                                                             : keyPress_3
+                                                                 ? 8'h1C
+                                                                 : keyReleased[2]
+                                                                     ? 8'h1B
+                                                                     : keyRelease_2
+                                                                         ? 8'hF0
+                                                                         : keyPress_2
+                                                                             ? 8'h1B
+                                                                             : keyReleased[1]
+                                                                                 ? 8'h23
+                                                                                 : keyRelease_1
+                                                                                     ? 8'hF0
+                                                                                     : keyPress_1
+                                                                                         ? 8'h23
+                                                                                         : keyReleased[0]
+                                                                                           | ~keyRelease_0
+                                                                                             ? 8'h1D
+                                                                                             : 8'hF0),	// src/device/Keyboard.scala:81:67, :82:69, :83:28, :106:23, :109:25, :112:{21,25}, src/main/scala/chisel3/util/Decoupled.scala:59:19
+    .io_deq_ready (_io_ps2_data_T & _scanQueue_io_deq_valid),	// src/device/Keyboard.scala:99:25, :102:26, :129:17, :131:36
     .io_deq_valid (_scanQueue_io_deq_valid),
     .io_deq_bits  (_scanQueue_io_deq_bits)
-  );	// src/device/Keyboard.scala:95:25
-  assign io_ps2_clk = _io_ps2_data_T | ps2Clk;	// src/device/Keyboard.scala:68:7, :115:23, :125:17, :179:20
-  assign io_ps2_data = _io_ps2_data_T | dataReg[0];	// src/device/Keyboard.scala:68:7, :120:24, :125:17, :185:{21,54}
+  );	// src/device/Keyboard.scala:99:25
+  assign io_ps2_clk = _io_ps2_data_T | ps2Clk;	// src/device/Keyboard.scala:68:7, :119:23, :129:17, :183:20
+  assign io_ps2_data = _io_ps2_data_T | dataReg[0];	// src/device/Keyboard.scala:68:7, :124:24, :129:17, :189:{21,54}
 endmodule
 
-module APBKeyboard(	// src/device/Keyboard.scala:198:9
-  input         clock,	// src/device/Keyboard.scala:198:9
-                reset,	// src/device/Keyboard.scala:198:9
+module APBKeyboard(	// src/device/Keyboard.scala:202:9
+  input         clock,	// src/device/Keyboard.scala:202:9
+                reset,	// src/device/Keyboard.scala:202:9
                 auto_in_psel,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [29:0] auto_in_paddr,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output        auto_in_pready,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   output [31:0] auto_in_prdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [3:0]  buttons	// src/device/Keyboard.scala:201:21
+  input  [7:0]  buttons	// src/device/Keyboard.scala:205:21
 );
 
-  wire _PS2Simulator_io_ps2_clk;	// src/device/Keyboard.scala:204:30
-  wire _PS2Simulator_io_ps2_data;	// src/device/Keyboard.scala:204:30
-  ps2Chisel mps2 (	// src/device/Keyboard.scala:203:22
+  wire _PS2Simulator_io_ps2_clk;	// src/device/Keyboard.scala:208:30
+  wire _PS2Simulator_io_ps2_data;	// src/device/Keyboard.scala:208:30
+  ps2Chisel mps2 (	// src/device/Keyboard.scala:207:22
     .clock        (clock),
     .reset        (reset),
     .io_clock     (clock),
     .io_reset     (reset),
     .io_in_psel   (auto_in_psel),
-    .io_in_paddr  ({2'h0, auto_in_paddr}),	// src/device/Keyboard.scala:208:16
+    .io_in_paddr  ({2'h0, auto_in_paddr}),	// src/device/Keyboard.scala:212:16
     .io_in_pready (auto_in_pready),
     .io_in_prdata (auto_in_prdata),
-    .io_ps2_clk   (_PS2Simulator_io_ps2_clk),	// src/device/Keyboard.scala:204:30
-    .io_ps2_data  (_PS2Simulator_io_ps2_data)	// src/device/Keyboard.scala:204:30
-  );	// src/device/Keyboard.scala:203:22
-  PS2Simulator PS2Simulator (	// src/device/Keyboard.scala:204:30
+    .io_ps2_clk   (_PS2Simulator_io_ps2_clk),	// src/device/Keyboard.scala:208:30
+    .io_ps2_data  (_PS2Simulator_io_ps2_data)	// src/device/Keyboard.scala:208:30
+  );	// src/device/Keyboard.scala:207:22
+  PS2Simulator PS2Simulator (	// src/device/Keyboard.scala:208:30
     .clock       (clock),
     .reset       (reset),
     .io_buttons  (buttons),
     .io_ps2_clk  (_PS2Simulator_io_ps2_clk),
     .io_ps2_data (_PS2Simulator_io_ps2_data)
-  );	// src/device/Keyboard.scala:204:30
+  );	// src/device/Keyboard.scala:208:30
 endmodule
 
 // external module vga_ctrl
@@ -5060,7 +5103,7 @@ module ysyxSoCASIC(	// src/SoC.scala:63:9
   inout  [31:0] sdram_dq,	// src/SoC.scala:93:19
   output [7:0]  gpio_out,	// src/SoC.scala:94:18
   input  [7:0]  gpio_in,	// src/SoC.scala:94:18
-  input  [3:0]  ps2,	// src/SoC.scala:95:17
+                ps2,	// src/SoC.scala:95:17
   output [7:0]  vga_r,	// src/SoC.scala:96:17
                 vga_g,	// src/SoC.scala:96:17
                 vga_b,	// src/SoC.scala:96:17
@@ -6067,7 +6110,7 @@ module ysyxSoCFull(	// src/SoC.scala:115:9
                reset,	// src/SoC.scala:115:9
   output [7:0] externalPins_gpio_out,	// src/SoC.scala:152:26
   input  [7:0] externalPins_gpio_in,	// src/SoC.scala:152:26
-  input  [3:0] externalPins_ps2,	// src/SoC.scala:152:26
+               externalPins_ps2,	// src/SoC.scala:152:26
   output [7:0] externalPins_vga_r,	// src/SoC.scala:152:26
                externalPins_vga_g,	// src/SoC.scala:152:26
                externalPins_vga_b,	// src/SoC.scala:152:26
@@ -6137,7 +6180,7 @@ module ysyxSoCTop(	// src/Top.scala:14:7
     .reset                  (reset),
     .externalPins_gpio_out  (/* unused */),
     .externalPins_gpio_in   (8'h0),
-    .externalPins_ps2       (4'h0),
+    .externalPins_ps2       (8'h0),
     .externalPins_vga_r     (/* unused */),
     .externalPins_vga_g     (/* unused */),
     .externalPins_vga_b     (/* unused */),
