@@ -78,10 +78,18 @@ class EXE(config: RVConfig) extends Module{
     // ------------- ALU -------------
 
     // ------------- MUL & DIV -------------
-    val multiplier = Module(new Multiplier(config))
-    val divider = Module(new Divider(config))
-    multiplier.io.req.valid := decodeBundle.fuType === FuType.MUL
-    multiplier.io.resp.ready := decodeBundle.fuType === FuType.MUL
+    val multiplier = Module(new Multiplier(config, latency = 2))
+    val divider = Module(new Divider(config, latency = 2))
+    val mulReqFired = RegEnable(false.B, false.B, io.fromID.fire)
+    when (multiplier.io.req.fire && !io.toMEM.fire){
+        mulReqFired := true.B
+    }
+    val divReqFired = RegEnable(false.B, false.B, io.fromID.fire)
+    when (divider.io.req.fire && !io.toMEM.fire){
+        divReqFired := true.B
+    }
+    multiplier.io.req.valid := decodeBundle.fuType === FuType.MUL && !mulReqFired && !io.fromID.bits.nop
+    multiplier.io.resp.ready := decodeBundle.fuType === FuType.MUL && io.toMEM.ready
     val mulSignedOpA = (decodeBundle.mulOp === MULOp.MUL) || 
                     (decodeBundle.mulOp === MULOp.MULH) ||
                     (decodeBundle.mulOp === MULOp.MULHSU)
@@ -107,20 +115,21 @@ class EXE(config: RVConfig) extends Module{
     val divAbsOpB = Mux(divSigned, opB.asSInt.abs.asUInt, opB)
     divider.io.req.bits.dividend := divAbsOpA
     divider.io.req.bits.divisor := divAbsOpB
+    divider.io.req.valid  := false.B
+    divider.io.resp.ready := false.B
+    val divReqNoNeed = WireDefault(false.B)
     when (opB === 0.U){
-        divider.io.req.valid  := false.B
-        divider.io.resp.ready := false.B
+        divReqNoNeed := decodeBundle.fuType === FuType.DIV
         divResFinal := 0xFFFFFFFFL.U
         remainderFinal := opA
     }.otherwise{
         when (divSigned && opA === 0x80000000L.U && opB === 0xFFFFFFFFL.U){
-            divider.io.req.valid  := false.B
-            divider.io.resp.ready := false.B
+            divReqNoNeed := decodeBundle.fuType === FuType.DIV
             divResFinal := 0x80000000L.U
             remainderFinal := 0.U
         }.otherwise{
-            divider.io.req.valid := decodeBundle.fuType === FuType.DIV
-            divider.io.resp.ready := decodeBundle.fuType === FuType.DIV
+            divider.io.req.valid := decodeBundle.fuType === FuType.DIV && !divReqFired && !io.fromID.bits.nop
+            divider.io.resp.ready := decodeBundle.fuType === FuType.DIV && io.toMEM.ready
             val divResOrigin = divider.io.resp.bits.quotient
             val divTowCompEnable = divSigned && (opA(opA.getWidth - 1) ^ opB(opB.getWidth - 1))
             divResFinal := (Cat(divTowCompEnable, Mux(divTowCompEnable, ~divResOrigin, divResOrigin)) + divTowCompEnable)
@@ -230,16 +239,8 @@ class EXE(config: RVConfig) extends Module{
     )
     io.toMEM.bits.controlSignals.memReadMask := decodeBundle.memRead
     // AXIFULL
-    // io.w.bits.last := true.B
-    // val wFired = RegInit(false.B)
-    // when(io.w.fire && !io.aw.fire){
-    //     wFired := true.B
-    // }
-    when(!io.toMEM.fire){
-        when(io.req.fire){
-            reqFired := true.B
-            // wFired := false.B
-        }
+    when(!io.toMEM.fire && io.req.fire){
+        reqFired := true.B
     }
     // ------------- WRITE -------------
     // ------------- LSU -------------
@@ -282,10 +283,11 @@ class EXE(config: RVConfig) extends Module{
                    (!(ren || wen)) || 
                    (((ren || wen) && (io.req.fire || reqFired)))
     val jumpValid = (io.jumpBus.valid && io.jumpBus.fire) || jumpBusFired || (!io.jumpBus.valid)
-    val mulValid = multiplier.io.resp.fire
+    val mulOrDivEnable = ((decodeBundle.fuType === FuType.MUL) || (decodeBundle.fuType === FuType.DIV)) && !io.toMEM.bits.nop
+    val mulOrDivValid = !mulOrDivEnable || (mulOrDivEnable && (multiplier.io.resp.fire || divider.io.resp.fire || divReqNoNeed))
 
-    io.toMEM.valid := lsuValid && jumpValid
-    io.fromID.ready := io.toMEM.ready && lsuValid && jumpValid
+    io.toMEM.valid := lsuValid && jumpValid && mulOrDivValid
+    io.fromID.ready := io.toMEM.ready && lsuValid && jumpValid && mulOrDivValid
 
     // DPI-C
     // skip: uart gpio keyboard
