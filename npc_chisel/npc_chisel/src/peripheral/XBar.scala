@@ -30,7 +30,7 @@ class XBar(config: RVConfig) extends Module {
         }
         val toMem = AXI4(config)
     })
-    val arbiter = Module(new Arbiter(config, respCacheEnable = false))
+    val arbiter = Module(new Arbiter(config, respCacheEnable = true))
     arbiter.io.ibus <> io.ibus
     arbiter.io.dbus <> io.dbus
     // arbiter.io.out <> io.toMem

@@ -38,13 +38,12 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 }
 extern "C" void pmem_read(int raddr, int* rdata)
 {
+    // TODO: skip difftest is not available without SoC system
     if (raddr == RTC_ADDR || raddr == RTC_ADDR + 4) {
-        difftest_skip_ref();        
         *rdata = get_time() >> ((raddr - RTC_ADDR) * 8);
         return;
     }
     if (raddr == SERIAL_PORT) {
-        difftest_skip_ref();
         *rdata = 0;
         return;
     }
@@ -69,7 +68,6 @@ extern "C" void inst_read(int addr, int* inst)
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask, svBit* bresp){
     if (waddr == SERIAL_PORT) {
-        difftest_skip_ref();
         putchar(wdata & 0xff);
         fflush(stdout);
         return;

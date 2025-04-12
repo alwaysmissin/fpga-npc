@@ -36,16 +36,16 @@ static int skip_dut_nr_inst = 0;
 static int pc_to_skip;
 static std::queue<int> pcs_to_skip;
 
-void difftest_skip_ref(){
+void difftest_skip_ref(int skip_pc){
     // is_skip_ref = true;
-    pc_to_skip = *cpu.pc_exe;
+    pc_to_skip = skip_pc;
     pcs_to_skip.push(pc_to_skip);
     // printf("skip " FMT_WORD "\n", pc_to_skip);
     // skip_dut_nr_inst = 0;
 }
 
-extern "C" void diff_skip(){
-    difftest_skip_ref();
+extern "C" void diff_skip(int skip_pc){
+    difftest_skip_ref(skip_pc);
 }
 
 void init_difftest(char *ref_so_file, long img_size, int port){
@@ -136,6 +136,11 @@ void difftest_step(word_t pc){
     if (!pcs_to_skip.empty() && pc_done == pcs_to_skip.front()){
         for (int i = 1; i < NR_GPR; i ++){
             ctx.gpr[i] = (word_t)gpr(i);
+        }
+        word_t *ctx_csrs = (word_t *)&(ctx.mstatus);
+        word_t **cpu_csrs = (word_t **)&cpu.mstatus;
+        for (int i = 0;i < NR_CSR;i ++){
+            ctx_csrs[i] = *cpu_csrs[i];
         }
         // TODO: NPC的判断在多周期取指不能这么计算
         // 暂且认为npc为pc+4, 因为目前需要跳过的指令都是访存访问外设的指令

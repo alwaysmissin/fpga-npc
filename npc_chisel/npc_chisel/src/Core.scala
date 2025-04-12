@@ -89,7 +89,7 @@ class Core(config: RVConfig) extends Module{
     idStage.io.bypassDataFromOtherStage.fromWB  <> wbStage.io.regWdata
 
 
-    io.dbus.req <> exeStage.io.req
+    io.dbus.req <> memStage.io.req
     // io.dbus.aw <> exeStage.io.aw
     // io.dbus.w  <> exeStage.io.w
 

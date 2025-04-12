@@ -57,10 +57,11 @@ object InterStage {
 
   class ExeMemSignalsBundle(config: RVConfig) extends Bundle{
     //   val fuType = UInt(ControlSignals.FuType.WIDTH.W)
-      val memReadMask = UInt(ControlSignals.MemRead.WIDTH.W)
+      val memRawMask = UInt(ControlSignals.MemRead.WIDTH.W)
       val signExt = Bool()
       val csrWriteData = UInt(config.xlen.W)
       val regWriteData = UInt(config.xlen.W)
+      val memWriteData = UInt(config.xlen.W)
       val regWrite = Bool()
       val csrWrite = Bool()
       val memWrite = Bool()

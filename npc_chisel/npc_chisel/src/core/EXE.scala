@@ -43,7 +43,6 @@ class EXE(config: RVConfig) extends Module{
         val toMEM = Irrevocable(new ExeMemBus(config))
         val bypass = Flipped(new BypassFrom(config))
         val regWdata = Output(UInt(config.xlen.W))
-        val req = Irrevocable(new SRAMLikeReq(config))
         val jumpBus = Irrevocable(new JumpBus(config))
         val flush = Output(Bool())
     })
@@ -185,64 +184,62 @@ class EXE(config: RVConfig) extends Module{
     val csrRes = csru.io.res
     // ------------- CSRU -------------
 
-    // for lsu
-    // ------------- LSU -------------
-    // ------------- READ -------------
-    val reqFired = RegEnable(false.B, false.B, io.fromID.fire)
-    val ren = io.fromID.bits.decodeBundle.memRead.orR && !io.toMEM.bits.nop // MemRead.N
-    val wen = io.fromID.bits.decodeBundle.memWrite.orR && !io.toMEM.bits.nop // MemWrite.N
-    io.req.valid := (ren || wen) && !reqFired
-    val byteWise = io.fromID.bits.decodeBundle.memRead | io.fromID.bits.decodeBundle.memWrite
-    val reqSize = PriorityMux(Seq(
-        (byteWise(3)) -> "b010".U,
-        (byteWise(1)) -> "b001".U,
-        (byteWise(0)) -> "b000".U
-    ))
+    // // for lsu
+    // // ------------- LSU -------------
+    // // ------------- READ -------------
+    // val reqFired = RegEnable(false.B, false.B, io.fromID.fire)
+    // val ren = io.fromID.bits.decodeBundle.memRead.orR && !io.toMEM.bits.nop // MemRead.N
+    // val wen = io.fromID.bits.decodeBundle.memWrite.orR && !io.toMEM.bits.nop // MemWrite.N
+    // io.req.valid := (ren || wen) && !reqFired
+    // val byteWise = io.fromID.bits.decodeBundle.memRead | io.fromID.bits.decodeBundle.memWrite
+    // val reqSize = PriorityMux(Seq(
+    //     (byteWise(3)) -> "b010".U,
+    //     (byteWise(1)) -> "b001".U,
+    //     (byteWise(0)) -> "b000".U
+    // ))
 
-    // launch read request
-    val vaddr = opA + opB
-    val vaddrLow2Bits = vaddr(1, 0)
-    val align = PriorityMux(Seq(
-        (byteWise(3)) -> (!vaddrLow2Bits.orR),
-        (byteWise(1)) -> (!vaddrLow2Bits(0)),
-        (byteWise(0)) -> true.B
-    ))
-    // align check when simulation is on
-    if (config.simulation){
-        switch(reqSize){
-            is("b010".U){ 
-                assert(vaddr(1, 0) === 0.U, "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n", 1.U << reqSize, vaddr, io.fromID.bits.pc)
-            }
-            is("b001".U){
-                assert(vaddr(0) === 0.U, "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n", 1.U << reqSize, vaddr, io.fromID.bits.pc)
-            }
-            is("b000".U){}
-        }
-    }
+    // // launch read request
+    // val vaddr = opA + opB
+    // val vaddrLow2Bits = vaddr(1, 0)
+    // val align = PriorityMux(Seq(
+    //     (byteWise(3)) -> (!vaddrLow2Bits.orR),
+    //     (byteWise(1)) -> (!vaddrLow2Bits(0)),
+    //     (byteWise(0)) -> true.B
+    // ))
+    // // align check when simulation is on
+    // if (config.simulation){
+    //     switch(reqSize){
+    //         is("b010".U){ 
+    //             assert(vaddr(1, 0) === 0.U, "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n", 1.U << reqSize, vaddr, io.fromID.bits.pc)
+    //         }
+    //         is("b001".U){
+    //             assert(vaddr(0) === 0.U, "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n", 1.U << reqSize, vaddr, io.fromID.bits.pc)
+    //         }
+    //         is("b000".U){}
+    //     }
+    // }
 
-    // ------------- READ -------------
-    // launch the write request
-    // ------------- WRITE -------------
-    // handle the wdata to make it align
-    val rawData = io.fromID.bits.rs2Data
-    // launch request
-    io.req.bits.addr := vaddr
-    io.req.bits.len := 0.U
-    io.req.bits.wr := wen
-    io.req.bits.wdata := io.fromID.bits.rs2Data
-    io.req.bits.wstrb := decodeBundle.memWrite << vaddrLow2Bits
-    io.req.bits.size := reqSize
-    io.req.bits.wdata := PriorityMux(Seq(
-        decodeBundle.memWrite(3) -> rawData,
-        decodeBundle.memWrite(1) -> Fill(2, rawData(15, 0)),
-        decodeBundle.memWrite(0) -> Fill(4, rawData( 7, 0)))
-    )
-    io.toMEM.bits.controlSignals.memReadMask := decodeBundle.memRead
-    // AXIFULL
-    when(!io.toMEM.fire && io.req.fire){
-        reqFired := true.B
-    }
-    // ------------- WRITE -------------
+    // // ------------- READ -------------
+    // // launch the write request
+    // // ------------- WRITE -------------
+    // // handle the wdata to make it align
+    // val rawData = io.fromID.bits.rs2Data
+    // // launch request
+    // io.req.bits.addr := vaddr
+    // io.req.bits.len := 0.U
+    // io.req.bits.wr := wen
+    // io.req.bits.wstrb := decodeBundle.memWrite << vaddrLow2Bits
+    // io.req.bits.size := reqSize
+    // io.req.bits.wdata := PriorityMux(Seq(
+    //     decodeBundle.memWrite(3) -> rawData,
+    //     decodeBundle.memWrite(1) -> Fill(2, rawData(15, 0)),
+    //     decodeBundle.memWrite(0) -> Fill(4, rawData( 7, 0)))
+    // )
+    // // AXIFULL
+    // when(!io.toMEM.fire && io.req.fire){
+    //     reqFired := true.B
+    // }
+    // // ------------- WRITE -------------
     // ------------- LSU -------------
 
     // bypass 
@@ -269,47 +266,30 @@ class EXE(config: RVConfig) extends Module{
     io.toMEM.bits.funct12 <> io.fromID.bits.funct12
     io.toMEM.bits.mret    <> io.fromID.bits.mret
     io.toMEM.bits.rd <> io.fromID.bits.rd
-    io.toMEM.bits.controlSignals.memRead := ren
-    io.toMEM.bits.controlSignals.memWrite := wen
+    io.toMEM.bits.controlSignals.memRawMask := decodeBundle.memRead | decodeBundle.memWrite
+    io.toMEM.bits.controlSignals.memRead := decodeBundle.memRead.orR && !io.fromID.bits.nop
+    io.toMEM.bits.controlSignals.memWrite := decodeBundle.memWrite.orR && !io.fromID.bits.nop
+    io.toMEM.bits.controlSignals.memWriteData := io.fromID.bits.rs2Data
     io.toMEM.bits.controlSignals.csrWriteData := csrRes
     // pass the exception
-    io.toMEM.bits.hasException := (io.fromID.bits.hasException || (!align && (wen || ren))) && !io.toMEM.bits.nop
-    io.toMEM.bits.exceptionCode := Mux(!align && (wen || ren), ExceptionCodes.LoadAddressMisaligned, io.fromID.bits.exceptionCode)
+    io.toMEM.bits.hasException := (io.fromID.bits.hasException) && !io.toMEM.bits.nop
+    io.toMEM.bits.exceptionCode := io.fromID.bits.exceptionCode
 
     io.flush := (io.jumpBus.valid || io.toMEM.bits.hasException || decodeBundle.fuType === FuType.CSR) && !io.toMEM.bits.nop
 
     // handshake signal
-    val lsuValid = reqFired || 
-                   (!(ren || wen)) || 
-                   (((ren || wen) && (io.req.fire || reqFired)))
+    // val lsuValid = reqFired || 
+    //                (!(ren || wen)) || 
+    //                (((ren || wen) && (io.req.fire || reqFired)))
     val jumpValid = (io.jumpBus.valid && io.jumpBus.fire) || jumpBusFired || (!io.jumpBus.valid)
     val mulOrDivEnable = ((decodeBundle.fuType === FuType.MUL) || (decodeBundle.fuType === FuType.DIV)) && !io.toMEM.bits.nop
     val mulOrDivValid = !mulOrDivEnable || (mulOrDivEnable && (multiplier.io.resp.fire || divider.io.resp.fire || divReqNoNeed))
 
-    io.toMEM.valid := lsuValid && jumpValid && mulOrDivValid
-    io.fromID.ready := io.toMEM.ready && lsuValid && jumpValid && mulOrDivValid
+    io.toMEM.valid := jumpValid && mulOrDivValid
+    io.fromID.ready := io.toMEM.ready && jumpValid && mulOrDivValid
 
     // DPI-C
     // skip: uart gpio keyboard
-    if (config.diff_enable){
-        val addrRangesToSkip = (vaddr >= 0x20000000L.U && vaddr < 0x21ffffffL.U) // skip device area and vga
-        val skip_enable = addrRangesToSkip && ((ren || wen) && io.req.fire) && !io.toMEM.bits.nop
-        dontTouch(skip_enable)
-        RawClockedVoidFunctionCall(
-            "diff_skip"
-        )(clock, enable = skip_enable)
-    }
-    if (config.simulation){
-        RawClockedVoidFunctionCall(
-            "PerfCountEXU",
-        )(clock, enable = io.fromID.bits.decodeBundle.fuType === FuType.ALU && !io.toMEM.bits.nop)
-        RawClockedVoidFunctionCall(
-            "LSULaunchARReq"
-        )(clock, enable = io.req.fire && !io.req.bits.wr)
-        RawClockedVoidFunctionCall(
-            "LSULaunchAWReq"
-        )(clock, enable = io.req.fire && io.req.bits.wr)
-    }
     if (config.trace_enable){
         RawClockedVoidFunctionCall(
             "ftrace", Option(Seq("pc", "target", "rd", "rs1"))
@@ -317,5 +297,10 @@ class EXE(config: RVConfig) extends Module{
           io.fromID.bits.pc, alu.io.sum, 
           Cat(0.U((config.xlen - log2Up(config.nr_reg)).W), io.fromID.bits.ftrace.rd), 
           Cat(0.U((config.xlen - log2Up(config.nr_reg)).W), io.fromID.bits.ftrace.rs1))
+    }
+    if (config.simulation){
+        RawClockedVoidFunctionCall(
+            "PerfCountEXU",
+        )(clock, enable = io.fromID.bits.decodeBundle.fuType === FuType.ALU && !io.toMEM.bits.nop)
     }
 }

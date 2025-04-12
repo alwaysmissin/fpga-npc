@@ -20,43 +20,119 @@ import utils.id.ControlSignals.FuType
 import utils.bus.SRAMLike._
 import chisel3.util.PriorityMux
 
+object MEMState extends ChiselEnum{
+    val IDLE, WAIT_RESP, AMO_WAIT_RESP, AMO_ALU, AMO_WRITE = Value
+}
+
 class MEM(config: RVConfig) extends Module {
     val io = IO(new Bundle{
         val fromEXE = Flipped(Irrevocable(new ExeMemBus(config)))
         val toWB = Irrevocable(new MemWbBus(config))
         // val r = Flipped(Irrevocable(new R(config)))
         // val b = Flipped(Irrevocable(new B(config)))
+        val req = Irrevocable(new SRAMLikeReq(config))
         val rResp = Flipped(Irrevocable(new SRAMLikeRResp(config)))
         val wResp = Flipped(Irrevocable(new SRAMLikeWResp(config)))
         val bypass = Flipped(new BypassFrom(config))
         val regWdata = Output(UInt(config.xlen.W))
     })
-    val ren = io.fromEXE.bits.controlSignals.memRead
-    val wen = io.fromEXE.bits.controlSignals.memWrite
-    io.rResp.ready := io.rResp.valid && ren
-    io.wResp.ready := io.wResp.valid && wen
-    // io.r.ready := io.r.valid && ren
-    // io.b.ready := io.b.valid && wen
-    val memMask = io.fromEXE.bits.controlSignals.memReadMask
-    val memSignedExt = io.fromEXE.bits.controlSignals.signExt
-    val offset = (io.fromEXE.bits.controlSignals.regWriteData(1) << 4.U).asUInt | (io.fromEXE.bits.controlSignals.regWriteData(0) << 3.U).asUInt
-    val rdataShift = io.rResp.bits.rdata >> offset
-    // val memRes = Mux1H(Seq(
-    //     (memMask === "b0001".U) -> Cat(Fill(24, rdata( 7) & memSignedExt), rdata( 7,  0)),
-    //     (memMask === "b0010".U) -> Cat(Fill(24, rdata(15) & memSignedExt), rdata(15,  8)),
-    //     (memMask === "b0100".U) -> Cat(Fill(24, rdata(23) & memSignedExt), rdata(23, 16)),
-    //     (memMask === "b1000".U) -> Cat(Fill(24, rdata(31) & memSignedExt), rdata(31, 24)),
-    //     (memMask === "b0011".U) -> Cat(Fill(16, rdata(15) & memSignedExt), rdata(15,  0)),
-    //     (memMask === "b1100".U) -> Cat(Fill(16, rdata(31) & memSignedExt), rdata(31, 16)),
-    //     (memMask === "b1111".U) -> rdata
-    // ))
-    val memRes = PriorityMux(Seq(
-        memMask(3) -> rdataShift,
-        memMask(1) -> Cat(Fill(16, rdataShift(15) & memSignedExt), rdataShift(15, 0)),
-        memMask(0) -> Cat(Fill(24, rdataShift( 7) & memSignedExt), rdataShift( 7, 0))
+    val controlSignals = io.fromEXE.bits.controlSignals
+    val state = RegInit(MEMState.IDLE)
+    val ren = controlSignals.memRead .orR && !io.fromEXE.bits.nop // MemRead.N
+    val wen = controlSignals.memWrite.orR && !io.fromEXE.bits.nop // MemWrite.N
+
+    // set pipeline control signal default
+    io.toWB.valid := false.B
+    io.fromEXE.ready := false.B
+
+    // set lsu request signal default
+    io.req.bits := 0.U.asTypeOf(io.req.bits)
+    io.req.valid := false.B
+    io.wResp.ready := false.B
+    io.rResp.ready := false.B
+
+    val byteWise = controlSignals.memRawMask
+    val reqSize = PriorityMux(Seq(
+        byteWise(3) -> 2.U,
+        byteWise(1) -> 1.U,
+        byteWise(0) -> 0.U,
     ))
 
-    // io.toWB.bits.aluRes      := io.fromEXE.bits.controlSignals.aluRes
+    val vaddr = controlSignals.regWriteData
+    val vaddrLow2Bits = vaddr(1, 0)
+    val align = PriorityMux(Seq(
+        byteWise(3) -> !vaddrLow2Bits.orR,
+        byteWise(1) -> !vaddrLow2Bits(0),
+        byteWise(0) -> true.B
+    ))
+
+    val memSignedExt = controlSignals.signExt
+    val offset = (controlSignals.regWriteData(1) << 4.U).asUInt | 
+                 (controlSignals.regWriteData(0) << 3.U).asUInt
+    val rdataShift = io.rResp.bits.rdata >> offset
+    val memRes = PriorityMux(Seq(
+        byteWise(3) -> rdataShift,
+        byteWise(1) -> Cat(Fill(16, rdataShift(15) & memSignedExt), rdataShift(15, 0)),
+        byteWise(0) -> Cat(Fill(24, rdataShift( 7) & memSignedExt), rdataShift( 7, 0))
+    ))
+
+    val memWdata = PriorityMux(Seq(
+        byteWise(3) -> controlSignals.memWriteData,
+        byteWise(1) -> Fill(2, controlSignals.memWriteData(15, 0)),
+        byteWise(0) -> Fill(4, controlSignals.memWriteData( 7, 0)),
+    ))
+
+    // align check when simulation is on
+    if (config.simulation){
+        switch(reqSize){
+            is("b010".U){ 
+                assert(vaddr(1, 0) === 0.U, "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n", 1.U << reqSize, vaddr, io.fromEXE.bits.pc)
+            }
+            is("b001".U){
+                assert(vaddr(0) === 0.U, "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n", 1.U << reqSize, vaddr, io.fromEXE.bits.pc)
+            }
+            is("b000".U){}
+        }
+    }
+
+    switch(state){
+        is (MEMState.IDLE){
+            when (ren || wen){
+                io.req.valid := true.B
+                io.req.bits.addr := vaddr
+                io.req.bits.len := 0.U
+                io.req.bits.wr := wen
+                io.req.bits.wdata := memWdata
+                io.req.bits.wstrb := controlSignals.memRawMask << vaddrLow2Bits
+                io.req.bits.size := reqSize
+                state := Mux(io.req.fire, MEMState.WAIT_RESP, MEMState.IDLE)
+            }.otherwise{
+                io.toWB.valid := true.B
+                io.fromEXE.ready := true.B
+            }
+        }
+        is (MEMState.WAIT_RESP){
+            io.rResp.ready := io.rResp.valid && io.fromEXE.valid
+            io.wResp.ready := io.wResp.valid && io.fromEXE.valid
+            io.fromEXE.ready := io.rResp.valid || io.wResp.valid
+            io.toWB.valid := io.rResp.valid || io.wResp.valid
+            when (io.rResp.fire || io.wResp.fire){
+                state := MEMState.IDLE
+            }
+        }
+    }
+
+    io.bypass.regWrite := controlSignals.regWrite
+    io.bypass.waddr := io.fromEXE.bits.rd
+    io.bypass.valid := io.toWB.valid
+    io.regWdata := Mux(ren, memRes, controlSignals.regWriteData)
+
+    val hasFired = RegEnable(false.B, false.B, io.toWB.fire && io.fromEXE.fire)
+    when (io.toWB.fire && !io.fromEXE.fire){
+        hasFired := true.B
+    }
+    io.toWB.bits.nop := io.fromEXE.bits.nop || hasFired
+
     io.toWB.bits.csrWriteData     := io.fromEXE.bits.controlSignals.csrWriteData
     io.toWB.bits.funct12     := io.fromEXE.bits.funct12
     // io.toWB.bits.memRes      := memRes
@@ -68,34 +144,10 @@ class MEM(config: RVConfig) extends Module {
     io.toWB.bits.mret        := io.fromEXE.bits.mret
     io.toWB.bits.hasException:= io.fromEXE.bits.hasException
     io.toWB.bits.exceptionCode := io.fromEXE.bits.exceptionCode
-
+    io.toWB.bits.regWriteData := io.regWdata
     if (config.diff_enable) io.toWB.bits.jumped := io.fromEXE.bits.jumped
     if (config.trace_enable) io.toWB.bits.inst  := io.fromEXE.bits.inst
 
-    val hasFired = RegEnable(false.B, false.B, io.toWB.fire && io.fromEXE.fire)
-    when (io.toWB.fire && !io.fromEXE.fire){
-        hasFired := true.B
-    }
-    io.toWB.bits.nop := io.fromEXE.bits.nop || hasFired
-
-    io.bypass.regWrite := io.fromEXE.bits.controlSignals.regWrite && !io.toWB.bits.nop
-    io.bypass.waddr := io.fromEXE.bits.rd
-    io.bypass.valid := io.toWB.valid
-
-    val controlSignals = io.fromEXE.bits.controlSignals
-    io.regWdata := Mux(ren, memRes, io.fromEXE.bits.controlSignals.regWriteData)
-    io.toWB.bits.regWriteData := io.regWdata
-
-    // val respValid = (((ren && (io.r.fire)) || (wen && (io.b.fire)))) || (!ren && !wen)
-    val respValid = ((ren && io.rResp.fire) || (wen && io.wResp.fire)) || (!ren && !wen) || hasFired
-    if (config.simulation){
-        // RawClockedVoidFunctionCall("ebreak", Option(Seq("inst")))(clock, respValid && wen && io.wResp.bits.resp , "h00100073".U(32.W))
-        when (respValid && wen){
-            assert(!io.wResp.bits.resp)
-        }
-    }
-    io.toWB.valid := respValid
-    io.fromEXE.ready := io.toWB.ready && respValid
 
     if (config.simulation){
         RawClockedVoidFunctionCall(
@@ -107,5 +159,22 @@ class MEM(config: RVConfig) extends Module {
         RawClockedVoidFunctionCall(
             "LSURecvBResp"
         )(clock, enable = io.wResp.fire && wen)
+    }
+    if (config.diff_enable){
+        val addrRangesToSkip = (vaddr >= 0x20000000L.U && vaddr < 0x21ffffffL.U) // skip device area and vga
+        val skip_enable = addrRangesToSkip && ((ren || wen) && io.req.fire) && !io.toWB.bits.nop
+        dontTouch(skip_enable)
+        RawClockedVoidFunctionCall(
+            "diff_skip", Option(Seq("skip_pc"))
+        )(clock, enable = skip_enable, io.fromEXE.bits.pc)
+    }
+
+    if (config.simulation){
+        RawClockedVoidFunctionCall(
+            "LSULaunchARReq"
+        )(clock, enable = io.req.fire && !io.req.bits.wr)
+        RawClockedVoidFunctionCall(
+            "LSULaunchAWReq"
+        )(clock, enable = io.req.fire && io.req.bits.wr)
     }
 }
