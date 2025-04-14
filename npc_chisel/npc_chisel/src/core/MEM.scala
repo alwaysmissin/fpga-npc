@@ -19,9 +19,12 @@ import chisel3.util.circt.dpi.RawClockedVoidFunctionCall
 import utils.id.ControlSignals.FuType
 import utils.bus.SRAMLike._
 import chisel3.util.PriorityMux
+import utils.id.ControlSignals.AMOOp
+import utils.id.Instructions.AMOADD
+import utils.exe.AMOALU
 
 object MEMState extends ChiselEnum{
-    val IDLE, WAIT_RESP, AMO_WAIT_RESP, AMO_ALU, AMO_WRITE = Value
+    val IDLE, WAIT_RESP, AMO_WAIT_READ_RESP, AMO_LAUNCH_WRITE_REQ, AMO_WAIT_WRITE_RESP = Value
 }
 
 class MEM(config: RVConfig) extends Module {
@@ -40,6 +43,7 @@ class MEM(config: RVConfig) extends Module {
     val state = RegInit(MEMState.IDLE)
     val ren = controlSignals.memRead .orR && !io.fromEXE.bits.nop // MemRead.N
     val wen = controlSignals.memWrite.orR && !io.fromEXE.bits.nop // MemWrite.N
+    val reservation = RegInit(0.U(config.xlen.W))
 
     // set pipeline control signal default
     io.toWB.valid := false.B
@@ -95,17 +99,44 @@ class MEM(config: RVConfig) extends Module {
         }
     }
 
+    val amoAlu = Module(new AMOALU(config))
+    amoAlu.io.amoOp := controlSignals.amoOp
+    amoAlu.io.mRead := io.rResp.bits.rdata
+    amoAlu.io.src2  := controlSignals.memWriteData
+    val amoAluRes = amoAlu.io.res
+    val amoAluResReg = RegInit(0.U(config.xlen.W))
+    val amoRegWriteDataReg = RegInit(0.U(config.xlen.W))
+    val amoRegWriteData = WireDefault(0.U(config.xlen.W))
+    amoRegWriteData := amoRegWriteDataReg
+
     switch(state){
         is (MEMState.IDLE){
             when (ren || wen){
-                io.req.valid := true.B
+                // when `ren` or `wen` is asserted, the inst should be load/store or load-reservation/store-condition/amo
+                // avoid to launch when the store-condition is not satisfied
+                io.req.valid := !(controlSignals.fuTypeAMO && controlSignals.amoOp === AMOOp.SC && reservation =/= vaddr)
                 io.req.bits.addr := vaddr
                 io.req.bits.len := 0.U
-                io.req.bits.wr := wen
+                // only launching write request when `wen` is true.B and `ren` is false.B
+                // avoid launch write request first when the inst is amo
+                io.req.bits.wr  := !ren && wen
                 io.req.bits.wdata := memWdata
                 io.req.bits.wstrb := controlSignals.memRawMask << vaddrLow2Bits
                 io.req.bits.size := reqSize
-                state := Mux(io.req.fire, MEMState.WAIT_RESP, MEMState.IDLE)
+                // `ren && wen` means `amox` instruction, should go to `AMO_WAIT_RESP` state
+                state := Mux(io.req.fire, 
+                            Mux(ren && wen, MEMState.AMO_WAIT_READ_RESP, MEMState.WAIT_RESP), 
+                            MEMState.IDLE)
+                // TODO: 考虑reservation是不是会在请求被阻塞时候，提前被清除？
+                when (io.toWB.fire || io.req.fire){
+                    reservation := Mux(controlSignals.fuTypeAMO && controlSignals.amoOp === AMOOp.SC, 0.U, reservation)
+                }
+                when (controlSignals.fuTypeAMO && controlSignals.amoOp === AMOOp.SC){
+                    amoRegWriteDataReg := Cat(0.U(31.W), reservation =/= vaddr)
+                    amoRegWriteData := Cat(0.U(31.W), reservation =/= vaddr)
+                    io.toWB.valid := reservation =/= vaddr
+                    io.fromEXE.ready := reservation =/= vaddr
+                }
             }.otherwise{
                 io.toWB.valid := true.B
                 io.fromEXE.ready := true.B
@@ -116,16 +147,52 @@ class MEM(config: RVConfig) extends Module {
             io.wResp.ready := io.wResp.valid && io.fromEXE.valid
             io.fromEXE.ready := io.rResp.valid || io.wResp.valid
             io.toWB.valid := io.rResp.valid || io.wResp.valid
-            when (io.rResp.fire || io.wResp.fire){
-                state := MEMState.IDLE
+            state := Mux(io.rResp.fire || io.wResp.fire, MEMState.IDLE, MEMState.WAIT_RESP)
+            when (controlSignals.fuTypeAMO) {
+                when (controlSignals.amoOp === AMOOp.LR){
+                    amoRegWriteData := io.rResp.bits.rdata
+                    amoRegWriteDataReg := io.rResp.bits.rdata
+                    reservation := vaddr
+                }.elsewhen(controlSignals.amoOp === AMOOp.SC){
+                    amoRegWriteData := 0.U
+                    amoRegWriteDataReg := 0.U
+                }
             }
+        }
+        is (MEMState.AMO_WAIT_READ_RESP){
+            io.rResp.ready := io.rResp.valid
+            when (io.rResp.fire){
+                amoAluResReg := amoAluRes
+                amoRegWriteDataReg := io.rResp.bits.rdata
+                state := MEMState.AMO_LAUNCH_WRITE_REQ
+            }
+        }
+        is (MEMState.AMO_LAUNCH_WRITE_REQ){
+            io.req.valid := true.B
+            io.req.bits.addr := vaddr
+            io.req.bits.len := 0.U
+            io.req.bits.wr  := true.B
+            io.req.bits.wdata := amoAluResReg
+            io.req.bits.wstrb := 0xF.U
+            io.req.bits.size := 2.U
+            state := Mux(io.req.fire, MEMState.AMO_WAIT_WRITE_RESP, MEMState.AMO_LAUNCH_WRITE_REQ)
+        }
+        is (MEMState.AMO_WAIT_WRITE_RESP){
+            io.wResp.ready := io.wResp.valid && io.fromEXE.valid
+            io.fromEXE.ready := io.wResp.valid
+            io.toWB.valid := io.wResp.valid
+            state := Mux(io.wResp.fire, MEMState.IDLE, MEMState.AMO_WAIT_WRITE_RESP)
         }
     }
 
     io.bypass.regWrite := controlSignals.regWrite
     io.bypass.waddr := io.fromEXE.bits.rd
     io.bypass.valid := io.toWB.valid
-    io.regWdata := Mux(ren, memRes, controlSignals.regWriteData)
+    io.regWdata := PriorityMux(Seq(
+        controlSignals.fuTypeAMO -> amoRegWriteData,
+        ren -> memRes,
+        true.B -> controlSignals.regWriteData
+    ))
 
     val hasFired = RegEnable(false.B, false.B, io.toWB.fire && io.fromEXE.fire)
     when (io.toWB.fire && !io.fromEXE.fire){

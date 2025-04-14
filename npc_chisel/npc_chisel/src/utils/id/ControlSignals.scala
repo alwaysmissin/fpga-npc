@@ -27,6 +27,7 @@ object ControlSignals {
     def CSR = BitPat("b0011")
     def MUL = BitPat("b0100")
     def DIV = BitPat("b0101")
+    def AMO = BitPat("b0110")
     def X = BitPat("b????")
     def WIDTH = X.getWidth
   }
@@ -50,7 +51,7 @@ object ControlSignals {
     def RS2 = BitPat("b00")
     // immediate number
     def IMM = BitPat("b01")
-    def N = BitPat("b10")
+    def ZERO = BitPat("b10")
     def CSR = BitPat("b11")
     def X = BitPat("b??")
     def WIDTH = X.getWidth
@@ -100,6 +101,22 @@ object ControlSignals {
     def REMU = BitPat("b10")
     def REM = BitPat("b11")
     def X = BitPat("b??")
+    def WIDTH = X.getWidth
+  }
+
+  object AMOOp{
+    def LR = BitPat("b0000")
+    def SC = BitPat("b0001")
+    def SWAP = BitPat("b0010")
+    def ADD  = BitPat("b0011")
+    def XOR  = BitPat("b0100")
+    def AND  = BitPat("b0101")
+    def OR   = BitPat("b0110")
+    def MIN  = BitPat("b0111")
+    def MAX  = BitPat("b1000")
+    def MINU = BitPat("b1001")
+    def MAXU = BitPat("b1010")
+    def X = BitPat("b????")
     def WIDTH = X.getWidth
   }
 
@@ -225,7 +242,7 @@ object ControlSignals {
     def WIDTH = X.getWidth
   }
 
-  object FENCE{
+  object Fence{
     def Y = BitPat("b1")
     def N = BitPat("b0")
     def X = BitPat("b?")

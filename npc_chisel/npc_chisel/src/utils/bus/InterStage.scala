@@ -66,6 +66,8 @@ object InterStage {
       val csrWrite = Bool()
       val memWrite = Bool()
       val memRead  = Bool()
+      val fuTypeAMO = Bool()
+      val amoOp = UInt(ControlSignals.AMOOp.WIDTH.W)
   }
 
   class ExeMemBus(config: RVConfig) extends Bundle{
