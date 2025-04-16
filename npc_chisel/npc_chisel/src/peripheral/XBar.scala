@@ -36,41 +36,55 @@ class XBar(config: RVConfig) extends Module {
     // arbiter.io.out <> io.toMem
 
     val clint = Module(new CLINT(config))
-    clint.io.bus.aw <> DontCare
-    clint.io.bus.w  <> DontCare
-    clint.io.bus.b  <> DontCare
     
     when (io.dbus.req.valid && io.dbus.req.bits.wr){
         arbiter.io.dbus.req <> io.dbus.req
     }
-    io.toMem.aw <> arbiter.io.out.aw
-    io.toMem.w  <> arbiter.io.out.w
-    io.toMem.b  <> arbiter.io.out.b
 
     // TODO： 使用FIFO去记录事务
-    val read_sel_rtc = Wire(Bool())
-    val read_sel_mem = Wire(Bool())
-    read_sel_rtc := arbiter.io.out.ar.bits.addr < XBarConfig.RTC_H && arbiter.io.out.ar.bits.addr >= XBarConfig.RTC_L
-    read_sel_mem := !read_sel_rtc
+    val read_sel_clint  = Wire(Bool())
+    val read_sel_mem    = Wire(Bool())
+    val write_sel_clint = Wire(Bool())
+    val write_sel_mem   = Wire(Bool())
+    read_sel_clint := arbiter.io.out.ar.bits.addr < XBarConfig.RTC_H && arbiter.io.out.ar.bits.addr >= XBarConfig.RTC_L
+    read_sel_mem := !read_sel_clint
+    write_sel_clint := arbiter.io.out.aw.bits.addr < XBarConfig.RTC_H && arbiter.io.out.aw.bits.addr >= XBarConfig.RTC_L
+    write_sel_mem := !write_sel_clint
 
 
+    // read transaction
     io.toMem.ar.valid := arbiter.io.out.ar.valid & read_sel_mem
     io.toMem.ar.bits  := arbiter.io.out.ar.bits
-    clint.io.bus.ar.valid := arbiter.io.out.ar.valid & read_sel_rtc
+    clint.io.bus.ar.valid := arbiter.io.out.ar.valid & read_sel_clint
     clint.io.bus.ar.bits := arbiter.io.out.ar.bits
     io.toMem.r.ready := arbiter.io.out.r.ready
     clint.io.bus.r.ready := arbiter.io.out.r.ready
 
-    // clint.io.bus.aw <> DontCare
-    // clint.io.bus.w  <> DontCare
-    // clint.io.bus.b  <> DontCare
-
+    // write transaction
+    io.toMem.aw.valid := arbiter.io.out.aw.valid & write_sel_mem
+    io.toMem.aw.bits := arbiter.io.out.aw.bits
+    clint.io.bus.aw.valid := arbiter.io.out.aw.valid & write_sel_clint
+    clint.io.bus.aw.bits := arbiter.io.out.aw.bits
+    io.toMem.w.valid := arbiter.io.out.w.valid & write_sel_mem
+    io.toMem.w.bits := arbiter.io.out.w.bits
+    clint.io.bus.w.valid := arbiter.io.out.w.valid & write_sel_clint
+    clint.io.bus.w.bits := arbiter.io.out.w.bits
+    io.toMem.b.ready := arbiter.io.out.b.ready
+    clint.io.bus.b.ready := arbiter.io.out.b.ready
 
     arbiter.io.out.ar.ready := Mux(read_sel_mem, io.toMem.ar.ready, clint.io.bus.ar.ready)
     arbiter.io.out.r.valid := io.toMem.r.valid || clint.io.bus.r.valid
     arbiter.io.out.r.bits := PriorityMux(Seq(
         io.toMem.r.valid      -> io.toMem.r.bits,
         clint.io.bus.r.valid  -> clint.io.bus.r.bits
+    ))
+
+    arbiter.io.out.aw.ready := Mux(write_sel_mem, io.toMem.aw.ready, clint.io.bus.aw.ready)
+    arbiter.io.out.w .ready := Mux(write_sel_mem, io.toMem.w.ready, clint.io.bus.w.ready)
+    arbiter.io.out.b.valid := io.toMem.b.valid || clint.io.bus.b.valid
+    arbiter.io.out.b.bits := PriorityMux(Seq(
+        io.toMem.b.valid      -> io.toMem.b.bits,
+        clint.io.bus.b.valid  -> clint.io.bus.b.bits
     ))
 
 }

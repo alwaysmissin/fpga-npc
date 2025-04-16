@@ -4064,56 +4064,92 @@ module Arbiter(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/per
       : _rChannelDBusQueue_deq_q_io_enq_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/Arbiter.scala:22:7, :48:53, :68:30, src/main/scala/chisel3/util/Decoupled.scala:362:21]
 endmodule
 
-import "DPI-C" function void rtc_read(	// @[src/main/scala/chisel3/util/circt/DPI.scala:56:6]
-  input  int raddr,
-  output int rdata
-);
-
-
 module CLINT(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
   input         clock,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
                 reset,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
-                io_bus_arvalid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
+                io_bus_awvalid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
+  input  [31:0] io_bus_awaddr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
+  input         io_bus_wvalid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
+  input  [31:0] io_bus_wdata,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
+  output        io_bus_bvalid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
+  input         io_bus_arvalid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
   input  [31:0] io_bus_araddr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
   output        io_bus_rvalid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
   output [31:0] io_bus_rdata	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:13:16]
 );
 
-  logic [31:0] _rtc_read_0;	// @[src/main/scala/chisel3/util/circt/DPI.scala:56:6]
-  reg          valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:30:24]
-  reg   [31:0] _GEN;	// @[src/main/scala/chisel3/util/circt/DPI.scala:56:6]
+  reg  [31:0] msip;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:16:23]
+  reg  [63:0] mtimecmp;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:17:27]
+  reg  [63:0] mtime;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:18:24]
+  reg  [31:0] rdata;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:36:24]
+  reg         io_bus_rvalid_REG;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:68:30]
+  reg         io_bus_bvalid_REG;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:69:30]
+  wire [63:0] _mtime_T = mtime + 64'h1;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:18:24, :28:20]
+  wire        _GEN = io_bus_awvalid & io_bus_wvalid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:47:26]
+  wire        _GEN_0 = io_bus_awaddr[15:0] == 16'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:37:16, :45:36, :48:23]
+  wire        _GEN_1 = io_bus_awaddr[15:0] == 16'h4000;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:45:36, :48:23]
+  wire        _GEN_2 = io_bus_awaddr[15:0] == 16'h4004;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:45:36, :48:23]
   always @(posedge clock) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
-    if (io_bus_arvalid) begin	// @[src/main/scala/chisel3/util/circt/DPI.scala:56:6]
-      rtc_read(io_bus_araddr, _rtc_read_0);	// @[src/main/scala/chisel3/util/circt/DPI.scala:56:6]
-      _GEN <= _rtc_read_0;	// @[src/main/scala/chisel3/util/circt/DPI.scala:56:6]
+    if (reset) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
+      msip <= 32'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:16:23]
+      mtimecmp <= 64'hFFFFFFFFFFFFFFFF;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:17:27]
+      mtime <= 64'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:18:24]
     end
-    if (reset)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
-      valid <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:30:24]
-    else	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
-      valid <= io_bus_arvalid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:30:24]
+    else begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
+      if (_GEN & _GEN_0)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:16:23, :47:{26,43}, :48:23, :50:22]
+        msip <= io_bus_wdata;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:16:23]
+      if (~_GEN | _GEN_0) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:17:27, :47:{26,43}, :48:23]
+      end
+      else if (_GEN_1)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:48:23]
+        mtimecmp <= {mtimecmp[63:32], io_bus_wdata};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:17:27, :39:41, :53:32]
+      else if (_GEN_2)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:48:23]
+        mtimecmp <= {io_bus_wdata, mtimecmp[31:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:17:27, :38:41, :56:32]
+      mtime <=
+        ~_GEN | _GEN_0 | _GEN_1 | _GEN_2
+          ? _mtime_T
+          : io_bus_awaddr[15:0] == 16'hBFF8
+              ? {mtime[63:32], io_bus_wdata}
+              : io_bus_awaddr[15:0] == 16'hBFFC
+                  ? {io_bus_wdata, mtime[31:0]}
+                  : _mtime_T;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:17:27, :18:24, :28:{11,20}, :40:38, :41:38, :45:36, :47:{26,43}, :48:23, :59:{23,29}, :62:{23,29}]
+    end
+    rdata <=
+      (io_bus_araddr[15:0] == 16'h0 ? msip : 32'h0)
+      | (io_bus_araddr[15:0] == 16'h4000 ? mtimecmp[31:0] : 32'h0)
+      | (io_bus_araddr[15:0] == 16'h4004 ? mtimecmp[63:32] : 32'h0)
+      | (io_bus_araddr[15:0] == 16'hBFF8 ? mtime[31:0] : 32'h0)
+      | (io_bus_araddr[15:0] == 16'hBFFC ? mtime[63:32] : 32'h0);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:16:23, :17:27, :18:24, :35:36, :36:24, :37:16, :38:{16,41}, :39:{16,41}, :40:{16,38}, :41:{16,38}, src/main/scala/chisel3/util/Mux.scala:30:73]
+    io_bus_rvalid_REG <= io_bus_arvalid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:68:30]
+    io_bus_bvalid_REG <= io_bus_awvalid & io_bus_wvalid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:69:{30,46}]
   end // always @(posedge)
   `ifdef ENABLE_INITIAL_REG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
     `ifdef FIRRTL_BEFORE_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
       `FIRRTL_BEFORE_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
     `endif // FIRRTL_BEFORE_INITIAL
-    logic [31:0] _RANDOM[0:2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
+    logic [31:0] _RANDOM[0:6];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
     initial begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
       `ifdef INIT_RANDOM_PROLOG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
         `INIT_RANDOM_PROLOG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
       `endif // INIT_RANDOM_PROLOG_
       `ifdef RANDOMIZE_REG_INIT	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
-        for (logic [1:0] i = 2'h0; i < 2'h3; i += 2'h1) begin
+        for (logic [2:0] i = 3'h0; i < 3'h7; i += 3'h1) begin
           _RANDOM[i] = `RANDOM;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
         end	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
-        valid = _RANDOM[2'h2][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :30:24]
+        msip = _RANDOM[3'h0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :16:23]
+        mtimecmp = {_RANDOM[3'h1], _RANDOM[3'h2]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :17:27]
+        mtime = {_RANDOM[3'h3], _RANDOM[3'h4]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :18:24]
+        rdata = _RANDOM[3'h5];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :36:24]
+        io_bus_rvalid_REG = _RANDOM[3'h6][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :68:30]
+        io_bus_bvalid_REG = _RANDOM[3'h6][1];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :68:30, :69:30]
       `endif // RANDOMIZE_REG_INIT
     end // initial
     `ifdef FIRRTL_AFTER_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
       `FIRRTL_AFTER_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  assign io_bus_rvalid = valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :30:24]
-  assign io_bus_rdata = _GEN;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, src/main/scala/chisel3/util/circt/DPI.scala:56:6]
+  assign io_bus_bvalid = io_bus_bvalid_REG;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :69:30]
+  assign io_bus_rvalid = io_bus_rvalid_REG;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :68:30]
+  assign io_bus_rdata = rdata;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/CLINT.scala:11:7, :36:24]
 endmodule
 
 module XBar(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:17:7]
@@ -4160,13 +4196,21 @@ module XBar(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/periph
   input  [3:0]  io_toMem_rid	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:18:16]
 );
 
+  wire        _clint_io_bus_bvalid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23]
   wire        _clint_io_bus_rvalid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23]
   wire [31:0] _clint_io_bus_rdata;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23]
+  wire        _arbiter_io_out_awvalid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
+  wire [31:0] _arbiter_io_out_awaddr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
+  wire        _arbiter_io_out_wvalid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
+  wire [31:0] _arbiter_io_out_wdata;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
   wire        _arbiter_io_out_arvalid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
   wire [31:0] _arbiter_io_out_araddr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
-  wire        read_sel_rtc =
+  wire        read_sel_clint =
     _arbiter_io_out_araddr < 32'h2004FFFF
-    & _arbiter_io_out_araddr > 32'h2003FFFF;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25, :53:{49,68,99}]
+    & _arbiter_io_out_araddr > 32'h2003FFFF;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25, :49:{51,70,101}]
+  wire        write_sel_clint =
+    _arbiter_io_out_awaddr < 32'h2004FFFF
+    & _arbiter_io_out_awaddr > 32'h2003FFFF;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25, :51:{52,71,102}]
   Arbiter arbiter (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
     .clock                    (clock),
     .reset                    (reset),
@@ -4189,24 +4233,24 @@ module XBar(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/periph
     .io_dbus_rResp_bits_rdata (io_dbus_rResp_bits_rdata),
     .io_dbus_wResp_ready      (io_dbus_wResp_ready),
     .io_dbus_wResp_valid      (io_dbus_wResp_valid),
-    .io_out_awready          (io_toMem_awready),
-    .io_out_awvalid          (io_toMem_awvalid),
-    .io_out_awaddr      (io_toMem_awaddr),
+    .io_out_awready          (write_sel_clint | io_toMem_awready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:51:71, :82:35]
+    .io_out_awvalid          (_arbiter_io_out_awvalid),
+    .io_out_awaddr      (_arbiter_io_out_awaddr),
     .io_out_awsize      (io_toMem_awsize),
-    .io_out_wready           (io_toMem_wready),
-    .io_out_wvalid           (io_toMem_wvalid),
-    .io_out_wdata       (io_toMem_wdata),
+    .io_out_wready           (write_sel_clint | io_toMem_wready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:51:71, :83:35]
+    .io_out_wvalid           (_arbiter_io_out_wvalid),
+    .io_out_wdata       (_arbiter_io_out_wdata),
     .io_out_wstrb       (io_toMem_wstrb),
     .io_out_bready           (io_toMem_bready),
-    .io_out_bvalid           (io_toMem_bvalid),
-    .io_out_arready          (read_sel_rtc | io_toMem_arready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:53:68, :69:35]
+    .io_out_bvalid           (io_toMem_bvalid | _clint_io_bus_bvalid),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23, :84:48]
+    .io_out_arready          (read_sel_clint | io_toMem_arready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:49:70, :75:35]
     .io_out_arvalid          (_arbiter_io_out_arvalid),
     .io_out_araddr      (_arbiter_io_out_araddr),
     .io_out_arid        (io_toMem_arid),
     .io_out_arlen       (io_toMem_arlen),
     .io_out_arsize      (io_toMem_arsize),
     .io_out_rready           (io_toMem_rready),
-    .io_out_rvalid           (io_toMem_rvalid | _clint_io_bus_rvalid),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23, :70:48]
+    .io_out_rvalid           (io_toMem_rvalid | _clint_io_bus_rvalid),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23, :76:48]
     .io_out_rdata
       (io_toMem_rvalid ? io_toMem_rdata : _clint_io_bus_rdata),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23, src/main/scala/chisel3/util/Mux.scala:50:70]
     .io_out_rid         (io_toMem_rvalid ? io_toMem_rid : 4'h1)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23, src/main/scala/chisel3/util/Mux.scala:50:70]
@@ -4214,12 +4258,21 @@ module XBar(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/periph
   CLINT clint (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23]
     .clock               (clock),
     .reset               (reset),
-    .io_bus_arvalid     (_arbiter_io_out_arvalid & read_sel_rtc),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25, :53:68, :59:54]
+    .io_bus_awvalid     (_arbiter_io_out_awvalid & write_sel_clint),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25, :51:71, :66:54]
+    .io_bus_awaddr (_arbiter_io_out_awaddr),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
+    .io_bus_wvalid      (_arbiter_io_out_wvalid & write_sel_clint),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25, :51:71, :70:52]
+    .io_bus_wdata  (_arbiter_io_out_wdata),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
+    .io_bus_bvalid      (_clint_io_bus_bvalid),
+    .io_bus_arvalid     (_arbiter_io_out_arvalid & read_sel_clint),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25, :49:70, :58:54]
     .io_bus_araddr (_arbiter_io_out_araddr),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:33:25]
     .io_bus_rvalid      (_clint_io_bus_rvalid),
     .io_bus_rdata  (_clint_io_bus_rdata)
   );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:38:23]
-  assign io_toMem_arvalid = _arbiter_io_out_arvalid & ~read_sel_rtc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:17:7, :33:25, :53:68, :54:21, :57:50]
+  assign io_toMem_awvalid = _arbiter_io_out_awvalid & ~write_sel_clint;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:17:7, :33:25, :51:71, :52:22, :64:50]
+  assign io_toMem_awaddr = _arbiter_io_out_awaddr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:17:7, :33:25]
+  assign io_toMem_wvalid = _arbiter_io_out_wvalid & ~write_sel_clint;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:17:7, :33:25, :51:71, :52:22, :68:48]
+  assign io_toMem_wdata = _arbiter_io_out_wdata;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:17:7, :33:25]
+  assign io_toMem_arvalid = _arbiter_io_out_arvalid & ~read_sel_clint;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:17:7, :33:25, :49:70, :50:21, :56:50]
   assign io_toMem_araddr = _arbiter_io_out_araddr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/XBar.scala:17:7, :33:25]
 endmodule
 

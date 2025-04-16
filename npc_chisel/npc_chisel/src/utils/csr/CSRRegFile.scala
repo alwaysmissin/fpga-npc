@@ -7,6 +7,8 @@ import utils.csr.CSRRegAddr._
 import upickle.default
 import utils.id.ControlLogic
 import utils.ExceptionCodes
+import utils.nutshellUtils.GenMask
+import utils.nutshellUtils.ZeroExt
 
 class CSRReadPort(config: RVConfig) extends Bundle{
     val raddr = Input(UInt(config.csr_width.W))
@@ -31,6 +33,34 @@ class CSRCMD(config: RVConfig) extends Bundle{
 class FlushCMD(config: RVConfig) extends Bundle{
     // val flush = Output(Bool())
     val target    = Output(UInt(config.xlen.W))
+}
+
+object PRIV extends ChiselEnum{
+    val User, Supervisor, Machine = Value
+}
+
+class MstatusStruct extends Bundle {
+    val sd   = UInt(1.W)
+    val pad0 = UInt(8.W)
+    val tsr  = UInt(1.W)
+    val tw   = UInt(1.W)
+    val tvm  = UInt(1.W)
+    val mxr  = UInt(1.W)
+    val sum  = UInt(1.W)
+    val mprv = UInt(1.W)
+    val xs   = UInt(2.W)
+    val fs   = UInt(2.W)
+    val mpp  = UInt(2.W)
+    val vs   = UInt(2.W)
+    val spp  = UInt(1.W)
+    val mpie = UInt(1.W)
+    val ube  = UInt(1.W)
+    val spie = UInt(1.W)
+    val pad1 = UInt(1.W)
+    val mie  = UInt(1.W)
+    val pad2 = UInt(1.W)
+    val sie  = UInt(1.W)
+    val pad3 = UInt(1.W)
 }
 
 class CSRRegFile(config: RVConfig) extends Module {
@@ -80,6 +110,17 @@ class CSRRegFile(config: RVConfig) extends Module {
         mepc   := io.writePort.wdata
         mstatus := mstatus.bitSet(7.U, mstatus(3))
     }
+
+    val mstatusMask = (~ZeroExt((
+        GenMask(31) |
+        GenMask(30, 23) |
+        GenMask(16, 15) |
+        GenMask(6) |
+        GenMask(4) |
+        GenMask(2) |
+        GenMask(0)
+    ), 32)).asUInt
+
     when(io.writePort.wen){
         switch(io.writePort.waddr){
             is(MSTATUS){
