@@ -13,12 +13,11 @@ import verification.trace.TraceSignals
 import verification.DebugSignals
 import utils.csr.CSRWritePort
 import utils.csr.CSRCMD
-import utils.csr.CSRRegAddr.MCAUSE
+import utils.csr.CsrConsts
 import chisel3.util.Cat
 import utils.id.ControlSignals.FuType
-import utils.csr.funct12
 
-class WB(config: RVConfig) extends Module {
+class WB(config: RVConfig) extends Module with CsrConsts{
     val io = IO(new Bundle{
         val fromMEM = Flipped(Irrevocable(new MemWbBus(config)))
         val writePort = Flipped(new RegWritePort(config))
@@ -46,7 +45,7 @@ class WB(config: RVConfig) extends Module {
 
     // 在出现异常时候, 将pc通过写端口的方式传递给CSRRegFile
     io.csrWritePort.wen := io.fromMEM.bits.csrWrite
-    io.csrWritePort.waddr := Mux(io.fromMEM.bits.hasException, MCAUSE, io.fromMEM.bits.funct12)
+    io.csrWritePort.waddr := Mux(io.fromMEM.bits.hasException, MCAUSE.U, io.fromMEM.bits.funct12)
     io.csrWritePort.wdata := Mux(io.fromMEM.bits.hasException, io.fromMEM.bits.pc, io.fromMEM.bits.csrWriteData)
     io.csrCmd.hasExcep := io.fromMEM.bits.hasException && !io.fromMEM.bits.nop
     io.csrCmd.excepCode := io.fromMEM.bits.exceptionCode

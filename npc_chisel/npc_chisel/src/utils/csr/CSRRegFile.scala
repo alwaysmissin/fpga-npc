@@ -3,12 +3,12 @@ package utils.csr
 import chisel3._
 import utils.RVConfig
 import chisel3.util._
-import utils.csr.CSRRegAddr._
 import upickle.default
 import utils.id.ControlLogic
 import utils.ExceptionCodes
 import utils.nutshellUtils.GenMask
 import utils.nutshellUtils.ZeroExt
+import utils.nutshellUtils.MaskedRegMap
 
 class CSRReadPort(config: RVConfig) extends Bundle{
     val raddr = Input(UInt(config.csr_width.W))
@@ -36,7 +36,7 @@ class FlushCMD(config: RVConfig) extends Bundle{
 }
 
 object PRIV extends ChiselEnum{
-    val User, Supervisor, Machine = Value
+    val User, Supervisor, Reserved, Machine = Value
 }
 
 class MstatusStruct extends Bundle {
@@ -63,7 +63,7 @@ class MstatusStruct extends Bundle {
     val pad3 = UInt(1.W)
 }
 
-class CSRRegFile(config: RVConfig) extends Module {
+class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
     val io = IO(new Bundle{
         val readPort = new CSRReadPort(config)
         val writePort = new CSRWritePort(config)
@@ -71,13 +71,14 @@ class CSRRegFile(config: RVConfig) extends Module {
         // val excpCMD = new FlushCMD(config)
         val excpCMD = Irrevocable(new FlushCMD(config))
     })
+    val privilege = RegInit(PRIV.Machine)
 
     val mstatus = RegInit(0x00001800.U(config.xlen.W))
     val mepc    = RegInit(0.U(config.xlen.W))
     val mcause  = RegInit(0.U(config.xlen.W))
     val mtvec   = RegInit(0.U(config.xlen.W))
-    val mvendorid = 0x79737978.U(config.xlen.W)
-    val marchid = 0x23060051.U(config.xlen.W)
+    val mvendorid = RegInit(0x79737978.U(config.xlen.W))
+    val marchid = RegInit(0x23060051.U(config.xlen.W))
     // dontTouch(mvendorid)
     // dontTouch(marchid)
 
@@ -102,13 +103,25 @@ class CSRRegFile(config: RVConfig) extends Module {
     
     // set 7th bit of mstatus when mret
     when (io.cmd.mret){
-        mstatus := mstatus | "h00000080".U
+        val mstatusOld = WireDefault(mstatus.asTypeOf(new MstatusStruct))
+        val mstatusNew = WireDefault(mstatus.asTypeOf(new MstatusStruct))
+        mstatusNew.mie := mstatusOld.mpie
+        mstatusNew.mpie := true.B
+        privilege := mstatusOld.mpp.asTypeOf(privilege)
+        mstatusNew.mpp := 0.U
+        mstatus := mstatusNew.asUInt
     }
     
     when(io.cmd.hasExcep){
         mcause := Cat(0.U((config.xlen - ExceptionCodes.getWidth).W), io.cmd.excepCode.asUInt)
         mepc   := io.writePort.wdata
-        mstatus := mstatus.bitSet(7.U, mstatus(3))
+        val mstatusOld = WireDefault(mstatus.asTypeOf(new MstatusStruct))
+        val mstatusNew = WireDefault(mstatus.asTypeOf(new MstatusStruct))
+        mstatusNew.mpie := mstatusOld.mie
+        mstatusNew.mie := false.B
+        mstatusNew.mpp := privilege.asTypeOf(mstatusNew.mpp)
+        privilege := PRIV.Machine
+        mstatus := mstatusNew.asUInt
     }
 
     val mstatusMask = (~ZeroExt((
@@ -121,87 +134,18 @@ class CSRRegFile(config: RVConfig) extends Module {
         GenMask(0)
     ), 32)).asUInt
 
-    when(io.writePort.wen){
-        switch(io.writePort.waddr){
-            is(MSTATUS){
-                mstatus := io.writePort.wdata & "h00207888".U | "h00001800".U
-            }
-            is(MEPC){
-                mepc    := io.writePort.wdata
-            }
-            is(MCAUSE){
-                mcause  := io.writePort.wdata
-            }
-            is(MTVEC){
-                mtvec   := io.writePort.wdata
-            }
-            // is(MVENDORID){
-            //     mvendorid := io.writePort.wdata
-            // }
-            // is(MARCHID){
-            //     marchid := io.writePort.wdata
-            // }
-        }
-    }
-    // when(io.writePort.wen){
-    //     switch(io.cmd.funct12){
-    //         is(funct12.ECALL){
-    //             mcause := 0x0000000b.U
-    //             mepc := io.writePort.wdata
-    //         }
-    //         is(funct12.MRET){
-    //             mstatus := mstatus | "h00000080".U
-    //         }
-    //     }
-    //     switch(io.writePort.waddr){
-    //         is(MSTATUS){
-    //             mstatus := io.writePort.wdata & "h00207888".U | "h00001800".U
-    //         }
-    //         is(MEPC){
-    //             mepc    := io.writePort.wdata
-    //         }
-    //         is(MCAUSE){
-    //             mcause  := io.writePort.wdata
-    //         }
-    //         is(MTVEC){
-    //             mtvec   := io.writePort.wdata
-    //         }
-    //         is(MVENDORID){
-    //             mvendorid := io.writePort.wdata
-    //         }
-    //         is(MARCHID){
-    //             marchid := io.writePort.wdata
-    //         }
-    //     }
-    // }
-    // io.readPort.rdata := 0.U
-    // switch(io.readPort.raddr){
-    //     is(MSTATUS){
-    //         io.readPort.rdata := mstatus
-    //     }
-    //     is(MEPC){
-    //         io.readPort.rdata := mepc
-    //     }
-    //     is(MCAUSE){
-    //         io.readPort.rdata := mcause
-    //     }
-    //     is(MTVEC){
-    //         io.readPort.rdata := mtvec
-    //     }
-    //     is(MVENDORID){
-    //         io.readPort.rdata := mvendorid
-    //     }
-    //     is(MARCHID){
-    //         io.readPort.rdata := marchid
-    //     }
-    // }
-    io.readPort.rdata := Mux1H(Seq(
-        (io.readPort.raddr === MSTATUS) -> mstatus,
-        (io.readPort.raddr === MEPC)    -> mepc,
-        (io.readPort.raddr === MCAUSE)  -> mcause,
-        (io.readPort.raddr === MTVEC)   -> mtvec,
-        (io.readPort.raddr === MVENDORID) -> mvendorid,
-        (io.readPort.raddr === MARCHID) -> marchid
-    ))
-  
+    val mapping = Map(
+        MaskedRegMap(MSTATUS, mstatus, mstatusMask),
+        MaskedRegMap(MEPC, mepc),
+        MaskedRegMap(MCAUSE, mcause),
+        MaskedRegMap(MTVEC, mtvec),
+        MaskedRegMap(MVENDORID, mvendorid, MaskedRegMap.UnwritableMask),
+        MaskedRegMap(MARCHID, marchid, MaskedRegMap.UnwritableMask)
+    )
+
+    val rdata = Wire(UInt(config.xlen.W))
+    io.readPort.rdata := rdata
+    MaskedRegMap.generate(mapping, io.readPort.raddr, rdata, 
+                io.writePort.waddr, io.writePort.wen, io.writePort.wdata)
+
 }

@@ -18,18 +18,17 @@ import utils.id.ControlSignals.OpBSrc
 import chisel3.util.circt.dpi.RawClockedVoidFunctionCall
 import chisel3.util.Fill
 import utils.csr.CSRReadPort
-import utils.csr.CSRRegAddr._
 import utils.id.Instructions._
 import chisel3.util.RegEnable
 import utils.ExceptionCodes
 import chisel3.util.Cat
 import chisel3.util.PriorityMux
-import utils.csr
+import utils.csr.CsrConsts
 import chisel3.util.Irrevocable
 import utils.id.ControlSignals.FuType
 import utils.id.ControlSignals.BRUOp
 
-class ID(config: RVConfig) extends Module{
+class ID(config: RVConfig) extends Module with CsrConsts{
     val io = IO(new Bundle{
         val fromIF = Flipped(Irrevocable(new IfIdBus(config)))
         val toEXE = Irrevocable(new IdExeBus(config))
@@ -88,14 +87,14 @@ class ID(config: RVConfig) extends Module{
     // io.csrReadPort.raddr := Mux(inst === MRET, MEPC,
     //                         Mux(inst === ECALL, MTVEC, inst(31, 20)))
     val funct12 = inst(31, 20)
-    val isECALL = inst(6, 0) === 0x73.U && funct12 === csr.funct12.ECALL
-    val isMRET  = inst(6, 0) === 0x73.U && funct12 === csr.funct12.MRET
+    val isECALL = inst(6, 0) === 0x73.U && funct12 === ECALL
+    val isMRET  = inst(6, 0) === 0x73.U && funct12 === MRET
     // io.csrReadPort.raddr := PriorityMux(Seq(
     //     (isMRET) -> MEPC,
     //     // (funct12 === csr.funct12.ECALL) -> MTVEC,
     //     (true.B) -> inst(31, 20)
     // ))
-    io.csrReadPort.raddr := Mux(isMRET, MEPC, inst(31, 20))
+    io.csrReadPort.raddr := Mux(isMRET, MEPC.U, inst(31, 20))
     io.toEXE.bits.csrData := io.csrReadPort.rdata
     io.toEXE.bits.funct12 := funct12
     io.toEXE.bits.mret    := isMRET
