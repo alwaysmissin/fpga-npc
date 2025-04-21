@@ -36,6 +36,8 @@ import utils.exe.Multiplier
 import utils.id.ControlSignals.MULOp
 import utils.id.ControlSignals.DIVOp
 import utils.exe.Divider
+import utils.nutshellUtils.ZeroExt
+import utils.csr._
 
 class EXE(config: RVConfig) extends Module{
     val io = IO(new Bundle{
@@ -44,6 +46,7 @@ class EXE(config: RVConfig) extends Module{
         val bypass = Flipped(new BypassFrom(config))
         val regWdata = Output(UInt(config.xlen.W))
         val jumpBus = Irrevocable(new JumpBus(config))
+        val csrWritePort = Flipped(new CSRWritePort(config))
         val flush = Output(Bool())
     })
     val decodeBundle = io.fromID.bits.decodeBundle
@@ -62,6 +65,7 @@ class EXE(config: RVConfig) extends Module{
     val opA = Mux1H(Seq(
         (opASrc === OpASrc.RS1 ) -> io.fromID.bits.rs1Data,
         (opASrc === OpASrc.PC  ) -> io.fromID.bits.pc,
+        (opASrc === OpASrc.RS1ADDR) -> ZeroExt(io.fromID.bits.rs1, config.xlen),
         (opASrc === OpASrc.ZERO) -> 0.U
     ))
     val opB = Mux1H(Seq(
@@ -73,7 +77,7 @@ class EXE(config: RVConfig) extends Module{
     val alu = Module(new ALU(config))
     alu.io.op <> decodeBundle.aluOp
     alu.io.opA <> opA
-    alu.io.opB := opB
+    alu.io.opB <> opB
     val aluRes = alu.io.res
     // ------------- ALU -------------
 
@@ -183,6 +187,10 @@ class EXE(config: RVConfig) extends Module{
     csru.io.opA <> opA
     csru.io.opB <> opB
     val csrRes = csru.io.res
+
+    io.csrWritePort.wen := decodeBundle.csrWrite.asBool && !io.toMEM.bits.nop
+    io.csrWritePort.waddr := io.fromID.bits.funct12
+    io.csrWritePort.wdata := csrRes
     // ------------- CSRU -------------
 
     // bypass 
@@ -204,13 +212,13 @@ class EXE(config: RVConfig) extends Module{
     val controlSignals = io.toMEM.bits.controlSignals
     controlSignals.signExt      := decodeBundle.memSignExt
     controlSignals.regWrite     := decodeBundle.regWrite
-    controlSignals.csrWrite     := decodeBundle.csrWrite
+    // controlSignals.csrWrite     := decodeBundle.csrWrite
     controlSignals.regWriteData := io.regWdata
     controlSignals.memRawMask   := decodeBundle.memRead | decodeBundle.memWrite
     controlSignals.memRead      := decodeBundle.memRead.orR && !io.fromID.bits.nop
     controlSignals.memWrite     := decodeBundle.memWrite.orR && !io.fromID.bits.nop
     controlSignals.memWriteData := io.fromID.bits.rs2Data
-    controlSignals.csrWriteData := csrRes
+    // controlSignals.csrWriteData := csrRes
     controlSignals.fuTypeAMO    := decodeBundle.fuType === FuType.AMO
     controlSignals.amoOp        := decodeBundle.amoOp
     // pass the exception

@@ -21,7 +21,7 @@ class WB(config: RVConfig) extends Module with CsrConsts{
     val io = IO(new Bundle{
         val fromMEM = Flipped(Irrevocable(new MemWbBus(config)))
         val writePort = Flipped(new RegWritePort(config))
-        val csrWritePort = Flipped(new CSRWritePort(config))
+        // val csrWritePort = Flipped(new CSRWritePort(config))
         val csrCmd = Flipped(new CSRCMD(config))
         val bypass = Flipped(new BypassFrom(config))
         val regWdata = Output(UInt(config.xlen.W))
@@ -44,14 +44,14 @@ class WB(config: RVConfig) extends Module with CsrConsts{
     io.writePort.wdata := wdata
 
     // 在出现异常时候, 将pc通过写端口的方式传递给CSRRegFile
-    io.csrWritePort.wen := io.fromMEM.bits.csrWrite
-    io.csrWritePort.waddr := Mux(io.fromMEM.bits.hasException, MCAUSE.U, io.fromMEM.bits.funct12)
-    io.csrWritePort.wdata := Mux(io.fromMEM.bits.hasException, io.fromMEM.bits.pc, io.fromMEM.bits.csrWriteData)
+    // io.csrWritePort.wen := io.fromMEM.bits.csrWrite
+    // io.csrWritePort.waddr := Mux(io.fromMEM.bits.hasException, Mcause.U, io.fromMEM.bits.funct12)
+    // io.csrWritePort.wdata := Mux(io.fromMEM.bits.hasException, io.fromMEM.bits.pc, io.fromMEM.bits.csrWriteData)
     io.csrCmd.hasExcep := io.fromMEM.bits.hasException && !io.fromMEM.bits.nop
     io.csrCmd.excepCode := io.fromMEM.bits.exceptionCode
     io.csrCmd.mret := io.fromMEM.bits.mret
     // io.csrCmd.funct12 := io.fromMEM.bits.funct12
-    // io.csrCmd.pc := io.fromMEM.bits.pc
+    io.csrCmd.pc := io.fromMEM.bits.pc
 
     io.fromMEM.ready := true.B
 

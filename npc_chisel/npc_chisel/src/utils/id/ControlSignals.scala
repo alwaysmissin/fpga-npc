@@ -40,7 +40,7 @@ object ControlSignals {
     def ZERO = BitPat("b01")
     // program counter(pc)
     def PC   = BitPat("b10")
-    def ALUSrc1 = BitPat("b11")
+    def RS1ADDR = BitPat("b11")
     def X    = BitPat("b??")
     def WIDTH = X.getWidth
   }

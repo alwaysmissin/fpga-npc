@@ -18,6 +18,7 @@
 #include "../../include/common.h"
 #include "../../include/cpu/isa-csr-def.h"
 #include <difftest-def.h>
+#include <iostream>
 #include <new>
 
 #define NR_GPR MUXDEF(CONFIG_RVE, 16, 32)

@@ -9,7 +9,7 @@ import utils.bus.InterStage.PreIFIFBus
 import chisel3.util.circt.dpi.RawClockedVoidFunctionCall
 import utils.bus.SRAMLike._
 import utils.bus.InterStage.JumpBus
-import utils.csr.FlushCMD
+import utils.csr.RedirectCMD
 import utils.ExceptionCodes
 
 class IF(config: RVConfig) extends Module {
@@ -19,7 +19,7 @@ class IF(config: RVConfig) extends Module {
         val r = Flipped(Irrevocable(new SRAMLikeRResp(config)))
         // val fromPreIF = Flipped(Irrevocable(new PreIFIFBus(config)))
         val jumpBus = Flipped(Irrevocable(new JumpBus(config)))
-        val excepCMD = Flipped(Irrevocable(new FlushCMD(config)))
+        val excepCMD = Flipped(Irrevocable(new RedirectCMD(config)))
         val toID = Irrevocable(new IfIdBus(config))
         val flush = Input(Bool())
     })

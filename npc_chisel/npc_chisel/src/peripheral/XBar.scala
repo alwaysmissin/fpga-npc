@@ -8,6 +8,7 @@ import chisel3.util.Mux1H
 import chisel3.util.Irrevocable
 import utils.bus.SRAMLike._
 import chisel3.util.PriorityMux
+import utils.csr.InterruptSimple
 
 object XBarConfig {
     def RTC_L = "h2004_0000".U
@@ -29,6 +30,7 @@ class XBar(config: RVConfig) extends Module {
             val wResp = Irrevocable(new SRAMLikeWResp(config))
         }
         val toMem = AXI4(config)
+        val interrupt = Output(new InterruptSimple())
     })
     val arbiter = Module(new Arbiter(config, respCacheEnable = true))
     arbiter.io.ibus <> io.ibus
@@ -36,6 +38,9 @@ class XBar(config: RVConfig) extends Module {
     // arbiter.io.out <> io.toMem
 
     val clint = Module(new CLINT(config))
+    io.interrupt.tip <> clint.io.mtip
+    io.interrupt.sip <> clint.io.msip
+    io.interrupt.eip <> false.B
     
     when (io.dbus.req.valid && io.dbus.req.bits.wr){
         arbiter.io.dbus.req <> io.dbus.req

@@ -12,7 +12,6 @@ import utils.bypass.BypassTo
 import utils.bypass.DataFromOtherStage
 import chisel3.util.Mux1H
 import utils.bypass
-import utils.id.ControlSignals.OpASrc.ALUSrc1
 import utils.id.ControlSignals.OpASrc
 import utils.id.ControlSignals.OpBSrc
 import chisel3.util.circt.dpi.RawClockedVoidFunctionCall
@@ -82,6 +81,7 @@ class ID(config: RVConfig) extends Module with CsrConsts{
     val rs1DataFromReg = io.readPort1.rdata
     val rs2DataFromReg = io.readPort2.rdata
     io.toEXE.bits.rd <> rdAddr
+    io.toEXE.bits.rs1 <> rs1Addr
 
     // 读 csr 寄存器
     // io.csrReadPort.raddr := Mux(inst === MRET, MEPC,
@@ -94,7 +94,7 @@ class ID(config: RVConfig) extends Module with CsrConsts{
     //     // (funct12 === csr.funct12.ECALL) -> MTVEC,
     //     (true.B) -> inst(31, 20)
     // ))
-    io.csrReadPort.raddr := Mux(isMRET, MEPC.U, inst(31, 20))
+    io.csrReadPort.raddr := Mux(isMRET, Mepc.U, inst(31, 20))
     io.toEXE.bits.csrData := io.csrReadPort.rdata
     io.toEXE.bits.funct12 := funct12
     io.toEXE.bits.mret    := isMRET
@@ -111,7 +111,9 @@ class ID(config: RVConfig) extends Module with CsrConsts{
     // bypass
     io.bypassPort.rs1 <> rs1Addr
     io.bypassPort.rs2 <> rs2Addr
-    val newestDataGetable = io.bypassPort.newestDataGetable
+    val newestDataGetable = Mux(decodeBundle.aluSrc1 === OpASrc.RS1 || decodeBundle.aluSrc2 === OpBSrc.RS2,
+                                    io.bypassPort.newestDataGetable,
+                                    true.B)
     val bypassTypeA = io.bypassPort.bypassTypeA
     val bypassTypeB = io.bypassPort.bypassTypeB
     val rs1Data = Mux1H(Seq(

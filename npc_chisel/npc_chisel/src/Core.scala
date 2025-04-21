@@ -16,6 +16,7 @@ import utils.cache.ICacheConfig
 import utils.cache.ICache
 import chisel3.util.IrrevocableIO
 import utils.bus.SRAMLike._
+import utils.csr.InterruptSimple
 
 // case class RVConfig(
 //     xlen: Int,
@@ -35,6 +36,7 @@ class Core(config: RVConfig) extends Module{
             val rResp = Flipped(Irrevocable(new SRAMLikeRResp(config)))
             val wResp = Flipped(Irrevocable(new SRAMLikeWResp(config)))
         }
+        val interrupt = Input(new InterruptSimple())
         val debug: DebugSignals = if(config.debug_enable) new DebugSignals(config) else null
         val diff: DiffSignals = if(config.diff_enable) new DiffSignals(config) else null
         val trace: TraceSignals = if(config.trace_enable) new TraceSignals(config) else null
@@ -73,6 +75,7 @@ class Core(config: RVConfig) extends Module{
     val csrRegs = Module(new CSRRegFile(config))
     idStage.io.csrReadPort <> csrRegs.io.readPort
     ifStage.io.excepCMD <> csrRegs.io.excpCMD
+    csrRegs.io.interrupt <> io.interrupt
 
     // 当在执行级的 BRU 检测到分支错误, 执行级处理 CSR 指令, 写回级提交异常  --->  冲刷流水线
     val flush = exeStage.io.flush || csrRegs.io.excpCMD.valid
@@ -98,8 +101,11 @@ class Core(config: RVConfig) extends Module{
     // io.dbus.b <> memStage.io.b
 
     wbStage.io.writePort <> regFiles.io.writePort
-    wbStage.io.csrWritePort <> csrRegs.io.writePort
+    exeStage.io.csrWritePort <> csrRegs.io.writePort
     wbStage.io.csrCmd <> csrRegs.io.cmd
+
+
+
     if (config.debug_enable){
         wbStage.io.debug <> io.debug
     }

@@ -9,6 +9,7 @@ import utils.ExceptionCodes
 import utils.nutshellUtils.GenMask
 import utils.nutshellUtils.ZeroExt
 import utils.nutshellUtils.MaskedRegMap
+import chisel3.util.circt.dpi.RawClockedVoidFunctionCall
 
 class CSRReadPort(config: RVConfig) extends Bundle{
     val raddr = Input(UInt(config.csr_width.W))
@@ -27,10 +28,10 @@ class CSRCMD(config: RVConfig) extends Bundle{
     val hasExcep = Input(Bool())
     val excepCode = Input(ExceptionCodes())
     val mret = Input(Bool())
-    // val pc      = Input(UInt(config.xlen.W))
+    val pc      = Input(UInt(config.xlen.W))
 }
 
-class FlushCMD(config: RVConfig) extends Bundle{
+class RedirectCMD(config: RVConfig) extends Bundle{
     // val flush = Output(Bool())
     val target    = Output(UInt(config.xlen.W))
 }
@@ -63,22 +64,67 @@ class MstatusStruct extends Bundle {
     val pad3 = UInt(1.W)
 }
 
+class Interrupt extends Bundle {
+    val eip = new Bundle {
+        val m = Bool()
+        val pad0 = Bool()
+        val s = Bool()
+        val pad1 = Bool()
+    }
+    val tip = new Bundle {
+        val m = Bool()
+        val pad0 = Bool()
+        val s = Bool()
+        val pad1 = Bool()
+    }
+    val sip = new Bundle {
+        val m = Bool()
+        val pad0 = Bool()
+        val s = Bool()
+        val pad1 = Bool()
+    }
+}
+
+class InterruptSimple extends Bundle {
+    val eip = Bool()
+    val tip = Bool()
+    val sip = Bool()
+}
+
 class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
     val io = IO(new Bundle{
         val readPort = new CSRReadPort(config)
         val writePort = new CSRWritePort(config)
         val cmd = new CSRCMD(config)
         // val excpCMD = new FlushCMD(config)
-        val excpCMD = Irrevocable(new FlushCMD(config))
+        val excpCMD = Irrevocable(new RedirectCMD(config))
+        val interrupt = Input(new InterruptSimple())
     })
     val privilege = RegInit(PRIV.Machine)
 
-    val mstatus = RegInit(0x00001800.U(config.xlen.W))
-    val mepc    = RegInit(0.U(config.xlen.W))
-    val mcause  = RegInit(0.U(config.xlen.W))
-    val mtvec   = RegInit(0.U(config.xlen.W))
+    val mstatus   = RegInit(0x00001800.U(config.xlen.W))
+    val mstatusStruct = mstatus.asTypeOf(new MstatusStruct)
+    val mie       = RegInit(0.U(config.xlen.W))
+    val mipReg    = RegInit(0.U(config.xlen.W))
+    val mtvec     = RegInit(0.U(config.xlen.W))
+    val menvcfg   = RegInit(0.U(config.xlen.W))
+    val mscratch  = RegInit(0.U(config.xlen.W))
+    val mepc      = RegInit(0.U(config.xlen.W))
+    val mcause    = RegInit(0.U(config.xlen.W))
+    val mtval     = RegInit(0.U(config.xlen.W))
+    val pmpcfg0   = RegInit(0.U(config.xlen.W))
+    val pmpaddr0  = RegInit(0.U(config.xlen.W))
     val mvendorid = RegInit(0x79737978.U(config.xlen.W))
-    val marchid = RegInit(0x23060051.U(config.xlen.W))
+    val marchid   = RegInit(0x23060051.U(config.xlen.W))
+    val mimpid    = RegInit(0.U(config.xlen.W))
+    val mhartid   = RegInit(0.U(config.xlen.W))
+
+    val mipWire = WireDefault(0.U.asTypeOf(new Interrupt))
+    mipWire.sip.m := io.interrupt.sip
+    mipWire.tip.m := io.interrupt.tip
+    mipWire.eip.m := io.interrupt.eip
+    val mip = (mipWire.asUInt | mipReg).asTypeOf(new Interrupt)
+    dontTouch(mip)
     // dontTouch(mvendorid)
     // dontTouch(marchid)
 
@@ -89,19 +135,10 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
     //     io.cmd.mret         -> mepc,
     // ))
 
-    val enq = Wire(Irrevocable(Bool()))
-    val flushQ = Queue.irrevocable(enq, 1, flow = true)
-    enq.valid := io.cmd.hasExcep || io.cmd.mret
-    val selMTvec = io.cmd.hasExcep
-    enq.bits := selMTvec
-    flushQ.ready := io.excpCMD.ready
-    io.excpCMD.bits.target := Mux(flushQ.bits, mtvec, mepc)
-    io.excpCMD.valid := flushQ.valid
 
-    // 处理mret
     
     
-    // set 7th bit of mstatus when mret
+    // handle mret
     when (io.cmd.mret){
         val mstatusOld = WireDefault(mstatus.asTypeOf(new MstatusStruct))
         val mstatusNew = WireDefault(mstatus.asTypeOf(new MstatusStruct))
@@ -112,9 +149,25 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
         mstatus := mstatusNew.asUInt
     }
     
-    when(io.cmd.hasExcep){
-        mcause := Cat(0.U((config.xlen - ExceptionCodes.getWidth).W), io.cmd.excepCode.asUInt)
-        mepc   := io.writePort.wdata
+    // handle interrupt and exception
+    val intrVec = mie(11, 0) & mip.asUInt
+    val intrNo = IntPriority.foldRight(0.U)((i: Int, sum: UInt) => Mux(intrVec(i), i.U, sum))
+    dontTouch(intrNo)
+    val raiseIntr = intrVec.orR && mstatusStruct.mie.asBool
+    val raiseExcep = io.cmd.hasExcep
+    val excepNo = io.cmd.excepCode.asUInt
+    val causeNO = (raiseIntr << (config.xlen - 1)) | Mux(raiseIntr, intrNo, excepNo)
+    val tvalClear = !(excepNo === ExceptionCodes.InstructionAccessFault.asUInt ||
+                      excepNo === ExceptionCodes.InstructionAddressMisaligned.asUInt ||
+                      excepNo === ExceptionCodes.LoadAccessFault.asUInt ||
+                      excepNo === ExceptionCodes.LoadAddressMisaligned.asUInt ||
+                      excepNo === ExceptionCodes.StoreAccessFault.asUInt ||
+                      excepNo === ExceptionCodes.StoreAddressMisaligned.asUInt) || raiseIntr
+
+    val raiseIntrExcep = raiseExcep || raiseIntr
+    when(raiseIntrExcep){
+        mcause := causeNO
+        mepc   := io.cmd.pc
         val mstatusOld = WireDefault(mstatus.asTypeOf(new MstatusStruct))
         val mstatusNew = WireDefault(mstatus.asTypeOf(new MstatusStruct))
         mstatusNew.mpie := mstatusOld.mie
@@ -122,7 +175,22 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
         mstatusNew.mpp := privilege.asTypeOf(mstatusNew.mpp)
         privilege := PRIV.Machine
         mstatus := mstatusNew.asUInt
+        when(tvalClear) { mtval := 0.U }
+        if (config.diff_enable){
+            RawClockedVoidFunctionCall(
+                "diff_raise_intr", Option(Seq("causeNO"))
+            )(clock, enable = raiseIntr, causeNO)
+        }
     }
+
+    val enq = Wire(Irrevocable(Bool()))
+    val flushQ = Queue.irrevocable(enq, 1, flow = true)
+    enq.valid := raiseIntrExcep || io.cmd.mret
+    val selMTvec = raiseIntrExcep
+    enq.bits := selMTvec
+    flushQ.ready := io.excpCMD.ready
+    io.excpCMD.bits.target := Mux(flushQ.bits, mtvec, mepc)
+    io.excpCMD.valid := flushQ.valid
 
     val mstatusMask = (~ZeroExt((
         GenMask(31) |
@@ -135,12 +203,21 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
     ), 32)).asUInt
 
     val mapping = Map(
-        MaskedRegMap(MSTATUS, mstatus, mstatusMask),
-        MaskedRegMap(MEPC, mepc),
-        MaskedRegMap(MCAUSE, mcause),
-        MaskedRegMap(MTVEC, mtvec),
-        MaskedRegMap(MVENDORID, mvendorid, MaskedRegMap.UnwritableMask),
-        MaskedRegMap(MARCHID, marchid, MaskedRegMap.UnwritableMask)
+        MaskedRegMap(Mstatus, mstatus, mstatusMask),
+        MaskedRegMap(Mie, mie),
+        MaskedRegMap(Mip, mip.asUInt, MaskedRegMap.UnwritableMask, MaskedRegMap.Unwritable),
+        MaskedRegMap(Mtvec, mtvec),
+        MaskedRegMap(Menvcfg, menvcfg),
+        MaskedRegMap(Mscratch, mscratch),
+        MaskedRegMap(Mepc, mepc),
+        MaskedRegMap(Mcause, mcause),
+        MaskedRegMap(Mtval, mtval),
+        MaskedRegMap(Pmpcfg0, pmpcfg0),
+        MaskedRegMap(Pmpaddr0, pmpaddr0),
+        MaskedRegMap(Mvendorid, mvendorid, MaskedRegMap.UnwritableMask, MaskedRegMap.Unwritable),
+        MaskedRegMap(Marchid, marchid, MaskedRegMap.UnwritableMask, MaskedRegMap.Unwritable),
+        MaskedRegMap(Mimpid, mimpid, MaskedRegMap.UnwritableMask, MaskedRegMap.Unwritable),
+        MaskedRegMap(Mhartid, mhartid, MaskedRegMap.UnwritableMask, MaskedRegMap.Unwritable)
     )
 
     val rdata = Wire(UInt(config.xlen.W))

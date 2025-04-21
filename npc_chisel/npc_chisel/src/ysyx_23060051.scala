@@ -13,6 +13,7 @@ class ysyx_23060051(config: RVConfig) extends Module{
     core.io.dbus <> xbar.io.dbus
     core.io.ibus <> xbar.io.ibus
     xbar.io.toMem <> io.master
+    xbar.io.interrupt <> core.io.interrupt
 
     io.slave <> DontCare
 

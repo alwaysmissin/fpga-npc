@@ -200,11 +200,11 @@ class MEM(config: RVConfig) extends Module {
     }
     io.toWB.bits.nop := io.fromEXE.bits.nop || hasFired
 
-    io.toWB.bits.csrWriteData     := io.fromEXE.bits.controlSignals.csrWriteData
+    // io.toWB.bits.csrWriteData     := io.fromEXE.bits.controlSignals.csrWriteData
     io.toWB.bits.funct12     := io.fromEXE.bits.funct12
     // io.toWB.bits.memRes      := memRes
     io.toWB.bits.regWrite    := io.fromEXE.bits.controlSignals.regWrite && !io.toWB.bits.nop
-    io.toWB.bits.csrWrite    := io.fromEXE.bits.controlSignals.csrWrite && !io.toWB.bits.nop
+    // io.toWB.bits.csrWrite    := io.fromEXE.bits.controlSignals.csrWrite && !io.toWB.bits.nop
     io.toWB.bits.rd          := io.fromEXE.bits.rd
     io.toWB.bits.pc          := io.fromEXE.bits.pc
     // TODO: 暂时忽略 Load Access Fault 异常

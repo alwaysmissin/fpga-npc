@@ -10,7 +10,7 @@ import utils.bus.InterStage.PreIFIFBus
 import utils.ExceptionCodes
 import chisel3.util.circt.dpi.RawClockedVoidFunctionCall
 import chisel3.util.Irrevocable
-import utils.csr.FlushCMD
+import utils.csr.RedirectCMD
 import chisel3.util.PriorityMux
 import utils.bus.SRAMLike.SRAMLikeReq
 
@@ -36,7 +36,7 @@ class PreIF(config: RVConfig) extends Module{
         val ar = Irrevocable(new SRAMLikeReq(config))
         // val r  = Flipped(Irrevocable(new R(config)))
         val jumpBus = Flipped(Irrevocable(new JumpBus(config)))
-        val excepCMD = Flipped(Irrevocable(new FlushCMD(config)))
+        val excepCMD = Flipped(Irrevocable(new RedirectCMD(config)))
         val toIF = Irrevocable(new PreIFIFBus(config))
         val flush = Input(Bool())
     })
