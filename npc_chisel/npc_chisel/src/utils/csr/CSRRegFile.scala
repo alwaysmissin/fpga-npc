@@ -22,13 +22,17 @@ class CSRWritePort(config: RVConfig) extends Bundle{
     val wdata = Input(UInt(config.xlen.W))
 }
 
-class CSRCMD(config: RVConfig) extends Bundle{
+class ExcepCMD(config: RVConfig) extends Bundle{
     // val cmd = Input(UInt(CSRCMD.WIDTH.W))
     // val funct12 = Input(UInt(config.csr_width.W))
     val hasExcep = Input(Bool())
     val excepCode = Input(ExceptionCodes())
     val mret = Input(Bool())
     val pc      = Input(UInt(config.xlen.W))
+}
+
+class InterruptCMD(config: RVConfig) extends Bundle{
+    val pc = Input(UInt(config.xlen.W))
 }
 
 class RedirectCMD(config: RVConfig) extends Bundle{
@@ -95,9 +99,10 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
     val io = IO(new Bundle{
         val readPort = new CSRReadPort(config)
         val writePort = new CSRWritePort(config)
-        val cmd = new CSRCMD(config)
+        val excepCmd = new ExcepCMD(config)
         // val excpCMD = new FlushCMD(config)
-        val excpCMD = Irrevocable(new RedirectCMD(config))
+        val intrCmd = Flipped(Irrevocable(new InterruptCMD(config)))
+        val redirectCmd = Irrevocable(new RedirectCMD(config))
         val interrupt = Input(new InterruptSimple())
     })
     val privilege = RegInit(PRIV.Machine)
@@ -139,7 +144,7 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
     
     
     // handle mret
-    when (io.cmd.mret){
+    when (io.excepCmd.mret){
         val mstatusOld = WireDefault(mstatus.asTypeOf(new MstatusStruct))
         val mstatusNew = WireDefault(mstatus.asTypeOf(new MstatusStruct))
         mstatusNew.mie := mstatusOld.mpie
@@ -152,10 +157,9 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
     // handle interrupt and exception
     val intrVec = mie(11, 0) & mip.asUInt
     val intrNo = IntPriority.foldRight(0.U)((i: Int, sum: UInt) => Mux(intrVec(i), i.U, sum))
-    dontTouch(intrNo)
     val raiseIntr = intrVec.orR && mstatusStruct.mie.asBool
-    val raiseExcep = io.cmd.hasExcep
-    val excepNo = io.cmd.excepCode.asUInt
+    val raiseExcep = io.excepCmd.hasExcep
+    val excepNo = io.excepCmd.excepCode.asUInt
     val causeNO = (raiseIntr << (config.xlen - 1)) | Mux(raiseIntr, intrNo, excepNo)
     val tvalClear = !(excepNo === ExceptionCodes.InstructionAccessFault.asUInt ||
                       excepNo === ExceptionCodes.InstructionAddressMisaligned.asUInt ||
@@ -164,10 +168,17 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
                       excepNo === ExceptionCodes.StoreAccessFault.asUInt ||
                       excepNo === ExceptionCodes.StoreAddressMisaligned.asUInt) || raiseIntr
 
+    val hadInterrupt = RegInit(false.B)
+    when (raiseIntr){
+        hadInterrupt := true.B
+    }.elsewhen(io.redirectCmd.fire){
+        hadInterrupt := false.B
+    }
+    io.intrCmd.ready := (raiseIntr || hadInterrupt) && io.redirectCmd.valid
     val raiseIntrExcep = raiseExcep || raiseIntr
     when(raiseIntrExcep){
         mcause := causeNO
-        mepc   := io.cmd.pc
+        mepc   := Mux(raiseIntr, io.intrCmd.bits.pc, io.excepCmd.pc)
         val mstatusOld = WireDefault(mstatus.asTypeOf(new MstatusStruct))
         val mstatusNew = WireDefault(mstatus.asTypeOf(new MstatusStruct))
         mstatusNew.mpie := mstatusOld.mie
@@ -178,19 +189,19 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
         when(tvalClear) { mtval := 0.U }
         if (config.diff_enable){
             RawClockedVoidFunctionCall(
-                "diff_raise_intr", Option(Seq("causeNO"))
-            )(clock, enable = raiseIntr, causeNO)
+                "diff_raise_intr", Option(Seq("causeNO", "epc"))
+            )(clock, enable = raiseIntr, causeNO, io.intrCmd.bits.pc)
         }
     }
 
     val enq = Wire(Irrevocable(Bool()))
     val flushQ = Queue.irrevocable(enq, 1, flow = true)
-    enq.valid := raiseIntrExcep || io.cmd.mret
+    enq.valid := raiseIntrExcep || io.excepCmd.mret
     val selMTvec = raiseIntrExcep
     enq.bits := selMTvec
-    flushQ.ready := io.excpCMD.ready
-    io.excpCMD.bits.target := Mux(flushQ.bits, mtvec, mepc)
-    io.excpCMD.valid := flushQ.valid
+    flushQ.ready := io.redirectCmd.ready
+    io.redirectCmd.bits.target := Mux(flushQ.bits, mtvec, mepc)
+    io.redirectCmd.valid := flushQ.valid
 
     val mstatusMask = (~ZeroExt((
         GenMask(31) |

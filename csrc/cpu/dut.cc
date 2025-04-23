@@ -49,9 +49,14 @@ extern "C" void diff_skip(int skip_pc){
     difftest_skip_ref(skip_pc);
 }
 
-extern "C" void diff_raise_intr(int causeNO){
-    if (ref_difftest_raise_intr)
-        ref_difftest_raise_intr(causeNO);
+static int pc_before_intr_triggered = 0;
+static int causeNo_intr_triggered = 0;
+extern "C" void diff_raise_intr(int causeNO, int epc){
+    pc_before_intr_triggered = *cpu.pc_mem;
+    causeNo_intr_triggered = causeNO;
+    printf("[difftest] raise intr at pc = " FMT_WORD ", causeNO = 0x%08x\n", *cpu.pc_mem, causeNO);
+    // if (ref_difftest_raise_intr)
+    //     ref_difftest_raise_intr(causeNO);
 }
 
 void init_difftest(char *ref_so_file, long img_size, int port){
@@ -162,6 +167,11 @@ void difftest_step(word_t pc){
     }
     struct diff_context_t ref_r;
     ref_difftest_exec(1);
+    if (*cpu.pc_done == pc_before_intr_triggered){
+        ref_difftest_raise_intr(causeNo_intr_triggered);
+        pc_before_intr_triggered = 0;
+        causeNo_intr_triggered = 0;
+    }
     ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
     checkregs(&ref_r, pc);
 }

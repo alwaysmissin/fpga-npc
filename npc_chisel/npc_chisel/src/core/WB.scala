@@ -11,9 +11,7 @@ import utils.bypass.BypassFrom
 import verification.diff.DiffSignals
 import verification.trace.TraceSignals
 import verification.DebugSignals
-import utils.csr.CSRWritePort
-import utils.csr.CSRCMD
-import utils.csr.CsrConsts
+import utils.csr._
 import chisel3.util.Cat
 import utils.id.ControlSignals.FuType
 
@@ -22,7 +20,7 @@ class WB(config: RVConfig) extends Module with CsrConsts{
         val fromMEM = Flipped(Irrevocable(new MemWbBus(config)))
         val writePort = Flipped(new RegWritePort(config))
         // val csrWritePort = Flipped(new CSRWritePort(config))
-        val csrCmd = Flipped(new CSRCMD(config))
+        val csrCmd = Flipped(new ExcepCMD(config))
         val bypass = Flipped(new BypassFrom(config))
         val regWdata = Output(UInt(config.xlen.W))
         val debug: DebugSignals = if(config.debug_enable) new DebugSignals(config) else null

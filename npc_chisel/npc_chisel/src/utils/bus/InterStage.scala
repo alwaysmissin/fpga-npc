@@ -6,7 +6,6 @@ import utils.RVConfig
 import utils.ExceptionCodes
 import utils.id.DecodeBundle
 import utils.id.ControlSignals
-import utils.csr.CSRCMD
 
 object InterStage {
   class JumpBus(config: RVConfig) extends Bundle{

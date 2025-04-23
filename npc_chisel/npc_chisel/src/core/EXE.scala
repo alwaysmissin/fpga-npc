@@ -48,15 +48,17 @@ class EXE(config: RVConfig) extends Module{
         val jumpBus = Irrevocable(new JumpBus(config))
         val csrWritePort = Flipped(new CSRWritePort(config))
         val flush = Output(Bool())
+        val interCMD = Irrevocable(new InterruptCMD(config))
     })
     val decodeBundle = io.fromID.bits.decodeBundle
+    val interrupt = io.interCMD.ready
 
     // 确保当前指令只被发送一次
     val hasFired = RegEnable(false.B, false.B, io.toMEM.fire && io.fromID.fire)
     when (io.toMEM.fire && !io.fromID.fire){
         hasFired := true.B
     }
-    io.toMEM.bits.nop := io.fromID.bits.nop || hasFired
+    io.toMEM.bits.nop := io.fromID.bits.nop || hasFired || interrupt
     
 
     // ------------- ALU -------------
@@ -207,6 +209,10 @@ class EXE(config: RVConfig) extends Module{
         (decodeBundle.fuType === FuType.AMO) -> aluRes
     ))
 
+    // interrupt
+    io.interCMD.bits.pc := io.fromID.bits.pc
+    io.interCMD.valid := true.B
+
     // pass the pipeline signal to next stage
     io.toMEM.bits.pc := io.fromID.bits.pc
     val controlSignals = io.toMEM.bits.controlSignals
@@ -230,7 +236,7 @@ class EXE(config: RVConfig) extends Module{
     if (config.diff_enable) io.toMEM.bits.jumped := io.jumpBus.fire
     if (config.trace_enable) io.toMEM.bits.inst <> io.fromID.bits.inst
 
-    io.flush := (io.jumpBus.valid || io.toMEM.bits.hasException || decodeBundle.fuType === FuType.CSR) && !io.toMEM.bits.nop
+    io.flush := (io.jumpBus.valid || io.toMEM.bits.hasException || decodeBundle.fuType === FuType.CSR || interrupt) && !io.toMEM.bits.nop
 
     // handshake signal
     val jumpValid = (io.jumpBus.valid && io.jumpBus.fire) || jumpBusFired || (!io.jumpBus.valid)

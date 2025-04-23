@@ -74,11 +74,11 @@ class Core(config: RVConfig) extends Module{
     idStage.io.readPort2 <> regFiles.io.readPort2
     val csrRegs = Module(new CSRRegFile(config))
     idStage.io.csrReadPort <> csrRegs.io.readPort
-    ifStage.io.excepCMD <> csrRegs.io.excpCMD
+    ifStage.io.excepCMD <> csrRegs.io.redirectCmd
     csrRegs.io.interrupt <> io.interrupt
 
     // 当在执行级的 BRU 检测到分支错误, 执行级处理 CSR 指令, 写回级提交异常  --->  冲刷流水线
-    val flush = exeStage.io.flush || csrRegs.io.excpCMD.valid
+    val flush = exeStage.io.flush || csrRegs.io.redirectCmd.valid
     ifStage.io.flush <> flush
     idStage.io.flush <> flush 
 
@@ -102,7 +102,8 @@ class Core(config: RVConfig) extends Module{
 
     wbStage.io.writePort <> regFiles.io.writePort
     exeStage.io.csrWritePort <> csrRegs.io.writePort
-    wbStage.io.csrCmd <> csrRegs.io.cmd
+    exeStage.io.interCMD <> csrRegs.io.intrCmd
+    wbStage.io.csrCmd <> csrRegs.io.excepCmd
 
 
 

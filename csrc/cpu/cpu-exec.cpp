@@ -169,10 +169,10 @@ static bool divide_condition(){
 }
 
 static bool dump_condition(){
-	#ifdef CONFIG_DUMP_WHEN_SDRAM
-	uint32_t pc = *cpu.pc_if;
-	return (pc >= SDRAM_BASE && pc < SDRAM_BASE + SDRAM_SIZE);
-	#endif
+	// #ifdef CONFIG_DUMP_WHEN_SDRAM
+	// uint32_t pc = *cpu.pc_if;
+	// return (pc >= SDRAM_BASE && pc < SDRAM_BASE + SDRAM_SIZE);
+	// #endif
 	return true;
 }
 
@@ -218,7 +218,7 @@ static void dump_wave(){
 
 static void exec_once()
 {
-	uint32_t death_loop_counter = 15000;
+	uint32_t death_loop_counter = 20000;
 	do{
 		top->clock = 0;
 		top->eval();
@@ -232,7 +232,7 @@ static void exec_once()
 	#endif
 		g_nr_cycle ++;
 		if (--death_loop_counter == 0){
-			npc_state.state = NPC_STOP;
+			npc_state.state = NPC_ABORT;
 			printf("NPC: death loop detected\n");
 			break;
 		}
@@ -269,6 +269,7 @@ void reset(int n)
 	cpu.pc_done = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__pc_done;
 	cpu.inst = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__inst;
 	cpu.pc_exe = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__exeStage_io_fromID_bits_rpc;
+	cpu.pc_mem = &top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__memStage_io_fromEXE_bits_rpc;
 	cpu.done = (bool*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__done;
 	cpu.gpr = (word_t (*)[NR_GPR - 1])&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__regFiles__DOT__R_ext__DOT__Memory;
 	CSR_LIST(CSR_INIT)

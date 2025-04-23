@@ -8,6 +8,7 @@
 typedef struct {
   word_t *pc_if;
   word_t *pc_exe;
+  word_t *pc_mem;
   bool *done;
   word_t *pc_done;
   word_t *inst;

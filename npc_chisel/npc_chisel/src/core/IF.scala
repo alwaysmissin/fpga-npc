@@ -24,7 +24,7 @@ class IF(config: RVConfig) extends Module {
         val flush = Input(Bool())
     })
     io.jumpBus.ready := io.toID.valid
-    io.excepCMD.ready := io.toID.valid
+    io.excepCMD.ready := io.toID.fire
 
     val npc = Wire(UInt(config.xlen.W))
     val PC  = RegEnable(npc, config.PC_INIT - 4.U, io.toID.fire)
