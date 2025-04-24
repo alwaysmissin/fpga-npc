@@ -45,8 +45,8 @@ class WB(config: RVConfig) extends Module with CsrConsts{
     // io.csrWritePort.wen := io.fromMEM.bits.csrWrite
     // io.csrWritePort.waddr := Mux(io.fromMEM.bits.hasException, Mcause.U, io.fromMEM.bits.funct12)
     // io.csrWritePort.wdata := Mux(io.fromMEM.bits.hasException, io.fromMEM.bits.pc, io.fromMEM.bits.csrWriteData)
-    io.csrCmd.hasExcep := io.fromMEM.bits.hasException && !io.fromMEM.bits.nop
-    io.csrCmd.excepCode := io.fromMEM.bits.exceptionCode
+    // io.csrCmd.hasExcep := io.fromMEM.bits.excepVec.asUInt.orR
+    io.csrCmd.excepVec := io.fromMEM.bits.excepVec.map(_ && !io.fromMEM.bits.nop)
     io.csrCmd.mret := io.fromMEM.bits.mret
     // io.csrCmd.funct12 := io.fromMEM.bits.funct12
     io.csrCmd.pc := io.fromMEM.bits.pc

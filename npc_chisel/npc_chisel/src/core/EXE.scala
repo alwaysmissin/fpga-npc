@@ -231,12 +231,14 @@ class EXE(config: RVConfig) extends Module{
     io.toMEM.bits.funct12       := io.fromID.bits.funct12
     io.toMEM.bits.mret          := io.fromID.bits.mret
     io.toMEM.bits.rd            := io.fromID.bits.rd
-    io.toMEM.bits.hasException  := (io.fromID.bits.hasException) && !io.toMEM.bits.nop
-    io.toMEM.bits.exceptionCode := io.fromID.bits.exceptionCode
+    io.toMEM.bits.excepVec      := io.fromID.bits.excepVec
+    // io.toMEM.bits.hasException  := (io.fromID.bits.hasException) && !io.toMEM.bits.nop
+    // io.toMEM.bits.exceptionCode := io.fromID.bits.exceptionCode
     if (config.diff_enable) io.toMEM.bits.jumped := io.jumpBus.fire
     if (config.trace_enable) io.toMEM.bits.inst <> io.fromID.bits.inst
 
-    io.flush := (io.jumpBus.valid || io.toMEM.bits.hasException || decodeBundle.fuType === FuType.CSR || interrupt) && !io.toMEM.bits.nop
+    // TODO: flush here
+    io.flush := (io.jumpBus.valid  || io.toMEM.bits.excepVec.asUInt.orR || decodeBundle.fuType === FuType.CSR || interrupt) && !io.toMEM.bits.nop
 
     // handshake signal
     val jumpValid = (io.jumpBus.valid && io.jumpBus.fire) || jumpBusFired || (!io.jumpBus.valid)

@@ -17,7 +17,7 @@ object InterStage {
       val pc = Output(UInt(config.xlen.W))
       val nop = Output(Bool())
       val hasException = Output(Bool())
-      val exceptionCode = Output(ExceptionCodes())
+      val exceptionCode = Output(UInt(4.W))
   }
 
   class IfIdBus(config: RVConfig) extends Bundle{
@@ -25,8 +25,9 @@ object InterStage {
       val inst = Output(UInt(config.xlen.W))
       val nop = Output(Bool())
       val branchPred = if (config.staticBranchPrediction) Output(Bool()) else null
-      val hasException = Output(Bool())
-      val exceptionCode = Output(ExceptionCodes())
+      // val hasException = Output(Bool())
+      val excepVec = Output(Vec(16, Bool()))
+      // val exceptionCode = Output(UInt(4.W))
   }
 
   class FtraceBundle(config: RVConfig) extends Bundle{
@@ -48,8 +49,8 @@ object InterStage {
       val nop = Output(Bool())
       val mret = Output(Bool())
       val branchPred = if (config.staticBranchPrediction) Output(Bool()) else null
-      val hasException = Output(Bool())
-      val exceptionCode = Output(ExceptionCodes())
+      // val hasException = Output(Bool())
+      val excepVec = Output(Vec(16, Bool()))
       // val jumped = if(config.diff_enable) Output(Bool()) else null
       val inst = if(config.trace_enable) Output(UInt(config.xlen.W)) else null
       val ftrace = if(config.trace_enable) Output(new FtraceBundle(config)) else null
@@ -79,8 +80,8 @@ object InterStage {
       val funct12 = Output(UInt(12.W))
       val mret = Output(Bool())
       val controlSignals = Output(new ExeMemSignalsBundle(config))
-      val hasException = Output(Bool())
-      val exceptionCode = Output(ExceptionCodes())
+      // val hasException = Output(Bool())
+      val excepVec = Output(Vec(16, Bool()))
   }
 
   // class MemWbSignalsBundle(config: RVConfig) extends Bundle{
@@ -104,8 +105,8 @@ object InterStage {
       // val csrWrite = Output(Bool())
       val nop = Output(Bool())
       val mret = Output(Bool())
-      val hasException = Output(Bool())
-      val exceptionCode = Output(ExceptionCodes())
+      // val hasException = Output(Bool())
+      val excepVec = Output(Vec(16, Bool()))
       val jumped = if(config.diff_enable) Output(Bool()) else null
       val inst = if(config.trace_enable) Output(UInt(config.xlen.W)) else null
       // val controlSignals = Output(new MemWbSignalsBundle(config))

@@ -25,15 +25,13 @@ class CSRWritePort(config: RVConfig) extends Bundle{
 class ExcepCMD(config: RVConfig) extends Bundle{
     // val cmd = Input(UInt(CSRCMD.WIDTH.W))
     // val funct12 = Input(UInt(config.csr_width.W))
-    val hasExcep = Input(Bool())
-    val excepCode = Input(ExceptionCodes())
+    // val hasExcep = Input(Bool())
+    val excepVec = Input(Vec(16, Bool()))
+    // val excepCode = Input(UInt(4.W))
     val mret = Input(Bool())
     val pc      = Input(UInt(config.xlen.W))
 }
 
-class InterruptCMD(config: RVConfig) extends Bundle{
-    val pc = Input(UInt(config.xlen.W))
-}
 
 class RedirectCMD(config: RVConfig) extends Bundle{
     // val flush = Output(Bool())
@@ -95,7 +93,11 @@ class InterruptSimple extends Bundle {
     val sip = Bool()
 }
 
-class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
+class InterruptCMD(config: RVConfig) extends Bundle{
+    val pc = Input(UInt(config.xlen.W))
+}
+
+class CSRRegFile(config: RVConfig) extends Module with CsrConsts with ExceptionCodes{
     val io = IO(new Bundle{
         val readPort = new CSRReadPort(config)
         val writePort = new CSRWritePort(config)
@@ -158,15 +160,15 @@ class CSRRegFile(config: RVConfig) extends Module with CsrConsts{
     val intrVec = mie(11, 0) & mip.asUInt
     val intrNo = IntPriority.foldRight(0.U)((i: Int, sum: UInt) => Mux(intrVec(i), i.U, sum))
     val raiseIntr = intrVec.orR && mstatusStruct.mie.asBool
-    val raiseExcep = io.excepCmd.hasExcep
-    val excepNo = io.excepCmd.excepCode.asUInt
+    val raiseExcep = io.excepCmd.excepVec.asUInt.orR
+    val excepNo = ExcepPriority.foldRight(0.U)((i: Int, sum: UInt) => Mux(io.excepCmd.excepVec(i), i.U, sum))
     val causeNO = (raiseIntr << (config.xlen - 1)) | Mux(raiseIntr, intrNo, excepNo)
-    val tvalClear = !(excepNo === ExceptionCodes.InstructionAccessFault.asUInt ||
-                      excepNo === ExceptionCodes.InstructionAddressMisaligned.asUInt ||
-                      excepNo === ExceptionCodes.LoadAccessFault.asUInt ||
-                      excepNo === ExceptionCodes.LoadAddressMisaligned.asUInt ||
-                      excepNo === ExceptionCodes.StoreAccessFault.asUInt ||
-                      excepNo === ExceptionCodes.StoreAddressMisaligned.asUInt) || raiseIntr
+    val tvalClear = !(excepNo === InstructionAccessFault.U ||
+                      excepNo === InstructionAddressMisaligned.U ||
+                      excepNo === LoadAccessFault.U ||
+                      excepNo === LoadAddressMisaligned.U ||
+                      excepNo === StoreAMOAccessFault.U ||
+                      excepNo === StoreAMOAddressMisaligned.U) || raiseIntr
 
     val hadInterrupt = RegInit(false.B)
     when (raiseIntr){

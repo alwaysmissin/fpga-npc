@@ -22,12 +22,13 @@ import chisel3.util.PriorityMux
 import utils.id.ControlSignals.AMOOp
 import utils.id.Instructions.AMOADD
 import utils.exe.AMOALU
+import utils.ExceptionCodes
 
 object MEMState extends ChiselEnum{
     val IDLE, WAIT_RESP, AMO_WAIT_READ_RESP, AMO_LAUNCH_WRITE_REQ, AMO_WAIT_WRITE_RESP = Value
 }
 
-class MEM(config: RVConfig) extends Module {
+class MEM(config: RVConfig) extends Module with ExceptionCodes{
     val io = IO(new Bundle{
         val fromEXE = Flipped(Irrevocable(new ExeMemBus(config)))
         val toWB = Irrevocable(new MemWbBus(config))
@@ -209,8 +210,7 @@ class MEM(config: RVConfig) extends Module {
     io.toWB.bits.pc          := io.fromEXE.bits.pc
     // TODO: 暂时忽略 Load Access Fault 异常
     io.toWB.bits.mret        := io.fromEXE.bits.mret
-    io.toWB.bits.hasException:= io.fromEXE.bits.hasException
-    io.toWB.bits.exceptionCode := io.fromEXE.bits.exceptionCode
+    io.toWB.bits.excepVec      := io.fromEXE.bits.excepVec
     io.toWB.bits.regWriteData := io.regWdata
     if (config.diff_enable) io.toWB.bits.jumped := io.fromEXE.bits.jumped
     if (config.trace_enable) io.toWB.bits.inst  := io.fromEXE.bits.inst

@@ -27,7 +27,7 @@ import chisel3.util.Irrevocable
 import utils.id.ControlSignals.FuType
 import utils.id.ControlSignals.BRUOp
 
-class ID(config: RVConfig) extends Module with CsrConsts{
+class ID(config: RVConfig) extends Module with CsrConsts with ExceptionCodes{
     val io = IO(new Bundle{
         val fromIF = Flipped(Irrevocable(new IfIdBus(config)))
         val toEXE = Irrevocable(new IdExeBus(config))
@@ -100,12 +100,16 @@ class ID(config: RVConfig) extends Module with CsrConsts{
     io.toEXE.bits.mret    := isMRET
 
     // 检查异常
-    io.toEXE.bits.hasException := (io.fromIF.bits.hasException || isECALL || !idu.io.legal) && !io.toEXE.bits.nop
-    io.toEXE.bits.exceptionCode := PriorityMux(Seq(
-        (!idu.io.legal) -> ExceptionCodes.IllegalInstruction,
-        (isECALL)       -> ExceptionCodes.MachineEnvironmentCall,
-        (true.B)          -> io.fromIF.bits.exceptionCode
-    ))
+    // io.toEXE.bits.hasException := (io.fromIF.bits.hasException || isECALL || !idu.io.legal) && !io.toEXE.bits.nop
+    // io.toEXE.bits.exceptionCode := PriorityMux(Seq(
+    //     (!idu.io.legal) -> IllegalInstruction.U,
+    //     (isECALL)       -> MachineEnvironmentCall.U,
+    //     (true.B)          -> io.fromIF.bits.exceptionCode
+    // ))
+    io.toEXE.bits.excepVec := io.fromIF.bits.excepVec
+    io.toEXE.bits.excepVec(IllegalInstruction) := !idu.io.legal
+    io.toEXE.bits.excepVec(MachineEnvironmentCall) := isECALL
+
     
 
     // bypass

@@ -12,7 +12,7 @@ import utils.bus.InterStage.JumpBus
 import utils.csr.RedirectCMD
 import utils.ExceptionCodes
 
-class IF(config: RVConfig) extends Module {
+class IF(config: RVConfig) extends Module with ExceptionCodes{
     val io = IO(new Bundle{
         // val r = Flipped(Irrevocable(new R(config)))
         val ar = Irrevocable(new SRAMLikeReq(config))
@@ -74,8 +74,10 @@ class IF(config: RVConfig) extends Module {
     io.toID.bits.pc := PC
     io.toID.bits.nop := PC === (config.PC_INIT - 4.U) || io.flush
     // TODO: 暂时忽略Instruction Access Fault异常
-    io.toID.bits.hasException := PC(1, 0).orR && !io.toID.bits.nop
-    io.toID.bits.exceptionCode := ExceptionCodes.InstructionAddressMisaligned
+    // io.toID.bits.hasException := PC(1, 0).orR && !io.toID.bits.nop
+    // io.toID.bits.exceptionCode := InstructionAddressMisaligned.U
+    io.toID.bits.excepVec.map(_ := false.B)
+    io.toID.bits.excepVec(InstructionAddressMisaligned) := PC(1, 0).orR
 
     io.toID.valid := (instValid && reqValid) || PC === config.PC_INIT
 
