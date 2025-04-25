@@ -8,7 +8,7 @@ object ControlSignals {
   def X = BitPat("b?")
 
   // instruction type
-  object InstType{
+  object InstType {
     def R = BitPat("b000") // R-Type
     def I = BitPat("b001") // I-Type
     def S = BitPat("b010") // S-Type
@@ -20,7 +20,7 @@ object ControlSignals {
     def WIDTH = X.getWidth
   }
 
-  object FuType{
+  object FuType {
     def ALU = BitPat("b0000")
     def LSU = BitPat("b0001")
     def BRU = BitPat("b0010")
@@ -33,20 +33,20 @@ object ControlSignals {
   }
 
   // the source of alu operator 1
-  object OpASrc{
+  object OpASrc {
     // register rs1
     def RS1 = BitPat("b00")
     // zero
     def ZERO = BitPat("b01")
     // program counter(pc)
-    def PC   = BitPat("b10")
+    def PC = BitPat("b10")
     def RS1ADDR = BitPat("b11")
-    def X    = BitPat("b??")
+    def X = BitPat("b??")
     def WIDTH = X.getWidth
   }
 
   // the source of alu operator 2
-  object OpBSrc{
+  object OpBSrc {
     // register rs2
     def RS2 = BitPat("b00")
     // immediate number
@@ -56,11 +56,11 @@ object ControlSignals {
     def X = BitPat("b??")
     def WIDTH = X.getWidth
   }
-  object ALUOp{
+  object ALUOp {
     def ADD = BitPat("b0000")
     def SUB = BitPat("b0001")
     def AND = BitPat("b0010")
-    def OR  = BitPat("b0011")
+    def OR = BitPat("b0011")
     def XOR = BitPat("b0100")
     // shift left logical
     def LTS = BitPat("b0101")
@@ -86,7 +86,7 @@ object ControlSignals {
     def WIDTH = X.getWidth
   }
 
-  object MULOp{
+  object MULOp {
     def MUL = BitPat("b00")
     def MULHU = BitPat("b01")
     def MULH = BitPat("b10")
@@ -95,7 +95,7 @@ object ControlSignals {
     def WIDTH = X.getWidth
   }
 
-  object DIVOp{
+  object DIVOp {
     def DIVU = BitPat("b00")
     def DIV = BitPat("b01")
     def REMU = BitPat("b10")
@@ -104,45 +104,44 @@ object ControlSignals {
     def WIDTH = X.getWidth
   }
 
-  object AMOOp{
+  object AMOOp {
     def LR = BitPat("b0000")
     def SC = BitPat("b0001")
     def SWAP = BitPat("b0010")
-    def ADD  = BitPat("b0011")
-    def XOR  = BitPat("b0100")
-    def AND  = BitPat("b0101")
-    def OR   = BitPat("b0110")
-    def MIN  = BitPat("b0111")
-    def MAX  = BitPat("b1000")
+    def ADD = BitPat("b0011")
+    def XOR = BitPat("b0100")
+    def AND = BitPat("b0101")
+    def OR = BitPat("b0110")
+    def MIN = BitPat("b0111")
+    def MAX = BitPat("b1000")
     def MINU = BitPat("b1001")
     def MAXU = BitPat("b1010")
     def X = BitPat("b????")
     def WIDTH = X.getWidth
   }
 
-  
-  object BRUOp{
+  object BRUOp {
     def LTU = BitPat("b000")
     def GEU = BitPat("b001")
     def LTS = BitPat("b010")
     def GES = BitPat("b011")
-    def EQ  = BitPat("b100")
+    def EQ = BitPat("b100")
     def NEQ = BitPat("b101")
-    def N   = BitPat("b110")
-    def X   = BitPat("b???")
+    def N = BitPat("b110")
+    def X = BitPat("b???")
     def WIDTH = X.getWidth
   }
 
-  object CSROp{
+  object CSROp {
     def RW = BitPat("b00")
     def RC = BitPat("b01")
     def RS = BitPat("b10")
-    def N  = BitPat("b11")
-    def X  = BitPat("b??")
+    def N = BitPat("b11")
+    def X = BitPat("b??")
     def WIDTH = X.getWidth
   }
 
-  object MemWrite{
+  object MemWrite {
     // Write 1 Byte
     def N = BitPat("b0000")
     def B = BitPat("b0001")
@@ -154,7 +153,7 @@ object ControlSignals {
     def WIDTH = X.getWidth
   }
 
-  object MemRead{
+  object MemRead {
     // Read 1 Byte
     def N = BitPat("b0000")
     def B = BitPat("b0001")
@@ -167,7 +166,7 @@ object ControlSignals {
     def WIDTH = X.getWidth
   }
 
-  object MemSignExt{
+  object MemSignExt {
     def UnsignedExt = BitPat("b0")
     def SignedExt = BitPat("b1")
     def X = BitPat("b?")
@@ -188,21 +187,21 @@ object ControlSignals {
   //   def WIDTH    = X.getWidth
   // }
 
-  object RegWrite{
+  object RegWrite {
     def Y = BitPat("b1")
     def N = BitPat("b0")
     def X = BitPat("b?")
     def WIDTH = X.getWidth
   }
 
-  object Legal{
+  object Legal {
     def Y = BitPat("b1")
     def N = BitPat("b0")
     def X = BitPat("b?")
     def WIDTH = X.getWidth
   }
 
-  object CSRWrite{
+  object CSRWrite {
     def Y = BitPat("b1")
     def N = BitPat("b0")
     def X = BitPat("b?")
@@ -225,7 +224,6 @@ object ControlSignals {
   //   def WIDTH  = X.getWidth
   // }
 
-
   // object CSR{
   //   def RW = BitPat("b00")
   //   def RC = BitPat("b01")
@@ -235,14 +233,14 @@ object ControlSignals {
   //   def WIDTH  = X.getWidth
   // }
 
-  object MemToReg{
+  object MemToReg {
     def Y = BitPat("b1")
     def N = BitPat("b0")
     def X = BitPat("b?")
     def WIDTH = X.getWidth
   }
 
-  object Fence{
+  object Fence {
     def Y = BitPat("b1")
     def N = BitPat("b0")
     def X = BitPat("b?")

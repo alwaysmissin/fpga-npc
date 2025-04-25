@@ -10,10 +10,10 @@ case class RVConfig(
     var diff_enable: Boolean = false,
     var trace_enable: Boolean = false,
     var simulation: Boolean = true
-){
-    val debug_enable = diff_enable | trace_enable
+) {
+  val debug_enable = diff_enable | trace_enable
 }
 
-object Config{
-    var FPGAPlatform = true
+object Config {
+  var FPGAPlatform = true
 }

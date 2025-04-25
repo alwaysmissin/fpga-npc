@@ -1,7 +1,7 @@
 package utils
 import chisel3._
 
-trait ExceptionCodes{
+trait ExceptionCodes {
   def InstructionAddressMisaligned = 0
   def InstructionAccessFault = 1
   def IllegalInstruction = 2

@@ -7,7 +7,7 @@ import chisel3.util.Cat
 import chisel3.util._
 import utils.Config.FPGAPlatform
 
-class MultiplierFPGA(dataWidth: Int = 32, latency: Int = 0) extends BlackBox{
+class MultiplierFPGA(dataWidth: Int = 32, latency: Int = 0) extends BlackBox {
   override val desiredName = "multiplier"
   val io = IO(new Bundle {
     val CLK = Clock()
@@ -17,8 +17,8 @@ class MultiplierFPGA(dataWidth: Int = 32, latency: Int = 0) extends BlackBox{
   })
 }
 
-class MultiplierSim(dataWidth: Int = 32, latency: Int = 0) extends Module{
-  val io = IO(new Bundle{
+class MultiplierSim(dataWidth: Int = 32, latency: Int = 0) extends Module {
+  val io = IO(new Bundle {
     val A = Input(UInt(dataWidth.W))
     val B = Input(UInt(dataWidth.W))
     val P = Output(UInt((dataWidth * 2).W))
@@ -30,24 +30,24 @@ class MultiplierSim(dataWidth: Int = 32, latency: Int = 0) extends Module{
 
 // }
 
-class Multiplier(config: RVConfig, latency: Int = 0) extends Module{
+class Multiplier(config: RVConfig, latency: Int = 0) extends Module {
   val io = IO(new Bundle {
-    val req = Flipped(Irrevocable(new Bundle{
+    val req = Flipped(Irrevocable(new Bundle {
       val A = UInt(config.xlen.W)
       val B = UInt(config.xlen.W)
     }))
-    val resp = Irrevocable(new Bundle{
+    val resp = Irrevocable(new Bundle {
       val P = UInt((config.xlen * 2).W)
     })
   })
   val busy = RegInit(false.B)
   val count = RegInit(0.U(log2Ceil(latency + 1).W))
   val result = Reg(UInt((config.xlen * 2).W))
-  if (FPGAPlatform){
+  if (FPGAPlatform) {
     val multiplier = Module(new MultiplierFPGA(latency = latency))
     multiplier.io.A <> io.req.bits.A
     multiplier.io.B <> io.req.bits.B
-    io.resp.bits.P  <> multiplier.io.P
+    io.resp.bits.P <> multiplier.io.P
     // 请求处理逻辑
     when(io.req.fire) {
       busy := true.B

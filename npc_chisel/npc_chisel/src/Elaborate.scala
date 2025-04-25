@@ -7,7 +7,6 @@ import peripheral.Arbiter
 import utils.bus.AXI4
 import utils.Config.FPGAPlatform
 
-
 object Elaborate extends App {
   val firtoolOptions = Array(
     "--lowering-options=" + List(
@@ -16,8 +15,9 @@ object Elaborate extends App {
       "disallowLocalVariables",
       "disallowPackedArrays",
       "locationInfoStyle=wrapInAtSquareBracket"
-    ).reduce(_ + "," + _)) 
-    
+    ).reduce(_ + "," + _)
+  )
+
   val config = RVConfig(
     PC_INIT = 0x10000000L.U,
     xlen = 32,
@@ -37,14 +37,17 @@ object Elaborate extends App {
     config.diff_enable = false
     config.trace_enable = false
     config.simulation = false
-    
+
   } else {
     FPGAPlatform = false
     print("Generate for Simulation\n")
   }
 
-  circt.stage.ChiselStage.emitSystemVerilogFile(new ysyx_23060051(config)
-  , args, firtoolOptions)
+  circt.stage.ChiselStage.emitSystemVerilogFile(
+    new ysyx_23060051(config),
+    args,
+    firtoolOptions
+  )
   // circt.stage.ChiselStage.emitSystemVerilogFile(new utils.IDStage.IDU(RVConfig(
   //   PC_INIT = (0x80000000L - 4).U,
   //   xlen = 32,
