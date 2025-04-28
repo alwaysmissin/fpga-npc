@@ -15,7 +15,7 @@ class top(config: RVConfig) extends Module {
       if (config.trace_enable) new TraceSignals(config) else null
   })
   val core = Module(new Core(config))
-  val xbar = Module(new XBar(config))
+  val xbar = Module(new XBar(config, 32))
   val dataMemory = Module(new Memory(config))
 
   core.io.dbus <> xbar.io.dbus

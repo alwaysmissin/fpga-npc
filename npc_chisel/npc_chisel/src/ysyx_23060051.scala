@@ -2,18 +2,19 @@ import chisel3._
 import utils.RVConfig
 import utils.bus.AXI4
 import peripheral.XBar
-class ysyx_23060051(config: RVConfig) extends Module {
+class ysyx_23060051(config: RVConfig, nrIntr: Int) extends Module {
   val io = IO(new Bundle {
-    val interrupt = Input(Bool())
+    val interrupt = Input(UInt(nrIntr.W))
     val master = AXI4(config, AXI4.MS.asMaster)
     val slave = AXI4(config, AXI4.MS.asSlave)
   })
   val core = Module(new Core(config))
-  val xbar = Module(new XBar(config))
+  val xbar = Module(new XBar(config, nrIntr))
   core.io.dbus <> xbar.io.dbus
   core.io.ibus <> xbar.io.ibus
   xbar.io.toMem <> io.master
   xbar.io.interrupt <> core.io.interrupt
+  xbar.io.intrVec <> io.interrupt
 
   io.slave <> DontCare
 

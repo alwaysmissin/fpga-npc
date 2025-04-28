@@ -76,6 +76,9 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
     )
   )
 
+  // val setMtval = WireDefault(!align)
+  // val setMtval_val = WireDefault(vaddr)
+
   val memSignedExt = controlSignals.signExt
   val offset = (controlSignals.regWriteData(1) << 4.U).asUInt |
     (controlSignals.regWriteData(0) << 3.U).asUInt
@@ -254,6 +257,8 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
   // TODO: 暂时忽略 Load Access Fault 异常
   io.toWB.bits.mret := io.fromEXE.bits.mret
   io.toWB.bits.excepVec := io.fromEXE.bits.excepVec
+  io.toWB.bits.excepVec(LoadAddressMisaligned) := !align
+  io.toWB.bits.excepVec(StoreAMOAddressMisaligned) := !align
   io.toWB.bits.regWriteData := io.regWdata
   if (config.diff_enable) io.toWB.bits.jumped := io.fromEXE.bits.jumped
   if (config.trace_enable) io.toWB.bits.inst := io.fromEXE.bits.inst
