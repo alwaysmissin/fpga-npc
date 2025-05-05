@@ -23,6 +23,7 @@ import utils.id.ControlSignals.AMOOp
 import utils.id.Instructions.AMOADD
 import utils.exe.AMOALU
 import utils.ExceptionCodes
+import chisel3.util.experimental.BoringUtils
 
 object MEMState extends ChiselEnum {
   val IDLE, WAIT_RESP, AMO_WAIT_READ_RESP, AMO_LAUNCH_WRITE_REQ,
@@ -40,11 +41,10 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
     val wResp = Flipped(Irrevocable(new SRAMLikeWResp(config)))
     val bypass = Flipped(new BypassFrom(config))
     val regWdata = Output(UInt(config.xlen.W))
+    val flush2EXE = Output(Bool())
   })
   val controlSignals = io.fromEXE.bits.controlSignals
   val state = RegInit(MEMState.IDLE)
-  val ren = controlSignals.memRead.orR && !io.fromEXE.bits.nop // MemRead.N
-  val wen = controlSignals.memWrite.orR && !io.fromEXE.bits.nop // MemWrite.N
   val reservation = RegInit(0.U(config.xlen.W))
 
   // set pipeline control signal default
@@ -76,8 +76,15 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
     )
   )
 
-  // val setMtval = WireDefault(!align)
-  // val setMtval_val = WireDefault(vaddr)
+  val ren =
+    controlSignals.memRead.orR && !io.fromEXE.bits.nop // MemRead.N
+  val wen =
+    controlSignals.memWrite.orR && !io.fromEXE.bits.nop // MemWrite.N
+
+  io.flush2EXE := (ren || wen) && !align
+  val setMtval = WireDefault(!align)
+  val setMtval_val = WireDefault(vaddr)
+  // BoringUtils.bore(setMtval)("setMtval")
 
   val memSignedExt = controlSignals.signExt
   val offset = (controlSignals.regWriteData(1) << 4.U).asUInt |
@@ -106,29 +113,29 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
   )
 
   // align check when simulation is on
-  if (config.simulation) {
-    switch(reqSize) {
-      is("b010".U) {
-        assert(
-          vaddr(1, 0) === 0.U,
-          "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n",
-          1.U << reqSize,
-          vaddr,
-          io.fromEXE.bits.pc
-        )
-      }
-      is("b001".U) {
-        assert(
-          vaddr(0) === 0.U,
-          "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n",
-          1.U << reqSize,
-          vaddr,
-          io.fromEXE.bits.pc
-        )
-      }
-      is("b000".U) {}
-    }
-  }
+  // if (config.simulation) {
+  //   switch(reqSize) {
+  //     is("b010".U) {
+  //       assert(
+  //         vaddr(1, 0) === 0.U,
+  //         "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n",
+  //         1.U << reqSize,
+  //         vaddr,
+  //         io.fromEXE.bits.pc
+  //       )
+  //     }
+  //     is("b001".U) {
+  //       assert(
+  //         vaddr(0) === 0.U,
+  //         "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n",
+  //         1.U << reqSize,
+  //         vaddr,
+  //         io.fromEXE.bits.pc
+  //       )
+  //     }
+  //     is("b000".U) {}
+  //   }
+  // }
 
   val amoAlu = Module(new AMOALU(config))
   amoAlu.io.amoOp := controlSignals.amoOp
@@ -142,7 +149,7 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
 
   switch(state) {
     is(MEMState.IDLE) {
-      when(ren || wen) {
+      when((ren || wen) && align) {
         // when `ren` or `wen` is asserted, the inst should be load/store or load-reservation/store-condition/amo
         // avoid to launch when the store-condition is not satisfied
         io.req.valid := !(controlSignals.fuTypeAMO && controlSignals.amoOp === AMOOp.SC && reservation =/= vaddr)
@@ -230,7 +237,8 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
     }
   }
 
-  io.bypass.regWrite := controlSignals.regWrite
+  val regWrite = Mux(ren, align, controlSignals.regWrite)
+  io.bypass.regWrite := regWrite
   io.bypass.waddr := io.fromEXE.bits.rd
   io.bypass.valid := io.toWB.valid
   io.regWdata := PriorityMux(
@@ -250,15 +258,15 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
   // io.toWB.bits.csrWriteData     := io.fromEXE.bits.controlSignals.csrWriteData
   io.toWB.bits.funct12 := io.fromEXE.bits.funct12
   // io.toWB.bits.memRes      := memRes
-  io.toWB.bits.regWrite := io.fromEXE.bits.controlSignals.regWrite && !io.toWB.bits.nop
+  io.toWB.bits.regWrite := regWrite && !io.toWB.bits.nop
   // io.toWB.bits.csrWrite    := io.fromEXE.bits.controlSignals.csrWrite && !io.toWB.bits.nop
   io.toWB.bits.rd := io.fromEXE.bits.rd
   io.toWB.bits.pc := io.fromEXE.bits.pc
   // TODO: 暂时忽略 Load Access Fault 异常
   io.toWB.bits.mret := io.fromEXE.bits.mret
   io.toWB.bits.excepVec := io.fromEXE.bits.excepVec
-  io.toWB.bits.excepVec(LoadAddressMisaligned) := !align
-  io.toWB.bits.excepVec(StoreAMOAddressMisaligned) := !align
+  io.toWB.bits.excepVec(LoadAddressMisaligned) := !align && ren
+  io.toWB.bits.excepVec(StoreAMOAddressMisaligned) := !align && wen
   io.toWB.bits.regWriteData := io.regWdata
   if (config.diff_enable) io.toWB.bits.jumped := io.fromEXE.bits.jumped
   if (config.trace_enable) io.toWB.bits.inst := io.fromEXE.bits.inst

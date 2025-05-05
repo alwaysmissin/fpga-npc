@@ -17,6 +17,7 @@ import utils.cache.ICache
 import chisel3.util.IrrevocableIO
 import utils.bus.SRAMLike._
 import utils.csr.InterruptSimple
+import chisel3.util.experimental.BoringUtils
 
 // case class RVConfig(
 //     xlen: Int,
@@ -85,6 +86,7 @@ class Core(config: RVConfig) extends Module {
   val flush = exeStage.io.flush || csrRegs.io.redirectCmd.valid
   ifStage.io.flush <> flush
   idStage.io.flush <> flush
+  exeStage.io.flushFromMEM <> memStage.io.flush2EXE
 
   val bypassNetwork = Module(new BypassNetwork(config))
   bypassNetwork.io.fromEXE <> exeStage.io.bypass
@@ -107,6 +109,11 @@ class Core(config: RVConfig) extends Module {
   exeStage.io.csrWritePort <> csrRegs.io.writePort
   exeStage.io.interCMD <> csrRegs.io.intrCmd
   wbStage.io.csrCmd <> csrRegs.io.excepCmd
+
+  BoringUtils.bore(memStage.setMtval, Seq(csrRegs.setMtval))
+  BoringUtils.bore(memStage.setMtval_val, Seq(csrRegs.setMtval_val))
+  // csrRegs.setMtval := BoringUtils.tapAndRead(memStage.setMtval)
+  // csrRegs.setMtval_val := BoringUtils.tapAndRead(memStage.setMtval_val)
 
   if (config.debug_enable) {
     wbStage.io.debug <> io.debug

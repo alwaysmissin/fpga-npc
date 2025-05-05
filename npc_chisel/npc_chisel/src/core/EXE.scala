@@ -49,6 +49,7 @@ class EXE(config: RVConfig) extends Module {
     val csrWritePort = Flipped(new CSRWritePort(config))
     val flush = Output(Bool())
     val interCMD = Irrevocable(new InterruptCMD(config))
+    val flushFromMEM = Input(Bool())
   })
   val decodeBundle = io.fromID.bits.decodeBundle
   val interrupt = io.interCMD.ready
@@ -58,7 +59,7 @@ class EXE(config: RVConfig) extends Module {
   when(io.toMEM.fire && !io.fromID.fire) {
     hasFired := true.B
   }
-  io.toMEM.bits.nop := io.fromID.bits.nop || hasFired || interrupt
+  io.toMEM.bits.nop := io.fromID.bits.nop || hasFired || interrupt || io.flushFromMEM
 
   // ------------- ALU -------------
   val opASrc = decodeBundle.aluSrc1
@@ -266,7 +267,7 @@ class EXE(config: RVConfig) extends Module {
   if (config.trace_enable) io.toMEM.bits.inst <> io.fromID.bits.inst
 
   // TODO: flush here
-  io.flush := (io.jumpBus.valid || io.toMEM.bits.excepVec.asUInt.orR || decodeBundle.fuType === FuType.CSR || interrupt) && !io.toMEM.bits.nop
+  io.flush := ((io.jumpBus.valid || io.toMEM.bits.excepVec.asUInt.orR || decodeBundle.fuType === FuType.CSR || interrupt) && !io.toMEM.bits.nop) || io.flushFromMEM
 
   // handshake signal
   val jumpValid =

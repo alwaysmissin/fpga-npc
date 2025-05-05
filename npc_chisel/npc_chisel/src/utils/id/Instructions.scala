@@ -70,6 +70,7 @@ object Instructions {
   def AMOMAXU= BitPat("b11100?? ????? ????? 010 ????? 01011 11")
   def FENCE  = BitPat("b0000??? ????? 00000 000 00000 00011 11")
   def FENCEI = BitPat("b0000000 00000 00000 001 00000 00011 11")
+  def WFI    = BitPat("b0001000 00101 00000 000 00000 11100 11")
   def NOP    = BitPat("b0000000 00000 00000 000 00000 00000 00")
 
 }

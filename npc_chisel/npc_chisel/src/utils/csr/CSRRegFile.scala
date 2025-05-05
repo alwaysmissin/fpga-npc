@@ -144,6 +144,12 @@ class CSRRegFile(config: RVConfig)
   //     io.cmd.mret         -> mepc,
   // ))
 
+  val setMtval = WireDefault(false.B)
+  val setMtval_val = WireDefault(0.U(config.xlen.W))
+  when (setMtval){
+    mtval := setMtval_val
+  }
+
   // handle mret
   when(io.excepCmd.mret) {
     val mstatusOld = WireDefault(mstatus.asTypeOf(new MstatusStruct))
