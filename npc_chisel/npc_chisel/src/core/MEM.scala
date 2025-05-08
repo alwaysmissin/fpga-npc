@@ -26,7 +26,7 @@ import utils.ExceptionCodes
 import chisel3.util.experimental.BoringUtils
 
 object MEMState extends ChiselEnum {
-  val IDLE, WAIT_RESP, AMO_WAIT_READ_RESP, AMO_LAUNCH_WRITE_REQ,
+  val IDLE, WAIT_RESP, AMO_WAIT_READ_RESP, AMO_CALC, AMO_LAUNCH_WRITE_REQ,
       AMO_WAIT_WRITE_RESP = Value
 }
 
@@ -138,8 +138,9 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
   // }
 
   val amoAlu = Module(new AMOALU(config))
+  val amoReadData = RegNext(io.rResp.bits.rdata, 0.U(config.xlen.W))
   amoAlu.io.amoOp := controlSignals.amoOp
-  amoAlu.io.mRead := io.rResp.bits.rdata
+  amoAlu.io.mRead := amoReadData
   amoAlu.io.src2 := controlSignals.memWriteData
   val amoAluRes = amoAlu.io.res
   val amoAluResReg = RegInit(0.U(config.xlen.W))
@@ -210,10 +211,14 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
     is(MEMState.AMO_WAIT_READ_RESP) {
       io.rResp.ready := io.rResp.valid
       when(io.rResp.fire) {
-        amoAluResReg := amoAluRes
+        // amoAluResReg := amoAluRes
         amoRegWriteDataReg := io.rResp.bits.rdata
-        state := MEMState.AMO_LAUNCH_WRITE_REQ
+        state := MEMState.AMO_CALC
       }
+    }
+    is(MEMState.AMO_CALC) {
+      amoAluResReg := amoAluRes
+      state := MEMState.AMO_LAUNCH_WRITE_REQ
     }
     is(MEMState.AMO_LAUNCH_WRITE_REQ) {
       io.req.valid := true.B
