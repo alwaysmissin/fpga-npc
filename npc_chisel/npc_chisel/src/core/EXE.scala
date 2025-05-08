@@ -89,7 +89,7 @@ class EXE(config: RVConfig) extends Module {
 
   // ------------- MUL & DIV -------------
   val multiplier = Module(new Multiplier(config, latency = 2))
-  val divider = Module(new Divider(config, latency = 2))
+  val divider = Module(new Divider(config, latency = 34))
   val mulReqFired = RegEnable(false.B, false.B, io.fromID.fire)
   when(multiplier.io.req.fire && !io.toMEM.fire) {
     mulReqFired := true.B

@@ -29,7 +29,7 @@ class xpm_memory_sdpram(
         "USE_MEM_INIT" -> 0,
         "WAKEUP_TIME" -> "disable_sleep",
         "WRITE_DATA_WIDTH_A" -> DATA_WIDTH,
-        "WRITE_MODE_B" -> "no_change"
+        "WRITE_MODE_B" -> "read_first"
       )
     ) {
   val io = IO(new Bundle {

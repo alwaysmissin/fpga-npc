@@ -8,7 +8,7 @@ import utils.Config.FPGAPlatform
 class DividerFPGA(dataWidth: Int = 32, latency: Int = 0) extends BlackBox {
   override val desiredName = "divider"
   val io = IO(new Bundle {
-    val aclk = Clock()
+    val aclk = Input(Bool())
     val s_axis_divisor_tvalid = Input(Bool())
     val s_axis_divisor_tdata = Input(UInt(dataWidth.W))
     val s_axis_dividend_tvalid = Input(Bool())
@@ -49,6 +49,7 @@ class Divider(config: RVConfig, latency: Int = 0) extends Module {
   val count = RegInit(0.U(log2Ceil(latency + 1).W))
   if (FPGAPlatform) {
     val divider = Module(new DividerFPGA(latency = latency))
+    divider.io.aclk := clock.asBool
     divider.io.s_axis_divisor_tvalid <> io.req.valid
     divider.io.s_axis_divisor_tdata <> io.req.bits.divisor
     divider.io.s_axis_dividend_tvalid <> io.req.valid

@@ -44,7 +44,8 @@ class ICache(
     val rFromMem = Flipped(Irrevocable(new SRAMLikeRResp(config)))
     val fencei = Input(Bool())
   })
-  val valids = Reg(Vec(icache.blocks, Vec(icache.ways, Bool())))
+  // val valids = Reg(Vec(icache.blocks, Vec(icache.ways, false.B)))
+  val valids = RegInit(VecInit(Seq.fill(icache.blocks)(VecInit(Seq.fill(icache.ways)(false.B)))))
   // val dataRams = Seq.fill(icache.ways)(
   //   // SyncReadMem(icache.blocks, Vec(icache.blockWords, UInt(config.xlen.W)))
   //   Module(new SDPRAM_SYNC(icache.blocks, UInt(config.xlen.W), icache.blockWords))
@@ -247,22 +248,22 @@ class ICache(
         respCounter := respCounter + 1.U
         when(respCounter === (icache.blockWords - 1).U) {
           state := FINISH
-        }
-        val newInfo = Wire(infoResp.copy())
-        for (i <- 0 until icache.ways) {
-          when(i.U === replaceWay) {
-            newInfo.tags(i) := tag
-          }.otherwise {
-            newInfo.tags(i) := infoResp.tags(i)
+          val newInfo = Wire(infoResp.copy())
+          for (i <- 0 until icache.ways) {
+            when(i.U === replaceWay) {
+              newInfo.tags(i) := tag
+            }.otherwise {
+              newInfo.tags(i) := infoResp.tags(i)
+            }
           }
+          if (icache.ways != 1) {
+            newInfo.lru := ~infoResp.lru
+          }
+          // newInfo.tags(replaceWay) := tag
+          // set the valid bit
+          valids(index)(replaceWay) := true.B
+          infoRams.write(index, newInfo.asTypeOf(infoRams.io.wdata))
         }
-        if (icache.ways != 1) {
-          newInfo.lru := ~infoResp.lru
-        }
-        // newInfo.tags(replaceWay) := tag
-        // set the valid bit
-        valids(index)(replaceWay) := true.B
-        infoRams.write(index, newInfo.asTypeOf(infoRams.io.wdata))
       }
     }
     is(FINISH) {
