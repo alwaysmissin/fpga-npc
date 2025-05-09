@@ -29,3 +29,13 @@ final case class ICacheConfig(
 ) extends CacheBasicConfig {
   assert(blocks >= 2)
 }
+
+final case class BTBConfig(
+  blocks: Int = 16,
+  blockSize: Int = 1,
+  ways: Int = 2
+) extends CacheBasicConfig {
+  val enable = true
+  val trackerWidth = 2
+  val biaWidth = 22
+}

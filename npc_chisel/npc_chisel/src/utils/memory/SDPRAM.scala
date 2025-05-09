@@ -125,7 +125,7 @@ class SDPRAM_ASYNC[T <: Data](size: Int, t: T, lineSize: Int = 1) extends Module
     }
 
   } else {
-    val mem = SyncReadMem(size, Vec(lineSize, t))
+    val mem = Mem(size, Vec(lineSize, t))
     io.rdata := mem.read(io.raddr)
     when (io.wen) {
       if (lineSize == 1){
@@ -134,5 +134,31 @@ class SDPRAM_ASYNC[T <: Data](size: Int, t: T, lineSize: Int = 1) extends Module
         mem.write(io.waddr, io.wdata, io.wstrobe.asBools)
       }
     }
+  }
+
+  def read(addr: UInt): Vec[T] = {
+    io.raddr := addr
+    io.rdata
+  }
+
+  def write(cond: Bool, addr: UInt, data: Vec[T], mask: UInt): Unit = {
+    io.wen := cond
+    io.waddr := addr
+    io.wdata := data
+    io.wstrobe := mask
+  }
+
+  def write(addr: UInt, data: Vec[T], mask: UInt): Unit = {
+    io.wen := true.B
+    io.waddr := addr
+    io.wdata := data
+    io.wstrobe := mask
+  }
+
+  def write(addr: UInt, data: Vec[T]): Unit = {
+    io.wen := true.B
+    io.waddr := addr
+    io.wdata := data
+    io.wstrobe := Fill(lineSize, 1.U)
   }
 }

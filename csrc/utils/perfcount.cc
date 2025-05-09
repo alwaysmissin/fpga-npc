@@ -1,5 +1,6 @@
 #include <common.h>
 #include <cpu/cpu.h>
+#include <cstdint>
 #include <queue>
 uint64_t IFUCounter = 0;
 uint64_t ALUInstCounter = 0;
@@ -107,4 +108,12 @@ void PerfCountICacheMiss(){
 
 void PerfCountSkipCache(){
   icacheSkipCounter ++;
+}
+
+uint64_t missBranchPrediction = 0;
+
+void PerfBranchPredictionAccuracy(svBit redirect){
+  if (redirect){
+    missBranchPrediction ++;
+  }
 }

@@ -26,11 +26,13 @@ import utils.csr.CsrConsts
 import chisel3.util.Irrevocable
 import utils.id.ControlSignals.FuType
 import utils.id.ControlSignals.BRUOp
+import utils.cache.BTBConfig
+import utils.BranchPredictionSelect
 
-class ID(config: RVConfig) extends Module with CsrConsts with ExceptionCodes {
+class ID(config: RVConfig, btbConfig: BTBConfig) extends Module with CsrConsts with ExceptionCodes {
   val io = IO(new Bundle {
-    val fromIF = Flipped(Irrevocable(new IfIdBus(config)))
-    val toEXE = Irrevocable(new IdExeBus(config))
+    val fromIF = Flipped(Irrevocable(new IfIdBus(config, btbConfig)))
+    val toEXE = Irrevocable(new IdExeBus(config, btbConfig))
     // val r = Flipped(Irrevocable(new R(config)))
     val readPort1 = Flipped(new RegReadPort(config))
     val readPort2 = Flipped(new RegReadPort(config))
@@ -149,8 +151,14 @@ class ID(config: RVConfig) extends Module with CsrConsts with ExceptionCodes {
   io.toEXE.bits.rs1Data := rs1Data
   io.toEXE.bits.rs2Data := rs2Data
 
-  if (config.staticBranchPrediction) {
+  if (config.branchPrediction == BranchPredictionSelect.Static || config.branchPrediction == BranchPredictionSelect.Dynamic) {
     io.toEXE.bits.branchPred := io.fromIF.bits.branchPred
+    io.toEXE.bits.predTarget := io.fromIF.bits.predTarget
+  }
+  if (config.branchPrediction == BranchPredictionSelect.Dynamic) {
+    io.toEXE.bits.btbHitInfo := io.fromIF.bits.btbHitInfo
+    io.toEXE.bits.predTarget := io.fromIF.bits.predTarget
+    io.toEXE.bits.btbInfo := io.fromIF.bits.btbInfo
   }
 
   // 在阻塞的情况下, 发送 nop

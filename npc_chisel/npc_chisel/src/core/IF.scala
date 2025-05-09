@@ -11,8 +11,11 @@ import utils.bus.SRAMLike._
 import utils.bus.InterStage.JumpBus
 import utils.csr.RedirectCMD
 import utils.ExceptionCodes
+import utils.bpu.BranchPredReq
+import utils.cache.BTBConfig
+import utils.BranchPredictionSelect
 
-class IF(config: RVConfig) extends Module with ExceptionCodes {
+class IF(config: RVConfig, btbConfig: BTBConfig) extends Module with ExceptionCodes {
   val io = IO(new Bundle {
     // val r = Flipped(Irrevocable(new R(config)))
     val ar = Irrevocable(new SRAMLikeReq(config))
@@ -20,15 +23,20 @@ class IF(config: RVConfig) extends Module with ExceptionCodes {
     // val fromPreIF = Flipped(Irrevocable(new PreIFIFBus(config)))
     val jumpBus = Flipped(Irrevocable(new JumpBus(config)))
     val excepCMD = Flipped(Irrevocable(new RedirectCMD(config)))
-    val toID = Irrevocable(new IfIdBus(config))
+    val toID = Irrevocable(new IfIdBus(config, btbConfig))
     val flush = Input(Bool())
+    val branchPredReq = if (config.branchPrediction == BranchPredictionSelect.Dynamic) {
+      Flipped(new BranchPredReq(config, btbConfig))
+    } else {
+      null
+    }
   })
   io.jumpBus.ready := io.toID.valid
   io.excepCMD.ready := io.toID.fire
 
   val npc = Wire(UInt(config.xlen.W))
   val PC = RegEnable(npc, config.PC_INIT - 4.U, io.toID.fire)
-  if (config.staticBranchPrediction) {
+  if (config.branchPrediction == BranchPredictionSelect.Static) {
     val inst = io.toID.bits.inst
     val branchPred = inst(31) && inst(6, 0) === 0x63.U
     val offset =
@@ -43,7 +51,24 @@ class IF(config: RVConfig) extends Module with ExceptionCodes {
       )
     )
     io.toID.bits.branchPred := branchPred
-  } else {
+    io.toID.bits.predTarget := predTarget
+  } else if (config.branchPrediction == BranchPredictionSelect.Dynamic){
+    io.branchPredReq.pc := PC
+    val branchPred = io.branchPredReq.branchPred
+    val predTarget = io.branchPredReq.branchPredTarget
+    npc := PriorityMux(
+      Seq(
+        (io.excepCMD.valid) -> io.excepCMD.bits.target,
+        (io.jumpBus.valid) -> io.jumpBus.bits.jumpTarget,
+        (branchPred) -> predTarget,
+        (true.B) -> (PC + 4.U)
+      )
+    )
+    io.toID.bits.branchPred := branchPred
+    io.toID.bits.predTarget := predTarget
+    io.toID.bits.btbHitInfo := io.branchPredReq.btbHitInfo
+    io.toID.bits.btbInfo := io.branchPredReq.btbInfo
+  } else if (config.branchPrediction == BranchPredictionSelect.None){
     npc := PriorityMux(
       Seq(
         (io.excepCMD.valid) -> io.excepCMD.bits.target,
@@ -51,6 +76,8 @@ class IF(config: RVConfig) extends Module with ExceptionCodes {
         (true.B) -> (PC + 4.U)
       )
     )
+  } else {
+    assert(false, "Branch Prediction not supported")
   }
 
   val instGetted = RegEnable(false.B, false.B, io.toID.fire)

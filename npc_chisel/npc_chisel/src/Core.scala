@@ -18,6 +18,9 @@ import chisel3.util.IrrevocableIO
 import utils.bus.SRAMLike._
 import utils.csr.InterruptSimple
 import chisel3.util.experimental.BoringUtils
+import utils.cache.BTBConfig
+import utils.bpu.BPU
+import utils.BranchPredictionSelect
 
 // case class RVConfig(
 //     xlen: Int,
@@ -46,11 +49,12 @@ class Core(config: RVConfig) extends Module {
       if (config.trace_enable) new TraceSignals(config) else null
   })
   private val iCacheConfig = ICacheConfig()
+  private val btbConfig = BTBConfig()
 
   // val preIfStage = Module(new PreIF(config))
-  val ifStage = Module(new IF(config))
-  val idStage = Module(new ID(config))
-  val exeStage = Module(new EXE(config))
+  val ifStage = Module(new IF(config, btbConfig))
+  val idStage = Module(new ID(config, btbConfig))
+  val exeStage = Module(new EXE(config, btbConfig))
   val memStage = Module(new MEM(config))
   val wbStage = Module(new WB(config))
 
@@ -87,6 +91,13 @@ class Core(config: RVConfig) extends Module {
   ifStage.io.flush <> flush
   idStage.io.flush <> flush
   exeStage.io.flushFromMEM <> memStage.io.flush2EXE
+
+  if (config.branchPrediction == BranchPredictionSelect.Dynamic) {
+    println("Dynamic branch prediction enabled")
+    val bpu = Module(new BPU(config, btbConfig))
+    bpu.io.branchPredReq <> ifStage.io.branchPredReq
+    bpu.io.btbUpdateInfo <> exeStage.io.btbUpdateInfo
+  }
 
   val bypassNetwork = Module(new BypassNetwork(config))
   bypassNetwork.io.fromEXE <> exeStage.io.bypass

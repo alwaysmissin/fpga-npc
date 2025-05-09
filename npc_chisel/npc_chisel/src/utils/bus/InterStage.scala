@@ -6,6 +6,10 @@ import utils.RVConfig
 import utils.ExceptionCodes
 import utils.id.DecodeBundle
 import utils.id.ControlSignals
+import utils.bpu.BranchPredReq
+import utils.bpu.BTBLineInfo
+import utils.cache.BTBConfig
+import utils.BranchPredictionSelect
 
 object InterStage {
   class JumpBus(config: RVConfig) extends Bundle {
@@ -20,11 +24,14 @@ object InterStage {
     val exceptionCode = Output(UInt(4.W))
   }
 
-  class IfIdBus(config: RVConfig) extends Bundle {
+  class IfIdBus(config: RVConfig, btbConfig: BTBConfig) extends Bundle {
     val pc = Output(UInt(config.xlen.W))
     val inst = Output(UInt(config.xlen.W))
     val nop = Output(Bool())
-    val branchPred = if (config.staticBranchPrediction) Output(Bool()) else null
+    val branchPred = if (config.branchPrediction == BranchPredictionSelect.Static || config.branchPrediction == BranchPredictionSelect.Dynamic) Output(Bool()) else null
+    val predTarget = if (config.branchPrediction == BranchPredictionSelect.Static || config.branchPrediction == BranchPredictionSelect.Dynamic) Output(UInt(config.xlen.W)) else null
+    val btbHitInfo = if (config.branchPrediction == BranchPredictionSelect.Dynamic) Output(UInt(btbConfig.ways.W)) else null
+    val btbInfo    = if (config.branchPrediction == BranchPredictionSelect.Dynamic) Output(BTBLineInfo(config, btbConfig)) else null
     // val hasException = Output(Bool())
     val excepVec = Output(Vec(16, Bool()))
     // val exceptionCode = Output(UInt(4.W))
@@ -36,7 +43,7 @@ object InterStage {
     val rs1 = UInt(log2Up(config.nr_reg).W)
   }
 
-  class IdExeBus(config: RVConfig) extends Bundle {
+  class IdExeBus(config: RVConfig, btbConfig: BTBConfig) extends Bundle {
     val decodeBundle = Output(new DecodeBundle)
     val pc = Output(UInt(config.xlen.W))
     val imm = Output(UInt(config.xlen.W))
@@ -48,7 +55,10 @@ object InterStage {
     val rs1 = Output(UInt(log2Up(config.nr_reg).W))
     val nop = Output(Bool())
     val mret = Output(Bool())
-    val branchPred = if (config.staticBranchPrediction) Output(Bool()) else null
+    val branchPred = if (config.branchPrediction == BranchPredictionSelect.Static || config.branchPrediction == BranchPredictionSelect.Dynamic) Output(Bool()) else null
+    val predTarget = if (config.branchPrediction == BranchPredictionSelect.Static || config.branchPrediction == BranchPredictionSelect.Dynamic) Output(UInt(config.xlen.W)) else null
+    val btbHitInfo = if (config.branchPrediction == BranchPredictionSelect.Dynamic) Output(UInt(btbConfig.ways.W)) else null
+    val btbInfo    = if (config.branchPrediction == BranchPredictionSelect.Dynamic) Output(BTBLineInfo(config, btbConfig)) else null
     // val hasException = Output(Bool())
     val excepVec = Output(Vec(16, Bool()))
     // val jumped = if(config.diff_enable) Output(Bool()) else null

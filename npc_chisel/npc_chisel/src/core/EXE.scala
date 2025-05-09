@@ -38,14 +38,18 @@ import utils.id.ControlSignals.DIVOp
 import utils.exe.Divider
 import utils.nutshellUtils.ZeroExt
 import utils.csr._
+import utils.cache.BTBConfig
+import utils.bpu.BTBUpdateInfo
+import utils.BranchPredictionSelect
 
-class EXE(config: RVConfig) extends Module {
+class EXE(config: RVConfig, btbConfig: BTBConfig) extends Module {
   val io = IO(new Bundle {
-    val fromID = Flipped(Irrevocable(new IdExeBus(config)))
+    val fromID = Flipped(Irrevocable(new IdExeBus(config, btbConfig)))
     val toMEM = Irrevocable(new ExeMemBus(config))
     val bypass = Flipped(new BypassFrom(config))
     val regWdata = Output(UInt(config.xlen.W))
     val jumpBus = Irrevocable(new JumpBus(config))
+    val btbUpdateInfo = if (config.branchPrediction == BranchPredictionSelect.Dynamic) Irrevocable(new BTBUpdateInfo(config, btbConfig)) else null
     val csrWritePort = Flipped(new CSRWritePort(config))
     val flush = Output(Bool())
     val interCMD = Irrevocable(new InterruptCMD(config))
@@ -189,8 +193,20 @@ class EXE(config: RVConfig) extends Module {
   // val csrJump = decodeBundle.nextPCSrc === NextPCSrc.CSR_J
   // val csrJumpTarget = io.fromID.bits.csrData
 
-  if (config.staticBranchPrediction) {
-    io.jumpBus.valid := ((jump ^ io.fromID.bits.branchPred) || decodeBundle.fencei || decodeBundle.fuType === FuType.CSR) && !io.toMEM.bits.nop
+  if (config.branchPrediction == BranchPredictionSelect.Static || config.branchPrediction == BranchPredictionSelect.Dynamic) {
+    val redirect = (jump ^ io.fromID.bits.branchPred) || (decodeBundle.fuType === FuType.BRU && jumpTarget =/= io.fromID.bits.predTarget)
+    dontTouch(redirect)
+    io.jumpBus.valid := (redirect || decodeBundle.fencei || decodeBundle.fuType === FuType.CSR) && !io.toMEM.bits.nop
+    if (config.simulation){
+      RawClockedVoidFunctionCall( 
+        "PerfBranchPredictionAccuracy",
+        Option(Seq("redirect"))
+      )(
+        clock,
+        enable = decodeBundle.fuType === FuType.BRU && io.toMEM.fire && !io.toMEM.bits.nop && !hasFired,
+        redirect
+      )
+    }
   } else {
     io.jumpBus.valid := (jump || decodeBundle.fencei || decodeBundle.fuType === FuType.CSR) && !io.toMEM.bits.nop
   }
@@ -206,6 +222,19 @@ class EXE(config: RVConfig) extends Module {
   val jumpBusFired = RegEnable(false.B, false.B, io.jumpBus.fire)
   when(io.jumpBus.fire && !io.toMEM.fire) {
     jumpBusFired := true.B
+  }
+
+  if (config.branchPrediction == BranchPredictionSelect.Dynamic) {
+    val btbUpdateInfoFired = RegEnable(false.B, false.B, io.toMEM.fire)
+    when (io.btbUpdateInfo.fire && !io.toMEM.fire) {
+      btbUpdateInfoFired := true.B
+    }
+    io.btbUpdateInfo.valid := decodeBundle.fuType === FuType.BRU && !io.toMEM.bits.nop && !btbUpdateInfoFired
+    io.btbUpdateInfo.bits.pc := io.fromID.bits.pc
+    io.btbUpdateInfo.bits.actualTaken := jump
+    io.btbUpdateInfo.bits.actualTarget := io.jumpBus.bits.jumpTarget
+    io.btbUpdateInfo.bits.btbHitInfo := io.fromID.bits.btbHitInfo
+    io.btbUpdateInfo.bits.btbInfo := io.fromID.bits.btbInfo
   }
 
   // ------------- BRU -------------

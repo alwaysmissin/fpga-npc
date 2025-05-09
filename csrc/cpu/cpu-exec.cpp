@@ -115,6 +115,7 @@ static void statistic() {
 	// extern uint64_t icacheAccessCounter;
 	extern uint64_t icacheSkipCounter;
 	extern uint64_t icacheMissCounter;
+	extern uint64_t missBranchPrediction;
   Log("host cycle spent = " NUMBERIC_FMT " cycles", g_nr_cycle);
   Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
 	Log("IPC = %f", g_nr_guest_inst / (double)g_nr_cycle);
@@ -138,6 +139,9 @@ static void statistic() {
 	// Log("the number of icache skip " NUMBERIC_FMT " times", icacheSkipCounter);
 	Log("the number of icache miss " NUMBERIC_FMT " times", icacheMissCounter);
 	Log("icache miss rate = %lf", icacheMissCounter / (double)icacheAccessCounter);
+	Log("4. branch prediction");
+	Log("the number of redirection " NUMBERIC_FMT " times", missBranchPrediction);
+	Log("branch miss prediction accuracy = %lf", missBranchPrediction / (double)BRUInstCounter);
 	Log("-------------------");
 	
 }
