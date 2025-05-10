@@ -113,29 +113,11 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
   )
 
   // align check when simulation is on
-  // if (config.simulation) {
-  //   switch(reqSize) {
-  //     is("b010".U) {
-  //       assert(
-  //         vaddr(1, 0) === 0.U,
-  //         "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n",
-  //         1.U << reqSize,
-  //         vaddr,
-  //         io.fromEXE.bits.pc
-  //       )
-  //     }
-  //     is("b001".U) {
-  //       assert(
-  //         vaddr(0) === 0.U,
-  //         "not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n",
-  //         1.U << reqSize,
-  //         vaddr,
-  //         io.fromEXE.bits.pc
-  //       )
-  //     }
-  //     is("b000".U) {}
-  //   }
-  // }
+  if (config.simulation) {
+    when (!align) {
+      printf("not align!!!!!, reqSize is %d, but target address is 0x%x, the pc is 0x%x\n", 1.U << reqSize, vaddr, io.fromEXE.bits.pc)
+    }
+  }
 
   val amoAlu = Module(new AMOALU(config))
   val amoReadData = RegNext(io.rResp.bits.rdata, 0.U(config.xlen.W))

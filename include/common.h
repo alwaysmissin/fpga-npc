@@ -20,4 +20,11 @@ typedef uint32_t paddr_t;
 #include <debug.h>
 
 #define FMT_WORD "0x%08" PRIx32
+
+#define EXIT_FAILURE 1
+#define FAIT_EXIT    exit(EXIT_FAILURE);
+// process sleep time
+#define WAIT_INTERVAL 5
+// max number of checkpoint process at a time
+#define SLOT_SIZE 2
 #endif

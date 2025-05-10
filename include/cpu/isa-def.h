@@ -21,4 +21,9 @@ typedef struct {
   // mcause_t *mcause;
 } cpu_state;
 
+typedef struct {
+  CSR_LIST(CSR_CTX_DEF)
+  word_t pc;
+} csr_ctx;
+
 #endif

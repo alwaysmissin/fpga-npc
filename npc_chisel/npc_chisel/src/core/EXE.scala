@@ -249,6 +249,14 @@ class EXE(config: RVConfig, btbConfig: BTBConfig) extends Module {
   io.csrWritePort.wen := decodeBundle.csrWrite.asBool && !io.toMEM.bits.nop
   io.csrWritePort.waddr := io.fromID.bits.funct12
   io.csrWritePort.wdata := csrRes
+  if (config.simulation){
+    val csrUpdated = RegEnable(io.csrWritePort.wen, io.toMEM.fire)
+    val csrUpdatedPC = RegEnable(io.fromID.bits.pc, io.toMEM.fire)
+    RawClockedVoidFunctionCall(
+      "update_csr",
+      Option(Seq("pc"))
+    )(clock, enable = csrUpdated && io.toMEM.fire, csrUpdatedPC)
+  }
   // ------------- CSRU -------------
 
   // bypass

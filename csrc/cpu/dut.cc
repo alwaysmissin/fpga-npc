@@ -110,6 +110,9 @@ inline bool skip_checkcsrs(const word_t *cpu_csrs, int index){
 }
 
 static word_t diff_npc = 0;
+#ifdef CONFIG_DIFFTEST
+std::queue<csr_ctx*> csr_ctx_q;
+#endif
 bool difftest_checkregs(struct diff_context_t *ref_r, word_t pc){
     bool check = true;
     // static word_t npc = 0;
@@ -117,23 +120,34 @@ bool difftest_checkregs(struct diff_context_t *ref_r, word_t pc){
         check = false;
         printf("[difftest] Error: pc is different at pc = " FMT_WORD " , REF = 0x%08x, DUT = 0x%08x\n", pc, diff_npc, pc);
     }
+    // word_t *ctx_csrs = (word_t *)&(ref_r->mstatus);
+    // word_t **cpu_csrs = (word_t **)&cpu.mstatus;
     for (int i = 1; i < NR_GPR; i ++){
         if (ref_r -> gpr[i] != gpr(i)){
             check = false;
             printf("[difftest] Error: reg $%s is different at pc = " FMT_WORD " , REF = 0x%08x, DUT = 0x%08x\n", reg_name(i), pc, ref_r -> gpr[i], gpr(i));
+            printf("mstatus: 0x%08x\n", ref_r -> mstatus.val);
         }
     }
-    // word_t *ctx_csrs = (word_t *)&(ref_r->mstatus);
-    // word_t **cpu_csrs = (word_t **)&cpu.mstatus;
-    // for (int i = 0;i < NR_CSR;i ++){
-    //     if (!skip_checkcsrs(ctx_csrs, i) && ctx_csrs[i] != *cpu_csrs[i]){
-    //         check = false;
-    //         printf("[difftest] Error: csr $%s is different at pc = " FMT_WORD ", REF = 0x%08x, DUT = 0x%08x\n", csr_name(i), pc, ctx_csrs[i], *cpu_csrs[i]);
-    //         for (int j = 0;j < NR_CSR;j ++){
-    //             printf("$%s = 0x%08x(ref: 0x%08x)\n", csr_name(j), *cpu_csrs[j], ctx_csrs[j]);
-    //         }
-    //     }
-    // }
+    if (!csr_ctx_q.empty()){
+        csr_ctx* csr_ctx_to_check = csr_ctx_q.front();
+        if (csr_ctx_to_check->pc == pc){
+            word_t *ctx_csrs = (word_t *)&(ref_r->mstatus);
+            word_t *cpu_csrs = (word_t *)&(csr_ctx_to_check->mstatus);
+            // word_t **cpu_csrs = (word_t **)&(cpu.mstatus);
+            for (int i = 0;i < NR_CSR;i ++){
+                if (!skip_checkcsrs(ctx_csrs, i) && ctx_csrs[i] != cpu_csrs[i]){
+                    check = false;
+                    printf("[difftest] Error: csr $%s is different at pc = " FMT_WORD ", REF = 0x%08x, DUT = 0x%08x\n", csr_name(i), pc, ctx_csrs[i], cpu_csrs[i]);
+                    for (int j = 0;j < NR_CSR;j ++){
+                        printf("$%s = 0x%08x(ref: 0x%08x)\n", csr_name(j), cpu_csrs[j], ctx_csrs[j]);
+                    }
+                }
+            }
+            csr_ctx_q.pop();
+            free(csr_ctx_to_check);
+        }
+    }
     diff_npc = ref_r -> pc;
     return check;
 }

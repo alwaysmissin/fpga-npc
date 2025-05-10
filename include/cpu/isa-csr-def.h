@@ -17,6 +17,9 @@
 #define CSR_DEF(_name, _addr, _mask, _is_reg, _init_val) \
     _name##_t* _name;
 
+#define CSR_CTX_DEF(_name, _addr, _mask, _is_reg, _init_val) \
+    _name##_t _name;
+
 // 新增两个辅助宏来处理不同情况
 #define CSR_INIT_true(_name, _addr, _mask, _is_reg, _init_val) \
     cpu._name = (_name##_t*)&top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__csrRegs__DOT__##_name;

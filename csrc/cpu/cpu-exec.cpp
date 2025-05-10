@@ -2,8 +2,10 @@
 #include <cpu/cpu.h>
 #include <cpu/difftest.h>
 #include <cstdio>
+#include <cstring>
 #include <memory/paddr.h>
 #include <debug.h>
+#include <queue>
 #include <watchpoint.h>
 #include <verilated_fst_c.h>
 #include <csignal>
@@ -12,6 +14,7 @@
 #include <ctime>
 #include <iomanip>
 #include <cpu/isa-def.h>
+#include <lightsss.h>
 
 #ifdef CONFIG_WAVEFORM
 vluint64_t main_time = 0;
@@ -46,6 +49,8 @@ word_t v_to_p(word_t addr);
 // use llvm to disassemble
 extern "C" void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
 // extern "C" int inst_read(int addr);
+LightSSS lightsss;
+static bool start_waveform = false;
 
 static bool diff_ok()
 {
@@ -58,6 +63,9 @@ static void trace_and_difftest()
 	// if (diff_ok())
 #ifdef CONFIG_DIFFTEST
 	// printf("pc: %x, npc: %x\n", pc, npc);
+#ifdef CONFIG_WAVEFORM
+	if (!start_waveform)
+#endif
 	difftest_step(pc);
 #endif
 	// watchpoint
@@ -160,14 +168,12 @@ static void ringbuf_print()
 static bool divide_condition(){
 	#ifdef CONFIG_WAVEFORM
 
-	#ifdef CONFIG_WAVEFORM_DIVIDE
 	static uint32_t count = 0;
-	uint32_t new_count = main_time / 1000000;
-	if (count != new_count){
+	uint32_t new_count = g_nr_cycle / 500000;
+	if (count != new_count || g_nr_cycle == 0){
 		count = new_count;
 		return true;
 	}
-	#endif
 	#endif
 	return false;
 }
@@ -210,14 +216,30 @@ static void trace_new(){
 	return;
 }
 
+
 static void dump_wave(){
 	#ifdef CONFIG_WAVEFORM
-	if (divide_condition()) trace_new();
-	if (dump_condition()){
+	extern char* wave_file;
+	if (divide_condition() && !lightsss.is_child()) {
+		int ret = lightsss.do_fork();
+		if (ret == FORK_CHILD) {
+			start_waveform = true;
+			tfp -> flush();
+			tfp -> close();
+			tfp -> open(wave_file);
+		}
+	#ifdef CONFIG_WAVEFORM_DIVIDE
+		trace_new();
+	#endif
+	}
+	if (dump_condition() && start_waveform){
+		if (lightsss.get_end_cycles() < g_nr_cycle)
+			npc_state.state = NPC_ABORT;
 		tfp -> dump(main_time);
 		main_time ++;
 	}
 	#endif
+
 }
 
 static void exec_once()
@@ -296,7 +318,6 @@ void reset(int n)
 		nvboard_update();
 	#endif
 	}
-
 	top->reset = 0;
 }
 
@@ -311,6 +332,19 @@ void ebreak(int inst)
 		npc_state.halt_ret = exit_code;
 		npc_state.halt_pc = *cpu.pc_if;
 	}
+}
+
+void update_csr(int pc){
+#ifdef CONFIG_DIFFTEST
+	std::queue<csr_ctx*> csr_ctx_q;
+	csr_ctx *ctx = (csr_ctx*)malloc(sizeof(csr_ctx));
+	ctx->pc = pc;
+	word_t *ctx_csrs = (word_t *)&(ctx->mstatus);
+	word_t **cpu_csrs = (word_t **)&cpu.mstatus;
+	for (int i = 0;i < NR_CSR;i ++){
+		ctx_csrs[i] = *cpu_csrs[i];
+	}
+#endif
 }
 
 static void excute(uint64_t n)
@@ -352,6 +386,7 @@ void intSignalHandler(int signum){
 	}
 	printf("Waveform saved after Ctrl+C\n");
 	ringbuf_print();
+	lightsss.do_clear();
 	if (top){
 		delete(top);
 	}
@@ -378,6 +413,7 @@ void abrtSignalHandler(int signum){
 	}
 	printf("Waveform saved after Aborted\n");
 	ringbuf_print();
+	lightsss.do_clear();
 	if (top){
 		delete(top);
 	}
@@ -399,6 +435,7 @@ void segvSignalHandler(int signum){
 	}
 	printf("Waveform saved after Aborted\n");
 	ringbuf_print();
+	lightsss.do_clear();
 	if (top){
 		delete(top);
 	}
@@ -444,10 +481,18 @@ void cpu_exec(uint64_t n)
 			(npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
 			npc_state.halt_pc);
 		#ifdef CONFIG_WAVEFORM
-			dump_wave();
 		#endif
-		if (npc_state.state == NPC_ABORT || npc_state.halt_ret != 0)
+		if (npc_state.state == NPC_ABORT || npc_state.halt_ret != 0){
+			if (!lightsss.is_child()){
+				lightsss.wakeup_child(g_nr_cycle);
+				lightsss.do_clear();
+			}else {
+				tfp -> flush();
+				tfp -> close();
+				exit(0);
+			}
 			ringbuf_print();
+		}
 		// fall through
 	case NPC_QUIT:
 		statistic();

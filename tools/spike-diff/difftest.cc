@@ -30,7 +30,7 @@ static std::vector<std::string> difftest_htif_args;
 //     1, std::make_pair(reg_t(DRAM_BASE), new mem_t(0x8000000)));
 static std::vector<std::pair<reg_t, mem_t*>> difftest_mem = 
 {
-  std::make_pair(reg_t(DRAM_BASE), new mem_t(0x8000000)),
+  std::make_pair(reg_t(DRAM_BASE), new mem_t(0x10000000)),
   std::make_pair(reg_t(SRAM_BASE), new mem_t(0x2000))
 };
 static debug_module_config_t difftest_dm_config = {

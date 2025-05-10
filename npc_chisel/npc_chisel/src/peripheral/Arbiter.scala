@@ -41,6 +41,13 @@ class Arbiter(config: RVConfig, respCacheEnable: Boolean = true)
     awReqBusy := 0.U.asTypeOf(io.out.aw.bits)
   }
 
+  val reqBusy = RegInit(false.B)
+  when (io.out.ar.fire){
+    reqBusy := true.B
+  }.elsewhen(io.out.r.fire && io.out.r.bits.last){
+    reqBusy := false.B
+  }
+
   // // 若主机无法及时接收应答, 则进入到FIFO中
   if (respCacheEnable) {
     val rChannelIBus = Wire(Irrevocable(UInt(config.xlen.W)))
@@ -152,13 +159,13 @@ class Arbiter(config: RVConfig, respCacheEnable: Boolean = true)
   io.out.aw.bits.len := 0.U
   io.out.aw.bits.size := io.dbus.req.bits.size
 
-  io.ibus.req.ready := io.out.ar.ready && ((reqLock && !selDBus) || (!reqLock && !(io.dbus.req.valid && !io.dbus.req.bits.wr)))
+  io.ibus.req.ready := io.out.ar.ready && !reqBusy && ((reqLock && !selDBus) || (!reqLock && !(io.dbus.req.valid && !io.dbus.req.bits.wr)))
   io.dbus.req.ready := Mux(
     io.dbus.req.bits.wr,
     dbusWReady,
-    io.out.ar.ready && ((reqLock && selDBus) || (!reqLock && io.out.ar.bits.addr =/= awReqBusy.addr))
+    io.out.ar.ready && !reqBusy && ((reqLock && selDBus) || (!reqLock && io.out.ar.bits.addr =/= awReqBusy.addr))
   )
-  io.out.ar.valid := ((io.dbus.req.valid && !io.dbus.req.bits.wr) || io.ibus.req.valid) && io.out.ar.bits.addr =/= awReqBusy.addr
+  io.out.ar.valid := !reqBusy && ((io.dbus.req.valid && !io.dbus.req.bits.wr) || io.ibus.req.valid) && io.out.ar.bits.addr =/= awReqBusy.addr
   io.out.ar.bits.addr := Mux(
     reqLock,
     Mux(selDBus, io.dbus.req.bits.addr, io.ibus.req.bits.addr),
