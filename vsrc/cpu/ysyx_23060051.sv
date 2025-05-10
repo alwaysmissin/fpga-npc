@@ -1478,7 +1478,8 @@ module EXE(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EX
   output        io_toMEM_bits_nop,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
                 io_toMEM_bits_jumped,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
   output [31:0] io_toMEM_bits_inst,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
-  output        io_toMEM_bits_mret,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
+  output        io_toMEM_bits_flushForIntr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
+                io_toMEM_bits_mret,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
   output [3:0]  io_toMEM_bits_controlSignals_memRawMask,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
   output        io_toMEM_bits_controlSignals_signExt,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
   output [31:0] io_toMEM_bits_controlSignals_regWriteData,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
@@ -1526,96 +1527,100 @@ module EXE(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EX
   output [31:0] io_csrWritePort_wdata,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
   output        io_flush,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
   input         io_interCMD_ready,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
+  output        io_interCMD_valid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
   output [31:0] io_interCMD_bits_pc,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
   input         io_flushFromMEM	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:46:14]
 );
 
-  wire [31:0] remainderFinal;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:150:21, :153:20, :155:71]
-  wire [31:0] divResFinal;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:150:21, :152:17, :155:71]
-  wire        _bru_io_branch;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:180:19]
-  wire        _divider_io_req_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:96:23]
-  wire        _divider_io_resp_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:96:23]
-  wire [31:0] _divider_io_resp_bits_quotient;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:96:23]
-  wire [31:0] _divider_io_resp_bits_remainder;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:96:23]
-  wire        _multiplier_io_req_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:95:26]
-  wire        _multiplier_io_resp_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:95:26]
-  wire [63:0] _multiplier_io_resp_bits_P;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:95:26]
-  wire [31:0] _alu_io_res;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:87:19]
-  wire [31:0] _alu_io_sum;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:87:19]
-  reg         hasFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:62:27]
+  wire        io_toMEM_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:319:31]
+  wire [31:0] remainderFinal;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:152:21, :155:20, :157:71]
+  wire [31:0] divResFinal;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:152:21, :154:17, :157:71]
+  wire        _bru_io_branch;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:182:19]
+  wire        _divider_io_req_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:23]
+  wire        _divider_io_resp_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:23]
+  wire [31:0] _divider_io_resp_bits_quotient;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:23]
+  wire [31:0] _divider_io_resp_bits_remainder;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:23]
+  wire        _multiplier_io_req_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:26]
+  wire        _multiplier_io_resp_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:26]
+  wire [63:0] _multiplier_io_resp_bits_P;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:26]
+  wire [31:0] _alu_io_res;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:89:19]
+  wire [31:0] _alu_io_sum;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:89:19]
+  wire        _csrUpdatedPC_T = io_toMEM_ready & io_toMEM_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:319:31, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+  reg         hasFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:64:27]
+  wire        _io_interCMD_valid_T = io_fromID_bits_nop | hasFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:64:27, :68:43]
   wire        io_toMEM_bits_nop_0 =
-    io_fromID_bits_nop | hasFired | io_interCMD_ready | io_flushFromMEM;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:62:27, :66:{43,55,68}]
+    _io_interCMD_valid_T | io_interCMD_ready | io_flushFromMEM;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:68:{43,55,68}]
   wire [31:0] opA =
     (io_fromID_bits_decodeBundle_aluSrc1 == 2'h0 ? io_fromID_bits_rs1Data : 32'h0)
     | (io_fromID_bits_decodeBundle_aluSrc1 == 2'h2 ? io_fromID_bits_pc : 32'h0)
-    | ((&io_fromID_bits_decodeBundle_aluSrc1) ? {27'h0, io_fromID_bits_rs1} : 32'h0);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :73:15, :74:15, :75:15, home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/nutshellUtils/BitUtils.scala:49:44, src/main/scala/chisel3/util/Mux.scala:30:73]
+    | ((&io_fromID_bits_decodeBundle_aluSrc1) ? {27'h0, io_fromID_bits_rs1} : 32'h0);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :75:15, :76:15, :77:15, home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/nutshellUtils/BitUtils.scala:49:44, src/main/scala/chisel3/util/Mux.scala:30:73]
   wire [31:0] opB =
     (io_fromID_bits_decodeBundle_aluSrc2 == 2'h0 ? io_fromID_bits_rs2Data : 32'h0)
     | ((&io_fromID_bits_decodeBundle_aluSrc2) ? io_fromID_bits_csrData : 32'h0)
-    | (io_fromID_bits_decodeBundle_aluSrc2 == 2'h1 ? io_fromID_bits_imm : 32'h0);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :81:15, :82:15, :83:15, src/main/scala/chisel3/util/Mux.scala:30:73]
-  reg         mulReqFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:30]
-  reg         divReqFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:101:30]
+    | (io_fromID_bits_decodeBundle_aluSrc2 == 2'h1 ? io_fromID_bits_imm : 32'h0);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :83:15, :84:15, :85:15, src/main/scala/chisel3/util/Mux.scala:30:73]
+  reg         mulReqFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:99:30]
+  reg         divReqFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:103:30]
   wire        multiplier_io_req_valid =
-    io_fromID_bits_decodeBundle_fuType == 4'h4 & ~mulReqFired & ~io_fromID_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:30, :105:{50,65,68,81,84}]
+    io_fromID_bits_decodeBundle_fuType == 4'h4 & ~mulReqFired & ~io_fromID_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:61:35, :99:30, :107:{50,65,68,81}]
   wire        multiplier_io_resp_ready =
-    io_fromID_bits_decodeBundle_fuType == 4'h4 & io_toMEM_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:106:{51,66}]
+    io_fromID_bits_decodeBundle_fuType == 4'h4 & io_toMEM_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:108:{51,66}]
   wire        mulSignedOpA =
     ~(|io_fromID_bits_decodeBundle_mulOp) | io_fromID_bits_decodeBundle_mulOp == 2'h2
-    | (&io_fromID_bits_decodeBundle_mulOp);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :107:{42,57}, :108:{25,41}, :109:25]
+    | (&io_fromID_bits_decodeBundle_mulOp);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :109:{42,57}, :110:{25,41}, :111:25]
   wire        mulSignedOpB =
-    ~(|io_fromID_bits_decodeBundle_mulOp) | io_fromID_bits_decodeBundle_mulOp == 2'h2;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :107:42, :110:{42,57}, :111:25]
-  wire        mulSigned = mulSignedOpA | mulSignedOpB;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:107:57, :108:41, :110:57, :112:32]
+    ~(|io_fromID_bits_decodeBundle_mulOp) | io_fromID_bits_decodeBundle_mulOp == 2'h2;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :109:42, :112:{42,57}, :113:25]
+  wire        mulSigned = mulSignedOpA | mulSignedOpB;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:109:57, :110:41, :112:57, :114:32]
   wire        multTwoCompEnable =
-    mulSigned & (~(mulSigned & (&io_fromID_bits_decodeBundle_mulOp)) & opB[31] ^ opA[31]);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:112:32, :117:28, :118:{15,37}, :119:8, :120:32, :122:37, src/main/scala/chisel3/util/Mux.scala:30:73]
+    mulSigned & (~(mulSigned & (&io_fromID_bits_decodeBundle_mulOp)) & opB[31] ^ opA[31]);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:114:32, :119:28, :120:{15,37}, :121:8, :122:32, :124:37, src/main/scala/chisel3/util/Mux.scala:30:73]
   wire [63:0] _mulResFinal_T_3 =
-    ({64{multTwoCompEnable}} ^ _multiplier_io_resp_bits_P) + {63'h0, multTwoCompEnable};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:95:26, :122:37, :126:8, :127:5]
+    ({64{multTwoCompEnable}} ^ _multiplier_io_resp_bits_P) + {63'h0, multTwoCompEnable};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:26, :124:37, :128:8, :129:5]
   wire        divSigned =
-    io_fromID_bits_decodeBundle_divOp == 2'h1 | (&io_fromID_bits_decodeBundle_divOp);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :142:{24,38,60}]
-  wire        _GEN = opB == 32'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:150:12, src/main/scala/chisel3/util/Mux.scala:30:73]
-  wire        _GEN_0 = divSigned & opA == 32'h80000000 & (&opB);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:142:38, :155:{20,27,45,52}, src/main/scala/chisel3/util/Mux.scala:30:73]
-  wire        _GEN_1 = _GEN | _GEN_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:147:24, :150:{12,21}, :155:{20,45,71}, :160:28]
+    io_fromID_bits_decodeBundle_divOp == 2'h1 | (&io_fromID_bits_decodeBundle_divOp);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :144:{24,38,60}]
+  wire        _GEN = opB == 32'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:152:12, src/main/scala/chisel3/util/Mux.scala:30:73]
+  wire        _GEN_0 = divSigned & opA == 32'h80000000 & (&opB);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:144:38, :157:{20,27,45,52}, src/main/scala/chisel3/util/Mux.scala:30:73]
+  wire        _GEN_1 = _GEN | _GEN_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:149:24, :152:{12,21}, :157:{20,45,71}, :162:28]
   wire        divider_io_req_valid =
     ~_GEN_1 & io_fromID_bits_decodeBundle_fuType == 4'h5 & ~divReqFired
-    & ~io_fromID_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:101:30, :105:84, :147:24, :150:21, :155:71, :160:{28,51,66,69,82}]
+    & ~io_fromID_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:61:35, :103:30, :149:24, :152:21, :157:71, :162:{28,51,66,69,82}]
   wire        divider_io_resp_ready =
-    ~_GEN_1 & io_fromID_bits_decodeBundle_fuType == 4'h5 & io_toMEM_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:147:24, :148:25, :150:21, :155:71, :160:28, :161:{29,52,67}]
-  wire        divTowCompEnable = divSigned & (opA[31] ^ opB[31]);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:119:8, :120:32, :142:38, :164:{19,45}, src/main/scala/chisel3/util/Mux.scala:30:73]
+    ~_GEN_1 & io_fromID_bits_decodeBundle_fuType == 4'h5 & io_toMEM_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:149:24, :150:25, :152:21, :157:71, :162:28, :163:{29,52,67}]
+  wire        divTowCompEnable = divSigned & (opA[31] ^ opB[31]);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:121:8, :122:32, :144:38, :166:{19,45}, src/main/scala/chisel3/util/Mux.scala:30:73]
   assign divResFinal =
     _GEN
       ? 32'hFFFFFFFF
       : _GEN_0
           ? 32'h80000000
           : ({32{divTowCompEnable}} ^ _divider_io_resp_bits_quotient)
-            + {31'h0, divTowCompEnable};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:96:23, :150:{12,21}, :152:17, :155:{20,45,71}, :157:19, :164:19, :165:19, :167:12, :168:9]
-  wire        remainderTowCompEnable = divSigned & opA[31];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:119:8, :142:38, :170:46, src/main/scala/chisel3/util/Mux.scala:30:73]
+            + {31'h0, divTowCompEnable};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:23, :152:{12,21}, :154:17, :157:{20,45,71}, :159:19, :166:19, :167:19, :169:12, :170:9]
+  wire        remainderTowCompEnable = divSigned & opA[31];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:121:8, :144:38, :172:46, src/main/scala/chisel3/util/Mux.scala:30:73]
   assign remainderFinal =
     _GEN
       ? opA
       : _GEN_0
           ? 32'h0
           : ({32{remainderTowCompEnable}} ^ _divider_io_resp_bits_remainder)
-            + {31'h0, remainderTowCompEnable};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:96:23, :150:{12,21}, :153:20, :155:{20,45,71}, :158:22, :170:46, :171:22, :173:12, :174:9, src/main/scala/chisel3/util/Mux.scala:30:73]
+            + {31'h0, remainderTowCompEnable};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:23, :152:{12,21}, :155:20, :157:{20,45,71}, :160:22, :172:46, :173:22, :175:12, :176:9, src/main/scala/chisel3/util/Mux.scala:30:73]
   wire        jump =
     io_fromID_bits_decodeBundle_fuType == 4'h2
-    & (_bru_io_branch | io_fromID_bits_decodeBundle_bruOp == 3'h6);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:180:19, :190:{25,40,58,80}]
+    & (_bru_io_branch | io_fromID_bits_decodeBundle_bruOp == 3'h6);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:182:19, :192:{25,40,58,80}]
   wire        redirect =
     jump ^ io_fromID_bits_branchPred | io_fromID_bits_decodeBundle_fuType == 4'h2
-    & _alu_io_sum != io_fromID_bits_predTarget;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:87:19, :190:40, :197:{26,55,79,94,108}]
+    & _alu_io_sum != io_fromID_bits_predTarget;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:89:19, :192:40, :199:{26,55,79,94,108}]
   wire        io_jumpBus_valid_0 =
     (redirect | io_fromID_bits_decodeBundle_fencei
-     | io_fromID_bits_decodeBundle_fuType == 4'h3) & ~io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:66:{43,55,68}, :197:55, :199:{35,58,81,97,100}]
-  wire [31:0] _io_regWdata_T_6 = io_fromID_bits_pc + 32'h4;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:220:73]
-  wire [31:0] io_jumpBus_bits_jumpTarget_0 = jump ? _alu_io_sum : _io_regWdata_T_6;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:87:19, :190:40, :220:{36,73}]
-  wire        io_toMEM_bits_jumped_0 = io_jumpBus_ready & io_jumpBus_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:199:97, src/main/scala/chisel3/util/Decoupled.scala:51:35]
-  reg         jumpBusFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:222:31]
-  reg         btbUpdateInfoFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:228:39]
+     | io_fromID_bits_decodeBundle_fuType == 4'h3) & ~io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:68:{55,68}, :199:55, :201:{35,58,81,97,100}]
+  wire [31:0] _io_regWdata_T_6 = io_fromID_bits_pc + 32'h4;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:222:73]
+  wire [31:0] io_jumpBus_bits_jumpTarget_0 = jump ? _alu_io_sum : _io_regWdata_T_6;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:89:19, :192:40, :222:{36,73}]
+  wire        io_toMEM_bits_jumped_0 = io_jumpBus_ready & io_jumpBus_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:201:97, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+  reg         jumpBusFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:224:31]
+  reg         btbUpdateInfoFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:230:39]
   wire        io_btbUpdateInfo_valid_0 =
     io_fromID_bits_decodeBundle_fuType == 4'h2 & ~io_toMEM_bits_nop_0
-    & ~btbUpdateInfoFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:66:{43,55,68}, :199:100, :228:39, :232:{51,66,88,91}]
+    & ~btbUpdateInfoFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:68:{55,68}, :201:100, :230:39, :234:{51,66,88,91}]
   wire        io_csrWritePort_wen_0 =
-    io_fromID_bits_decodeBundle_csrWrite & ~io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:66:{43,55,68}, :199:100, :249:55]
-  reg         csrUpdated;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:253:31]
-  reg  [31:0] csrUpdatedPC;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:254:33]
+    io_fromID_bits_decodeBundle_csrWrite & _csrUpdatedPC_T & ~io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:68:{55,68}, :201:100, :251:{55,72}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+  reg         csrUpdated;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:255:31]
+  reg  [31:0] csrUpdatedPC;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:256:33]
   wire [31:0] io_regWdata_0 =
     ((|io_fromID_bits_decodeBundle_fuType) ? 32'h0 : _alu_io_res)
     | (io_fromID_bits_decodeBundle_fuType == 4'h3 ? io_fromID_bits_csrData : 32'h0)
@@ -1631,59 +1636,58 @@ module EXE(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EX
             | io_fromID_bits_decodeBundle_divOp == 2'h0
               ? divResFinal
               : remainderFinal)
-         : 32'h0) | (io_fromID_bits_decodeBundle_fuType == 4'h6 ? _alu_io_res : 32'h0);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :87:19, :107:42, :127:5, :128:19, :130:16, :131:16, :136:19, :137:{24,38,60}, :150:21, :152:17, :153:20, :155:71, :220:73, :268:28, :269:28, :270:28, :271:28, :272:28, :273:28, :274:28, src/main/scala/chisel3/util/Mux.scala:30:73]
-  wire        jumpValid = io_toMEM_bits_jumped_0 | jumpBusFired | ~io_jumpBus_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:199:97, :222:31, :311:{43,59,63}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+         : 32'h0) | (io_fromID_bits_decodeBundle_fuType == 4'h6 ? _alu_io_res : 32'h0);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :89:19, :109:42, :129:5, :130:19, :132:16, :133:16, :138:19, :139:{24,38,60}, :152:21, :154:17, :155:20, :157:71, :222:73, :270:28, :271:28, :272:28, :273:28, :274:28, :275:28, :276:28, src/main/scala/chisel3/util/Mux.scala:30:73]
+  wire        jumpValid = io_toMEM_bits_jumped_0 | jumpBusFired | ~io_jumpBus_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:201:97, :224:31, :313:{43,59,63}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
   wire        mulOrDivEnable =
     (io_fromID_bits_decodeBundle_fuType == 4'h4
-     | io_fromID_bits_decodeBundle_fuType == 4'h5) & ~io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:66:{43,55,68}, :199:100, :313:{27,43,67,84}]
+     | io_fromID_bits_decodeBundle_fuType == 4'h5) & ~io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:68:{55,68}, :201:100, :315:{27,43,67,84}]
   wire        mulOrDivValid =
     ~mulOrDivEnable | mulOrDivEnable
     & (multiplier_io_resp_ready & _multiplier_io_resp_valid | divider_io_resp_ready
        & _divider_io_resp_valid
        | (_GEN
             ? io_fromID_bits_decodeBundle_fuType == 4'h5
-            : _GEN_0 & io_fromID_bits_decodeBundle_fuType == 4'h5));	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:95:26, :96:23, :106:66, :148:25, :149:33, :150:{12,21}, :151:{18,41}, :155:{20,45,71}, :156:{20,43}, :161:{29,67}, :313:84, :315:{5,21,40,68,92}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
-  wire        io_toMEM_valid_0 = jumpValid & mulOrDivValid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:311:{43,59}, :315:21, :317:31]
-  wire        io_fromID_ready_0 = io_toMEM_ready & jumpValid & mulOrDivValid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:311:{43,59}, :315:21, :318:{37,50}]
-  wire        _csrUpdatedPC_T = io_toMEM_ready & io_toMEM_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:317:31, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+            : _GEN_0 & io_fromID_bits_decodeBundle_fuType == 4'h5));	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:26, :98:23, :108:66, :150:25, :151:33, :152:{12,21}, :153:{18,41}, :157:{20,45,71}, :158:{20,43}, :163:{29,67}, :315:84, :317:{5,21,40,68,92}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+  assign io_toMEM_valid_0 = jumpValid & mulOrDivValid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:313:{43,59}, :317:21, :319:31]
+  wire        io_fromID_ready_0 = io_toMEM_ready & jumpValid & mulOrDivValid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:313:{43,59}, :317:21, :320:{37,50}]
   always @(posedge clock) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
     if (io_fromID_bits_decodeBundle_fuType == 4'h2 & _csrUpdatedPC_T
-        & ~io_toMEM_bits_nop_0 & ~hasFired)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:62:27, :66:{43,55,68}, :199:100, :206:{38,53,70,92,95}, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-      PerfBranchPredictionAccuracy(redirect);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:197:55, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-    if (csrUpdated & _csrUpdatedPC_T)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:253:31, :258:34, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-      update_csr(csrUpdatedPC);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:254:33, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-    if (io_fromID_bits_ftrace_doFtrace & ~io_toMEM_bits_nop_0 & _csrUpdatedPC_T)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:66:{43,55,68}, :199:100, :329:{40,62}, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+        & ~io_toMEM_bits_nop_0 & ~hasFired)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:64:27, :68:{55,68}, :201:100, :208:{38,53,70,92,95}, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+      PerfBranchPredictionAccuracy(redirect);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:199:55, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if (csrUpdated & _csrUpdatedPC_T)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:255:31, :260:34, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+      update_csr(csrUpdatedPC);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:256:33, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if (io_fromID_bits_ftrace_doFtrace & ~io_toMEM_bits_nop_0 & _csrUpdatedPC_T)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:68:{55,68}, :201:100, :331:{40,62}, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
       ftrace(io_fromID_bits_pc, _alu_io_sum, {27'h0, io_fromID_bits_ftrace_rd},
-             {27'h0, io_fromID_bits_ftrace_rs1});	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:87:19, :332:10, :336:10, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-    if (~(|io_fromID_bits_decodeBundle_fuType) & ~io_toMEM_bits_nop_0)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:66:{43,55,68}, :199:100, :268:28, :348:{44,59}, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+             {27'h0, io_fromID_bits_ftrace_rs1});	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:89:19, :334:10, :338:10, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if (~(|io_fromID_bits_decodeBundle_fuType) & ~io_toMEM_bits_nop_0)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:68:{55,68}, :201:100, :270:28, :350:{44,59}, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
       PerfCountEXU();	// @[src/main/scala/chisel3/util/circt/DPI.scala:110:82]
     if (reset) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
-      hasFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :62:27]
-      mulReqFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :97:30]
-      divReqFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :101:30]
-      jumpBusFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :222:31]
-      btbUpdateInfoFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :228:39]
+      hasFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :64:27]
+      mulReqFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :99:30]
+      divReqFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :103:30]
+      jumpBusFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :224:31]
+      btbUpdateInfoFired <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :230:39]
     end
     else begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
       hasFired <=
         _csrUpdatedPC_T & ~io_fromID_ready_0 | ~(_csrUpdatedPC_T & io_fromID_ready_0)
-        & hasFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:62:{27,60}, :63:{22,25,42}, :64:14, :318:{37,50}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+        & hasFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:64:{27,60}, :65:{22,25,42}, :66:14, :320:{37,50}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
       mulReqFired <=
         _multiplier_io_req_ready & multiplier_io_req_valid & ~_csrUpdatedPC_T
-        | ~io_fromID_ready_0 & mulReqFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:95:26, :97:30, :98:{31,34,50}, :99:17, :105:{65,81}, :318:{37,50}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+        | ~io_fromID_ready_0 & mulReqFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:26, :99:30, :100:{31,34,50}, :101:17, :107:{65,81}, :320:{37,50}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
       divReqFired <=
         _divider_io_req_ready & divider_io_req_valid & ~_csrUpdatedPC_T
-        | ~io_fromID_ready_0 & divReqFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:96:23, :97:30, :98:34, :101:30, :102:{28,47}, :103:17, :147:24, :150:21, :155:71, :160:{28,66,82}, :318:{37,50}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+        | ~io_fromID_ready_0 & divReqFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:23, :99:30, :100:34, :103:30, :104:{28,47}, :105:17, :149:24, :152:21, :157:71, :162:{28,66,82}, :320:{37,50}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
       jumpBusFired <=
         io_toMEM_bits_jumped_0 & ~_csrUpdatedPC_T | ~io_toMEM_bits_jumped_0
-        & jumpBusFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:34, :222:31, :223:{24,43}, :224:18, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+        & jumpBusFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:100:34, :224:31, :225:{24,43}, :226:18, src/main/scala/chisel3/util/Decoupled.scala:51:35]
       btbUpdateInfoFired <=
         io_btbUpdateInfo_valid_0 & ~_csrUpdatedPC_T | ~_csrUpdatedPC_T
-        & btbUpdateInfoFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:34, :228:39, :229:{33,52}, :230:26, :232:{66,88}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+        & btbUpdateInfoFired;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:100:34, :230:39, :231:{33,52}, :232:26, :234:{66,88}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
     end
     if (_csrUpdatedPC_T) begin	// @[src/main/scala/chisel3/util/Decoupled.scala:51:35]
-      csrUpdated <= io_csrWritePort_wen_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:249:55, :253:31]
-      csrUpdatedPC <= io_fromID_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:254:33]
+      csrUpdated <= io_csrWritePort_wen_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:251:{55,72}, :255:31]
+      csrUpdatedPC <= io_fromID_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:256:33]
     end
   end // always @(posedge)
   `ifdef ENABLE_INITIAL_REG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
@@ -1699,81 +1703,82 @@ module EXE(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EX
         for (logic [1:0] i = 2'h0; i < 2'h2; i += 2'h1) begin
           _RANDOM[i[0]] = `RANDOM;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
         end	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
-        hasFired = _RANDOM[1'h0][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :62:27]
-        mulReqFired = _RANDOM[1'h0][1];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :62:27, :97:30]
-        divReqFired = _RANDOM[1'h0][2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :62:27, :101:30]
-        jumpBusFired = _RANDOM[1'h0][3];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :62:27, :222:31]
-        btbUpdateInfoFired = _RANDOM[1'h0][4];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :62:27, :228:39]
-        csrUpdated = _RANDOM[1'h0][5];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :62:27, :253:31]
-        csrUpdatedPC = {_RANDOM[1'h0][31:6], _RANDOM[1'h1][5:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :62:27, :254:33]
+        hasFired = _RANDOM[1'h0][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :64:27]
+        mulReqFired = _RANDOM[1'h0][1];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :64:27, :99:30]
+        divReqFired = _RANDOM[1'h0][2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :64:27, :103:30]
+        jumpBusFired = _RANDOM[1'h0][3];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :64:27, :224:31]
+        btbUpdateInfoFired = _RANDOM[1'h0][4];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :64:27, :230:39]
+        csrUpdated = _RANDOM[1'h0][5];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :64:27, :255:31]
+        csrUpdatedPC = {_RANDOM[1'h0][31:6], _RANDOM[1'h1][5:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :64:27, :256:33]
       `endif // RANDOMIZE_REG_INIT
     end // initial
     `ifdef FIRRTL_AFTER_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
       `FIRRTL_AFTER_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  ALU alu (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:87:19]
+  ALU alu (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:89:19]
     .io_opA (opA),	// @[src/main/scala/chisel3/util/Mux.scala:30:73]
     .io_opB (opB),	// @[src/main/scala/chisel3/util/Mux.scala:30:73]
     .io_op  (io_fromID_bits_decodeBundle_aluOp),
     .io_res (_alu_io_res),
     .io_sum (_alu_io_sum)
-  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:87:19]
-  Multiplier multiplier (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:95:26]
+  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:89:19]
+  Multiplier multiplier (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:26]
     .clock          (clock),
     .reset          (reset),
     .io_req_ready   (_multiplier_io_req_ready),
-    .io_req_valid   (multiplier_io_req_valid),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:105:{65,81}]
-    .io_req_bits_A  (mulSignedOpA & $signed(opA) < 32'sh0 ? 32'h0 - opA : opA),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:107:57, :108:41, :113:{22,48}, src/main/scala/chisel3/util/Mux.scala:30:73]
-    .io_req_bits_B  (mulSignedOpB & $signed(opB) < 32'sh0 ? 32'h0 - opB : opB),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:110:57, :113:48, :114:{22,48}, src/main/scala/chisel3/util/Mux.scala:30:73]
-    .io_resp_ready  (multiplier_io_resp_ready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:106:66]
+    .io_req_valid   (multiplier_io_req_valid),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:107:{65,81}]
+    .io_req_bits_A  (mulSignedOpA & $signed(opA) < 32'sh0 ? 32'h0 - opA : opA),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:109:57, :110:41, :115:{22,48}, src/main/scala/chisel3/util/Mux.scala:30:73]
+    .io_req_bits_B  (mulSignedOpB & $signed(opB) < 32'sh0 ? 32'h0 - opB : opB),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:112:57, :115:48, :116:{22,48}, src/main/scala/chisel3/util/Mux.scala:30:73]
+    .io_resp_ready  (multiplier_io_resp_ready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:108:66]
     .io_resp_valid  (_multiplier_io_resp_valid),
     .io_resp_bits_P (_multiplier_io_resp_bits_P)
-  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:95:26]
-  Divider divider (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:96:23]
+  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:97:26]
+  Divider divider (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:23]
     .clock                  (clock),
     .reset                  (reset),
     .io_req_ready           (_divider_io_req_ready),
-    .io_req_valid           (divider_io_req_valid),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:147:24, :150:21, :155:71, :160:{28,66,82}]
-    .io_req_bits_divisor    (divSigned & $signed(opB) < 32'sh0 ? 32'h0 - opB : opB),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:113:48, :142:38, :144:{22,45}, src/main/scala/chisel3/util/Mux.scala:30:73]
-    .io_req_bits_dividend   (divSigned & $signed(opA) < 32'sh0 ? 32'h0 - opA : opA),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:113:48, :142:38, :143:{22,45}, src/main/scala/chisel3/util/Mux.scala:30:73]
-    .io_resp_ready          (divider_io_resp_ready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:148:25, :150:21, :155:71, :161:{29,67}]
+    .io_req_valid           (divider_io_req_valid),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:149:24, :152:21, :157:71, :162:{28,66,82}]
+    .io_req_bits_divisor    (divSigned & $signed(opB) < 32'sh0 ? 32'h0 - opB : opB),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:115:48, :144:38, :146:{22,45}, src/main/scala/chisel3/util/Mux.scala:30:73]
+    .io_req_bits_dividend   (divSigned & $signed(opA) < 32'sh0 ? 32'h0 - opA : opA),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:115:48, :144:38, :145:{22,45}, src/main/scala/chisel3/util/Mux.scala:30:73]
+    .io_resp_ready          (divider_io_resp_ready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:150:25, :152:21, :157:71, :163:{29,67}]
     .io_resp_valid          (_divider_io_resp_valid),
     .io_resp_bits_quotient  (_divider_io_resp_bits_quotient),
     .io_resp_bits_remainder (_divider_io_resp_bits_remainder)
-  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:96:23]
-  BRU bru (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:180:19]
+  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:98:23]
+  BRU bru (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:182:19]
     .io_bruOp  (io_fromID_bits_decodeBundle_bruOp),
     .io_opA    (io_fromID_bits_rs1Data),
     .io_opB    (io_fromID_bits_rs2Data),
     .io_branch (_bru_io_branch)
-  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:180:19]
-  CSRU csru (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:243:20]
+  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:182:19]
+  CSRU csru (	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:245:20]
     .io_opA (opA),	// @[src/main/scala/chisel3/util/Mux.scala:30:73]
     .io_opB (opB),	// @[src/main/scala/chisel3/util/Mux.scala:30:73]
     .io_op  (io_fromID_bits_decodeBundle_csrOp),
     .io_res (io_csrWritePort_wdata)
-  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:243:20]
-  assign io_fromID_ready = io_fromID_ready_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :318:{37,50}]
-  assign io_toMEM_valid = io_toMEM_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :317:31]
+  );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:245:20]
+  assign io_fromID_ready = io_fromID_ready_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :320:{37,50}]
+  assign io_toMEM_valid = io_toMEM_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :319:31]
   assign io_toMEM_bits_pc = io_fromID_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_toMEM_bits_rd = io_fromID_bits_rd;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
-  assign io_toMEM_bits_nop = io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :66:{43,55,68}]
+  assign io_toMEM_bits_nop = io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :68:{55,68}]
   assign io_toMEM_bits_jumped = io_toMEM_bits_jumped_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, src/main/scala/chisel3/util/Decoupled.scala:51:35]
   assign io_toMEM_bits_inst = io_fromID_bits_inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
+  assign io_toMEM_bits_flushForIntr = ~io_fromID_bits_nop & io_interCMD_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :61:{35,55}]
   assign io_toMEM_bits_mret = io_fromID_bits_mret;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_toMEM_bits_controlSignals_memRawMask =
-    io_fromID_bits_decodeBundle_memRead | io_fromID_bits_decodeBundle_memWrite;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :289:53]
+    io_fromID_bits_decodeBundle_memRead | io_fromID_bits_decodeBundle_memWrite;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :291:53]
   assign io_toMEM_bits_controlSignals_signExt = io_fromID_bits_decodeBundle_memSignExt;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_toMEM_bits_controlSignals_regWriteData = io_regWdata_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, src/main/scala/chisel3/util/Mux.scala:30:73]
   assign io_toMEM_bits_controlSignals_memWriteData = io_fromID_bits_rs2Data;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_toMEM_bits_controlSignals_regWrite = io_fromID_bits_decodeBundle_regWrite;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_toMEM_bits_controlSignals_memWrite =
-    (|io_fromID_bits_decodeBundle_memWrite) & ~io_fromID_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :105:84, :291:{52,56}]
+    (|io_fromID_bits_decodeBundle_memWrite) & ~io_fromID_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :61:35, :293:{52,56}]
   assign io_toMEM_bits_controlSignals_memRead =
-    (|io_fromID_bits_decodeBundle_memRead) & ~io_fromID_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :105:84, :290:{50,54}]
+    (|io_fromID_bits_decodeBundle_memRead) & ~io_fromID_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :61:35, :292:{50,54}]
   assign io_toMEM_bits_controlSignals_fuTypeAMO =
-    io_fromID_bits_decodeBundle_fuType == 4'h6;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :294:51]
+    io_fromID_bits_decodeBundle_fuType == 4'h6;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :296:51]
   assign io_toMEM_bits_controlSignals_amoOp = io_fromID_bits_decodeBundle_amoOp;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_toMEM_bits_excepVec_0 = io_fromID_bits_excepVec_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_toMEM_bits_excepVec_1 = io_fromID_bits_excepVec_1;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
@@ -1791,16 +1796,16 @@ module EXE(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EX
   assign io_toMEM_bits_excepVec_15 = io_fromID_bits_excepVec_15;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_bypass_valid =
     io_fromID_bits_decodeBundle_fuType != 4'h1
-    & io_fromID_bits_decodeBundle_fuType != 4'h6;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :265:{42,57,80}]
-  assign io_bypass_regWrite = io_fromID_bits_decodeBundle_regWrite & ~io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :66:{43,55,68}, :199:100, :263:47]
+    & io_fromID_bits_decodeBundle_fuType != 4'h6;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :267:{42,57,80}]
+  assign io_bypass_regWrite = io_fromID_bits_decodeBundle_regWrite & ~io_toMEM_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :68:{55,68}, :201:100, :265:47]
   assign io_bypass_waddr = io_fromID_bits_rd;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_regWdata = io_regWdata_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, src/main/scala/chisel3/util/Mux.scala:30:73]
-  assign io_jumpBus_valid = io_jumpBus_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :199:97]
-  assign io_jumpBus_bits_jumpTarget = io_jumpBus_bits_jumpTarget_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :220:36]
-  assign io_btbUpdateInfo_valid = io_btbUpdateInfo_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :232:{66,88}]
+  assign io_jumpBus_valid = io_jumpBus_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :201:97]
+  assign io_jumpBus_bits_jumpTarget = io_jumpBus_bits_jumpTarget_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :222:36]
+  assign io_btbUpdateInfo_valid = io_btbUpdateInfo_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :234:{66,88}]
   assign io_btbUpdateInfo_bits_pc = io_fromID_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
-  assign io_btbUpdateInfo_bits_actualTaken = jump;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :190:40]
-  assign io_btbUpdateInfo_bits_actualTarget = io_jumpBus_bits_jumpTarget_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :220:36]
+  assign io_btbUpdateInfo_bits_actualTaken = jump;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :192:40]
+  assign io_btbUpdateInfo_bits_actualTarget = io_jumpBus_bits_jumpTarget_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :222:36]
   assign io_btbUpdateInfo_bits_btbHitInfo = io_fromID_bits_btbHitInfo;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_btbUpdateInfo_bits_btbInfo_lru = io_fromID_bits_btbInfo_lru;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_btbUpdateInfo_bits_btbInfo_bia_0 = io_fromID_bits_btbInfo_bia_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
@@ -1809,7 +1814,7 @@ module EXE(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EX
   assign io_btbUpdateInfo_bits_btbInfo_tracker_1 = io_fromID_bits_btbInfo_tracker_1;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_btbUpdateInfo_bits_btbInfo_bta_0 = io_fromID_bits_btbInfo_bta_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_btbUpdateInfo_bits_btbInfo_bta_1 = io_fromID_bits_btbInfo_bta_1;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
-  assign io_csrWritePort_wen = io_csrWritePort_wen_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :249:55]
+  assign io_csrWritePort_wen = io_csrWritePort_wen_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :251:{55,72}]
   assign io_csrWritePort_waddr = io_fromID_bits_funct12;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
   assign io_flush =
     ((|{io_jumpBus_valid_0,
@@ -1829,7 +1834,8 @@ module EXE(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EX
         io_fromID_bits_excepVec_2,
         io_fromID_bits_excepVec_1,
         io_fromID_bits_excepVec_0}) | io_fromID_bits_decodeBundle_fuType == 4'h3
-     | io_interCMD_ready) & ~io_toMEM_bits_nop_0 | io_flushFromMEM;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :66:{43,55,68}, :199:{97,100}, :307:{34,67,71,94,109,123,146}]
+     | io_interCMD_ready) & ~io_toMEM_bits_nop_0 | io_flushFromMEM;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :68:{55,68}, :201:{97,100}, :309:{34,67,71,94,109,123,146}]
+  assign io_interCMD_valid = ~(_io_interCMD_valid_T | io_flushFromMEM);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7, :68:43, :282:{24,57}]
   assign io_interCMD_bits_pc = io_fromID_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/EXE.scala:45:7]
 endmodule
 
@@ -1888,7 +1894,8 @@ module MEM(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/ME
   input         io_fromEXE_bits_nop,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
                 io_fromEXE_bits_jumped,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
   input  [31:0] io_fromEXE_bits_inst,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
-  input         io_fromEXE_bits_mret,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
+  input         io_fromEXE_bits_flushForIntr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
+                io_fromEXE_bits_mret,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
   input  [3:0]  io_fromEXE_bits_controlSignals_memRawMask,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
   input         io_fromEXE_bits_controlSignals_signExt,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
   input  [31:0] io_fromEXE_bits_controlSignals_regWriteData,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
@@ -1937,6 +1944,7 @@ module MEM(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/ME
                 io_toWB_bits_excepVec_15,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
                 io_toWB_bits_jumped,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
   output [31:0] io_toWB_bits_inst,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
+  output        io_toWB_bits_flushForIntr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
   input         io_req_ready,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
   output        io_req_valid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
                 io_req_bits_wr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:34:14]
@@ -2077,21 +2085,21 @@ module MEM(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/ME
   wire        skip_enable =
     (|(io_fromEXE_bits_controlSignals_regWriteData[31:29]))
     & io_fromEXE_bits_controlSignals_regWriteData < 32'h21FFFFFF & _skip_enable_T
-    & _skip_enable_T_1 & ~io_toWB_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:84:24, :243:43, :248:40, :274:{14,31,40}, :276:{24,41,57}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+    & _skip_enable_T_1 & ~io_toWB_bits_nop_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:84:24, :243:43, :248:40, :277:{14,31,40}, :279:{24,41,57}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
   wire        _hasFired_T_1 = io_toWB_valid_0 & io_fromEXE_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:133:17, :135:35, src/main/scala/chisel3/util/Decoupled.scala:51:35]
   wire        _GEN_15 = io_wResp_ready_0 & io_wResp_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:57:18, :133:17, src/main/scala/chisel3/util/Decoupled.scala:51:35]
   always @(posedge clock) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7]
-    if ((_GEN_7 | _GEN_15) & ~io_toWB_bits_nop_0)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:243:43, :248:40, :264:{38,56}, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if ((_GEN_7 | _GEN_15) & ~io_toWB_bits_nop_0)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:243:43, :248:40, :267:{38,56}, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
       PerfCountLSU();	// @[src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-    if (_GEN_7 & ren)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:80:32, :267:37, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if (_GEN_7 & ren)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:80:32, :270:37, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
       LSURecvRResp();	// @[src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-    if (_GEN_15 & wen)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:82:33, :270:37, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if (_GEN_15 & wen)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:82:33, :273:37, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
       LSURecvBResp();	// @[src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-    if (skip_enable)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:276:57, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if (skip_enable)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:279:57, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
       diff_skip(io_fromEXE_bits_pc);	// @[src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-    if (_skip_enable_T_1 & ~io_req_bits_wr_0)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:133:17, :135:35, :287:{35,38}, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if (_skip_enable_T_1 & ~io_req_bits_wr_0)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:133:17, :135:35, :290:{35,38}, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
       LSULaunchARReq();	// @[src/main/scala/chisel3/util/circt/DPI.scala:110:82]
-    if (_skip_enable_T_1 & io_req_bits_wr_0)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:133:17, :135:35, :290:35, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if (_skip_enable_T_1 & io_req_bits_wr_0)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:133:17, :135:35, :293:35, src/main/scala/chisel3/util/Decoupled.scala:51:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
       LSULaunchAWReq();	// @[src/main/scala/chisel3/util/circt/DPI.scala:110:82]
     if (reset) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7]
       state <= 3'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7, :47:22]
@@ -2190,6 +2198,7 @@ module MEM(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/ME
   assign io_toWB_bits_excepVec_15 = io_fromEXE_bits_excepVec_15;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7]
   assign io_toWB_bits_jumped = io_fromEXE_bits_jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7]
   assign io_toWB_bits_inst = io_fromEXE_bits_inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7]
+  assign io_toWB_bits_flushForIntr = io_fromEXE_bits_flushForIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7]
   assign io_req_valid = io_req_valid_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7, :133:17, :135:35]
   assign io_req_bits_wr = io_req_bits_wr_0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7, :133:17, :135:35]
   assign io_req_bits_size =
@@ -2221,135 +2230,142 @@ module MEM(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/ME
   assign setMtval_val__bore = setMtval_val;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/MEM.scala:33:7, :86:33]
 endmodule
 
-module WB(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-  input         clock,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-                reset,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-                io_fromMEM_valid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  input  [31:0] io_fromMEM_bits_pc,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  input  [4:0]  io_fromMEM_bits_rd,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  input         io_fromMEM_bits_regWrite,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  input  [31:0] io_fromMEM_bits_regWriteData,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  input         io_fromMEM_bits_nop,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_mret,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_0,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_1,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_2,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_3,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_4,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_5,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_6,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_7,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_8,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_9,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_10,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_11,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_12,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_13,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_14,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_excepVec_15,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_fromMEM_bits_jumped,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  input  [31:0] io_fromMEM_bits_inst,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output        io_writePort_wen,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output [4:0]  io_writePort_waddr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output [31:0] io_writePort_wdata,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output        io_csrCmd_excepVec_0,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_1,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_2,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_3,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_4,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_5,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_6,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_7,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_8,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_9,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_10,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_11,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_12,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_13,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_14,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_excepVec_15,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-                io_csrCmd_mret,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output [31:0] io_csrCmd_pc,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output        io_bypass_regWrite,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output [4:0]  io_bypass_waddr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output [31:0] io_regWdata,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output        io_debug_done,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output [31:0] io_debug_pc_done,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output        io_diff_jumped,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-  output [31:0] io_trace_inst	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
+module WB(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+  input         clock,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+                reset,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+                io_fromMEM_valid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  input  [31:0] io_fromMEM_bits_pc,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  input  [4:0]  io_fromMEM_bits_rd,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  input         io_fromMEM_bits_regWrite,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  input  [31:0] io_fromMEM_bits_regWriteData,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  input         io_fromMEM_bits_nop,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_mret,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_0,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_1,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_2,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_3,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_4,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_5,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_6,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_7,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_8,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_9,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_10,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_11,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_12,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_13,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_14,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_excepVec_15,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_fromMEM_bits_jumped,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  input  [31:0] io_fromMEM_bits_inst,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  input         io_fromMEM_bits_flushForIntr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output        io_writePort_wen,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output [4:0]  io_writePort_waddr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output [31:0] io_writePort_wdata,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output        io_csrCmd_excepVec_0,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_1,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_2,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_3,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_4,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_5,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_6,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_7,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_8,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_9,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_10,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_11,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_12,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_13,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_14,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_excepVec_15,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+                io_csrCmd_mret,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output [31:0] io_csrCmd_pc,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output        io_bypass_regWrite,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output [4:0]  io_bypass_waddr,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output [31:0] io_regWdata,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output        io_debug_done,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output [31:0] io_debug_pc_done,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output        io_diff_jumped,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+  output [31:0] io_trace_inst	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
 );
 
-  reg        done;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:61:23]
-  reg [31:0] pc_done;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:62:26]
-  reg        jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:73:25]
-  reg [31:0] inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:80:23]
-  always @(posedge clock) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-    if (reset) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-      done <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:61:23]
-      pc_done <= 32'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:62:26]
-      jumped <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:73:25]
-      inst <= 32'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:80:23]
+  reg        done;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:62:23]
+  reg [31:0] pc_done;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:63:26]
+  reg        flushForIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:64:33]
+  reg        jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:76:25]
+  reg [31:0] inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:83:23]
+  always @(posedge clock) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+    if (reset) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+      done <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:62:23]
+      pc_done <= 32'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:63:26]
+      flushForIntr <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:64:33]
+      jumped <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:76:25]
+      inst <= 32'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:83:23]
     end
-    else begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-      done <= io_fromMEM_valid & ~io_fromMEM_bits_nop & (|io_fromMEM_bits_pc);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:52:59, :61:23, :63:28, :64:{12,36,58}, :67:12]
-      if (io_fromMEM_valid) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:14]
-        pc_done <= io_fromMEM_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:62:26]
-        jumped <= io_fromMEM_bits_jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:73:25]
-        inst <= io_fromMEM_bits_inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:80:23]
+    else begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+      done <=
+        io_fromMEM_valid & (~io_fromMEM_bits_nop | io_fromMEM_bits_flushForIntr)
+        & (|io_fromMEM_bits_pc);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:53:59, :62:23, :66:28, :67:{12,37,70,92}, :70:12]
+      if (io_fromMEM_valid) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:20:14]
+        pc_done <= io_fromMEM_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:63:26]
+        flushForIntr <= io_fromMEM_bits_flushForIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:64:33]
+        jumped <= io_fromMEM_bits_jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:76:25]
+        inst <= io_fromMEM_bits_inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:83:23]
       end
     end
   end // always @(posedge)
-  `ifdef ENABLE_INITIAL_REG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-    `ifdef FIRRTL_BEFORE_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-      `FIRRTL_BEFORE_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
+  `ifdef ENABLE_INITIAL_REG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+    `ifdef FIRRTL_BEFORE_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+      `FIRRTL_BEFORE_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
     `endif // FIRRTL_BEFORE_INITIAL
-    logic [31:0] _RANDOM[0:2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-    initial begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-      `ifdef INIT_RANDOM_PROLOG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-        `INIT_RANDOM_PROLOG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
+    logic [31:0] _RANDOM[0:2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+    initial begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+      `ifdef INIT_RANDOM_PROLOG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+        `INIT_RANDOM_PROLOG_	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
       `endif // INIT_RANDOM_PROLOG_
-      `ifdef RANDOMIZE_REG_INIT	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
+      `ifdef RANDOMIZE_REG_INIT	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
         for (logic [1:0] i = 2'h0; i < 2'h3; i += 2'h1) begin
-          _RANDOM[i] = `RANDOM;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-        end	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-        done = _RANDOM[2'h0][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :61:23]
-        pc_done = {_RANDOM[2'h0][31:1], _RANDOM[2'h1][0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :61:23, :62:26]
-        jumped = _RANDOM[2'h1][1];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :62:26, :73:25]
-        inst = {_RANDOM[2'h1][31:2], _RANDOM[2'h2][1:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :62:26, :80:23]
+          _RANDOM[i] = `RANDOM;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+        end	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+        done = _RANDOM[2'h0][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :62:23]
+        pc_done = {_RANDOM[2'h0][31:1], _RANDOM[2'h1][0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :62:23, :63:26]
+        flushForIntr = _RANDOM[2'h1][1];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :63:26, :64:33]
+        jumped = _RANDOM[2'h1][2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :63:26, :76:25]
+        inst = {_RANDOM[2'h1][31:3], _RANDOM[2'h2][2:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :63:26, :83:23]
       `endif // RANDOMIZE_REG_INIT
     end // initial
-    `ifdef FIRRTL_AFTER_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-      `FIRRTL_AFTER_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
+    `ifdef FIRRTL_AFTER_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+      `FIRRTL_AFTER_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  assign io_writePort_wen = (|io_fromMEM_bits_rd) & io_fromMEM_bits_regWrite;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :44:{26,33}]
-  assign io_writePort_waddr = io_fromMEM_bits_rd;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-  assign io_writePort_wdata = io_fromMEM_bits_regWriteData;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-  assign io_csrCmd_excepVec_0 = io_fromMEM_bits_excepVec_0 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_1 = io_fromMEM_bits_excepVec_1 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_2 = io_fromMEM_bits_excepVec_2 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_3 = io_fromMEM_bits_excepVec_3 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_4 = io_fromMEM_bits_excepVec_4 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_5 = io_fromMEM_bits_excepVec_5 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_6 = io_fromMEM_bits_excepVec_6 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_7 = io_fromMEM_bits_excepVec_7 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_8 = io_fromMEM_bits_excepVec_8 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_9 = io_fromMEM_bits_excepVec_9 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_10 = io_fromMEM_bits_excepVec_10 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_11 = io_fromMEM_bits_excepVec_11 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_12 = io_fromMEM_bits_excepVec_12 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_13 = io_fromMEM_bits_excepVec_13 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_14 = io_fromMEM_bits_excepVec_14 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_excepVec_15 = io_fromMEM_bits_excepVec_15 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :52:{56,59}]
-  assign io_csrCmd_mret = io_fromMEM_bits_mret;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-  assign io_csrCmd_pc = io_fromMEM_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-  assign io_bypass_regWrite = io_fromMEM_bits_regWrite;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-  assign io_bypass_waddr = io_fromMEM_bits_rd;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-  assign io_regWdata = io_fromMEM_bits_regWriteData;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7]
-  assign io_debug_done = done;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :61:23]
-  assign io_debug_pc_done = pc_done;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :62:26]
-  assign io_diff_jumped = jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :73:25]
-  assign io_trace_inst = inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:18:7, :80:23]
+  assign io_writePort_wen = (|io_fromMEM_bits_rd) & io_fromMEM_bits_regWrite;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :45:{26,33}]
+  assign io_writePort_waddr = io_fromMEM_bits_rd;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+  assign io_writePort_wdata = io_fromMEM_bits_regWriteData;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+  assign io_csrCmd_excepVec_0 = io_fromMEM_bits_excepVec_0 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_1 = io_fromMEM_bits_excepVec_1 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_2 = io_fromMEM_bits_excepVec_2 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_3 = io_fromMEM_bits_excepVec_3 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_4 = io_fromMEM_bits_excepVec_4 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_5 = io_fromMEM_bits_excepVec_5 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_6 = io_fromMEM_bits_excepVec_6 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_7 = io_fromMEM_bits_excepVec_7 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_8 = io_fromMEM_bits_excepVec_8 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_9 = io_fromMEM_bits_excepVec_9 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_10 = io_fromMEM_bits_excepVec_10 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_11 = io_fromMEM_bits_excepVec_11 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_12 = io_fromMEM_bits_excepVec_12 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_13 = io_fromMEM_bits_excepVec_13 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_14 = io_fromMEM_bits_excepVec_14 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_excepVec_15 = io_fromMEM_bits_excepVec_15 & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:{56,59}]
+  assign io_csrCmd_mret = io_fromMEM_bits_mret & ~io_fromMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :53:59, :54:42]
+  assign io_csrCmd_pc = io_fromMEM_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+  assign io_bypass_regWrite = io_fromMEM_bits_regWrite;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+  assign io_bypass_waddr = io_fromMEM_bits_rd;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+  assign io_regWdata = io_fromMEM_bits_regWriteData;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7]
+  assign io_debug_done = done;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :62:23]
+  assign io_debug_pc_done = pc_done;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :63:26]
+  assign io_diff_jumped = jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :76:25]
+  assign io_trace_inst = inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/core/WB.scala:19:7, :83:23]
 endmodule
 
 // VCS coverage exclude_file
@@ -3153,6 +3169,7 @@ module CSRRegFile(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/
                 io_excepCmd_mret,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:103:14]
   input  [31:0] io_excepCmd_pc,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:103:14]
   output        io_intrCmd_ready,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:103:14]
+  input         io_intrCmd_valid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:103:14]
   input  [31:0] io_intrCmd_bits_pc,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:103:14]
   input         io_redirectCmd_ready,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:103:14]
   output        io_redirectCmd_valid,	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:103:14]
@@ -3204,6 +3221,7 @@ module CSRRegFile(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/
           mip_sip_s,
           mip_sip_pad1})) & mstatus[3];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:114:24, :115:39, :116:20, :135:47, :165:{20,28,34}, :168:{27,31}]
   reg         hadInterrupt;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:182:29]
+  wire        _raiseIntrExcep_T = raiseIntr & io_intrCmd_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:168:31, :189:49]
   wire        raiseIntrExcep =
     (|{io_excepCmd_excepVec_15,
        io_excepCmd_excepVec_14,
@@ -3220,7 +3238,7 @@ module CSRRegFile(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/
        io_excepCmd_excepVec_3,
        io_excepCmd_excepVec_2,
        io_excepCmd_excepVec_1,
-       io_excepCmd_excepVec_0}) | raiseIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:168:31, :169:{41,48}, :189:35]
+       io_excepCmd_excepVec_0}) | _raiseIntrExcep_T;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:169:{41,48}, :189:{35,49}]
   wire [3:0]  excepNo =
     io_excepCmd_excepVec_3
       ? 4'h3
@@ -3267,7 +3285,7 @@ module CSRRegFile(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/
                             : {1'h0, mie[5] & mip_tip_s ? 3'h5 : 3'h0})
        : excepNo};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:99:7, :116:20, :135:47, :165:{20,28}, :167:{58,66}, :168:31, :171:8, :174:{38,43}]
   always @(posedge clock) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:99:7]
-    if (raiseIntrExcep & raiseIntr)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:168:31, :189:35, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
+    if (raiseIntrExcep & _raiseIntrExcep_T)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:189:{35,49}, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
       diff_raise_intr(causeNO, io_intrCmd_bits_pc);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:174:38, src/main/scala/chisel3/util/circt/DPI.scala:110:82]
     if (reset) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:99:7]
       privilege <= 2'h3;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:112:26]
@@ -3407,7 +3425,8 @@ module CSRRegFile(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/
             mip_sip_pad1}
          : 32'h0) | (io_readPort_raddr == 12'h341 ? mepc : 32'h0)
     | (io_readPort_raddr == 12'h343 ? mtval : 32'h0);	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:99:7, :114:24, :116:20, :118:22, :119:24, :120:25, :121:21, :122:23, :123:22, :124:24, :125:25, :135:{29,47}, home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/nutshellUtils/LookupTree.scala:22:34, home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/nutshellUtils/RegMap.scala:77:59, src/main/scala/chisel3/util/Mux.scala:30:73]
-  assign io_intrCmd_ready = (raiseIntr | hadInterrupt) & _flushQ_deq_q_io_deq_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:99:7, :168:31, :182:29, :188:{34,51}, src/main/scala/chisel3/util/Decoupled.scala:362:21]
+  assign io_intrCmd_ready =
+    (raiseIntr | hadInterrupt) & _flushQ_deq_q_io_deq_valid & io_intrCmd_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:99:7, :168:31, :182:29, :188:{34,51,75}, src/main/scala/chisel3/util/Decoupled.scala:362:21]
   assign io_redirectCmd_valid = _flushQ_deq_q_io_deq_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:99:7, src/main/scala/chisel3/util/Decoupled.scala:362:21]
   assign io_redirectCmd_bits_target = _flushQ_deq_q_io_deq_bits ? mtvec : mepc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/utils/csr/CSRRegFile.scala:99:7, :118:22, :121:21, :215:36, src/main/scala/chisel3/util/Decoupled.scala:362:21]
 endmodule
@@ -3971,6 +3990,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
   wire        _memStage_io_toWB_bits_excepVec_15;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24]
   wire        _memStage_io_toWB_bits_jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24]
   wire [31:0] _memStage_io_toWB_bits_inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24]
+  wire        _memStage_io_toWB_bits_flushForIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24]
   wire        _memStage_io_bypass_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24]
   wire        _memStage_io_bypass_regWrite;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24]
   wire [4:0]  _memStage_io_bypass_waddr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24]
@@ -3985,6 +4005,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
   wire        _exeStage_io_toMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
   wire        _exeStage_io_toMEM_bits_jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
   wire [31:0] _exeStage_io_toMEM_bits_inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
+  wire        _exeStage_io_toMEM_bits_flushForIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
   wire        _exeStage_io_toMEM_bits_mret;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
   wire [3:0]  _exeStage_io_toMEM_bits_controlSignals_memRawMask;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
   wire        _exeStage_io_toMEM_bits_controlSignals_signExt;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
@@ -4031,6 +4052,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
   wire [11:0] _exeStage_io_csrWritePort_waddr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
   wire [31:0] _exeStage_io_csrWritePort_wdata;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
   wire        _exeStage_io_flush;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
+  wire        _exeStage_io_interCMD_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
   wire [31:0] _exeStage_io_interCMD_bits_pc;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
   wire        _idStage_io_fromIF_ready;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:56:23]
   wire [1:0]  _idStage_io_toEXE_bits_decodeBundle_aluSrc1;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:56:23]
@@ -4176,6 +4198,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
   reg         memStage_io_fromEXE_bits_rnop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
   reg         memStage_io_fromEXE_bits_rjumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
   reg  [31:0] memStage_io_fromEXE_bits_rinst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
+  reg         memStage_io_fromEXE_bits_rflushForIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
   reg         memStage_io_fromEXE_bits_rmret;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
   reg  [3:0]  memStage_io_fromEXE_bits_rcontrolSignals_memRawMask;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
   reg         memStage_io_fromEXE_bits_rcontrolSignals_signExt;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
@@ -4224,6 +4247,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
   reg         wbStage_io_fromMEM_bits_rexcepVec_15;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
   reg         wbStage_io_fromMEM_bits_rjumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
   reg  [31:0] wbStage_io_fromMEM_bits_rinst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
+  reg         wbStage_io_fromMEM_bits_rflushForIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
   wire        flush = _exeStage_io_flush | _csrRegs_io_redirectCmd_valid;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24, :84:23, :90:33]
   always @(posedge clock) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7]
     if (reset) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7]
@@ -4301,6 +4325,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
       memStage_io_fromEXE_bits_rnop <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
       memStage_io_fromEXE_bits_rjumped <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
       memStage_io_fromEXE_bits_rinst <= 32'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
+      memStage_io_fromEXE_bits_rflushForIntr <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
       memStage_io_fromEXE_bits_rmret <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
       memStage_io_fromEXE_bits_rcontrolSignals_memRawMask <= 4'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
       memStage_io_fromEXE_bits_rcontrolSignals_signExt <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
@@ -4349,6 +4374,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
       wbStage_io_fromMEM_bits_rexcepVec_15 <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
       wbStage_io_fromMEM_bits_rjumped <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
       wbStage_io_fromMEM_bits_rinst <= 32'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
+      wbStage_io_fromMEM_bits_rflushForIntr <= 1'h0;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
     end
     else begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7]
       if (_idStage_io_fromIF_ready & _ifStage_io_toID_valid) begin	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:55:23, :56:23, src/main/scala/chisel3/util/Decoupled.scala:51:35]
@@ -4463,6 +4489,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
         memStage_io_fromEXE_bits_rnop <= _exeStage_io_toMEM_bits_nop;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24, :144:28]
         memStage_io_fromEXE_bits_rjumped <= _exeStage_io_toMEM_bits_jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24, :144:28]
         memStage_io_fromEXE_bits_rinst <= _exeStage_io_toMEM_bits_inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24, :144:28]
+        memStage_io_fromEXE_bits_rflushForIntr <= _exeStage_io_toMEM_bits_flushForIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24, :144:28]
         memStage_io_fromEXE_bits_rmret <= _exeStage_io_toMEM_bits_mret;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24, :144:28]
         memStage_io_fromEXE_bits_rcontrolSignals_memRawMask <=
           _exeStage_io_toMEM_bits_controlSignals_memRawMask;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24, :144:28]
@@ -4522,6 +4549,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
         wbStage_io_fromMEM_bits_rexcepVec_15 <= _memStage_io_toWB_bits_excepVec_15;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24, :144:28]
         wbStage_io_fromMEM_bits_rjumped <= _memStage_io_toWB_bits_jumped;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24, :144:28]
         wbStage_io_fromMEM_bits_rinst <= _memStage_io_toWB_bits_inst;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24, :144:28]
+        wbStage_io_fromMEM_bits_rflushForIntr <= _memStage_io_toWB_bits_flushForIntr;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24, :144:28]
       end
     end
   end // always @(posedge)
@@ -4619,57 +4647,59 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
         memStage_io_fromEXE_bits_rnop = _RANDOM[5'h15][22];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
         memStage_io_fromEXE_bits_rjumped = _RANDOM[5'h15][23];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
         memStage_io_fromEXE_bits_rinst = {_RANDOM[5'h15][31:24], _RANDOM[5'h16][23:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rmret = _RANDOM[5'h17][4];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rcontrolSignals_memRawMask = _RANDOM[5'h17][8:5];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rcontrolSignals_signExt = _RANDOM[5'h17][9];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rflushForIntr = _RANDOM[5'h16][24];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rmret = _RANDOM[5'h17][5];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rcontrolSignals_memRawMask = _RANDOM[5'h17][9:6];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rcontrolSignals_signExt = _RANDOM[5'h17][10];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
         memStage_io_fromEXE_bits_rcontrolSignals_regWriteData =
-          {_RANDOM[5'h17][31:10], _RANDOM[5'h18][9:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+          {_RANDOM[5'h17][31:11], _RANDOM[5'h18][10:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
         memStage_io_fromEXE_bits_rcontrolSignals_memWriteData =
-          {_RANDOM[5'h18][31:10], _RANDOM[5'h19][9:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rcontrolSignals_regWrite = _RANDOM[5'h19][10];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rcontrolSignals_memWrite = _RANDOM[5'h19][11];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rcontrolSignals_memRead = _RANDOM[5'h19][12];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rcontrolSignals_fuTypeAMO = _RANDOM[5'h19][13];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rcontrolSignals_amoOp = _RANDOM[5'h19][17:14];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_0 = _RANDOM[5'h19][18];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_1 = _RANDOM[5'h19][19];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_2 = _RANDOM[5'h19][20];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_3 = _RANDOM[5'h19][21];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_5 = _RANDOM[5'h19][23];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_7 = _RANDOM[5'h19][25];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_8 = _RANDOM[5'h19][26];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_9 = _RANDOM[5'h19][27];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_10 = _RANDOM[5'h19][28];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_11 = _RANDOM[5'h19][29];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_12 = _RANDOM[5'h19][30];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_13 = _RANDOM[5'h19][31];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_14 = _RANDOM[5'h1A][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        memStage_io_fromEXE_bits_rexcepVec_15 = _RANDOM[5'h1A][1];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rpc = {_RANDOM[5'h1A][31:2], _RANDOM[5'h1B][1:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rrd = _RANDOM[5'h1B][6:2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rregWrite = _RANDOM[5'h1B][19];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+          {_RANDOM[5'h18][31:11], _RANDOM[5'h19][10:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rcontrolSignals_regWrite = _RANDOM[5'h19][11];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rcontrolSignals_memWrite = _RANDOM[5'h19][12];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rcontrolSignals_memRead = _RANDOM[5'h19][13];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rcontrolSignals_fuTypeAMO = _RANDOM[5'h19][14];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rcontrolSignals_amoOp = _RANDOM[5'h19][18:15];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_0 = _RANDOM[5'h19][19];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_1 = _RANDOM[5'h19][20];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_2 = _RANDOM[5'h19][21];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_3 = _RANDOM[5'h19][22];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_5 = _RANDOM[5'h19][24];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_7 = _RANDOM[5'h19][26];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_8 = _RANDOM[5'h19][27];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_9 = _RANDOM[5'h19][28];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_10 = _RANDOM[5'h19][29];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_11 = _RANDOM[5'h19][30];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_12 = _RANDOM[5'h19][31];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_13 = _RANDOM[5'h1A][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_14 = _RANDOM[5'h1A][1];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        memStage_io_fromEXE_bits_rexcepVec_15 = _RANDOM[5'h1A][2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rpc = {_RANDOM[5'h1A][31:3], _RANDOM[5'h1B][2:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rrd = _RANDOM[5'h1B][7:3];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rregWrite = _RANDOM[5'h1B][20];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
         wbStage_io_fromMEM_bits_rregWriteData =
-          {_RANDOM[5'h1B][31:20], _RANDOM[5'h1C][19:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rnop = _RANDOM[5'h1C][20];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rmret = _RANDOM[5'h1C][21];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_0 = _RANDOM[5'h1C][22];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_1 = _RANDOM[5'h1C][23];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_2 = _RANDOM[5'h1C][24];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_3 = _RANDOM[5'h1C][25];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_4 = _RANDOM[5'h1C][26];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_5 = _RANDOM[5'h1C][27];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_6 = _RANDOM[5'h1C][28];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_7 = _RANDOM[5'h1C][29];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_8 = _RANDOM[5'h1C][30];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_9 = _RANDOM[5'h1C][31];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_10 = _RANDOM[5'h1D][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_11 = _RANDOM[5'h1D][1];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_12 = _RANDOM[5'h1D][2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_13 = _RANDOM[5'h1D][3];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_14 = _RANDOM[5'h1D][4];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rexcepVec_15 = _RANDOM[5'h1D][5];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rjumped = _RANDOM[5'h1D][6];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
-        wbStage_io_fromMEM_bits_rinst = {_RANDOM[5'h1D][31:7], _RANDOM[5'h1E][6:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+          {_RANDOM[5'h1B][31:21], _RANDOM[5'h1C][20:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rnop = _RANDOM[5'h1C][21];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rmret = _RANDOM[5'h1C][22];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_0 = _RANDOM[5'h1C][23];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_1 = _RANDOM[5'h1C][24];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_2 = _RANDOM[5'h1C][25];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_3 = _RANDOM[5'h1C][26];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_4 = _RANDOM[5'h1C][27];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_5 = _RANDOM[5'h1C][28];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_6 = _RANDOM[5'h1C][29];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_7 = _RANDOM[5'h1C][30];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_8 = _RANDOM[5'h1C][31];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_9 = _RANDOM[5'h1D][0];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_10 = _RANDOM[5'h1D][1];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_11 = _RANDOM[5'h1D][2];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_12 = _RANDOM[5'h1D][3];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_13 = _RANDOM[5'h1D][4];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_14 = _RANDOM[5'h1D][5];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rexcepVec_15 = _RANDOM[5'h1D][6];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rjumped = _RANDOM[5'h1D][7];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rinst = {_RANDOM[5'h1D][31:8], _RANDOM[5'h1E][7:0]};	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
+        wbStage_io_fromMEM_bits_rflushForIntr = _RANDOM[5'h1E][8];	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7, :144:28]
       `endif // RANDOMIZE_REG_INIT
     end // initial
     `ifdef FIRRTL_AFTER_INITIAL	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:30:7]
@@ -4884,6 +4914,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
     .io_toMEM_bits_nop                         (_exeStage_io_toMEM_bits_nop),
     .io_toMEM_bits_jumped                      (_exeStage_io_toMEM_bits_jumped),
     .io_toMEM_bits_inst                        (_exeStage_io_toMEM_bits_inst),
+    .io_toMEM_bits_flushForIntr                (_exeStage_io_toMEM_bits_flushForIntr),
     .io_toMEM_bits_mret                        (_exeStage_io_toMEM_bits_mret),
     .io_toMEM_bits_controlSignals_memRawMask
       (_exeStage_io_toMEM_bits_controlSignals_memRawMask),
@@ -4951,6 +4982,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
     .io_csrWritePort_wdata                     (_exeStage_io_csrWritePort_wdata),
     .io_flush                                  (_exeStage_io_flush),
     .io_interCMD_ready                         (_csrRegs_io_intrCmd_ready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:84:23]
+    .io_interCMD_valid                         (_exeStage_io_interCMD_valid),
     .io_interCMD_bits_pc                       (_exeStage_io_interCMD_bits_pc),
     .io_flushFromMEM                           (_memStage_io_flush2EXE)	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:58:24]
   );	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
@@ -4964,6 +4996,8 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
     .io_fromEXE_bits_nop                         (memStage_io_fromEXE_bits_rnop),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
     .io_fromEXE_bits_jumped                      (memStage_io_fromEXE_bits_rjumped),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
     .io_fromEXE_bits_inst                        (memStage_io_fromEXE_bits_rinst),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
+    .io_fromEXE_bits_flushForIntr
+      (memStage_io_fromEXE_bits_rflushForIntr),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
     .io_fromEXE_bits_mret                        (memStage_io_fromEXE_bits_rmret),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
     .io_fromEXE_bits_controlSignals_memRawMask
       (memStage_io_fromEXE_bits_rcontrolSignals_memRawMask),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
@@ -5022,6 +5056,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
     .io_toWB_bits_excepVec_15                    (_memStage_io_toWB_bits_excepVec_15),
     .io_toWB_bits_jumped                         (_memStage_io_toWB_bits_jumped),
     .io_toWB_bits_inst                           (_memStage_io_toWB_bits_inst),
+    .io_toWB_bits_flushForIntr                   (_memStage_io_toWB_bits_flushForIntr),
     .io_req_ready                                (io_dbus_req_ready),
     .io_req_valid                                (io_dbus_req_valid),
     .io_req_bits_wr                              (io_dbus_req_bits_wr),
@@ -5070,6 +5105,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
     .io_fromMEM_bits_excepVec_15  (wbStage_io_fromMEM_bits_rexcepVec_15),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
     .io_fromMEM_bits_jumped       (wbStage_io_fromMEM_bits_rjumped),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
     .io_fromMEM_bits_inst         (wbStage_io_fromMEM_bits_rinst),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
+    .io_fromMEM_bits_flushForIntr (wbStage_io_fromMEM_bits_rflushForIntr),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:144:28]
     .io_writePort_wen             (_wbStage_io_writePort_wen),
     .io_writePort_waddr           (_wbStage_io_writePort_waddr),
     .io_writePort_wdata           (_wbStage_io_writePort_wdata),
@@ -5154,6 +5190,7 @@ module Core(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.s
     .io_excepCmd_mret           (_wbStage_io_csrCmd_mret),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:59:23]
     .io_excepCmd_pc             (_wbStage_io_csrCmd_pc),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:59:23]
     .io_intrCmd_ready           (_csrRegs_io_intrCmd_ready),
+    .io_intrCmd_valid           (_exeStage_io_interCMD_valid),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
     .io_intrCmd_bits_pc         (_exeStage_io_interCMD_bits_pc),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:57:24]
     .io_redirectCmd_ready       (_ifStage_io_excepCMD_ready),	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/Core.scala:55:23]
     .io_redirectCmd_valid       (_csrRegs_io_redirectCmd_valid),
@@ -5632,8 +5669,8 @@ module PLIC(	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/periph
   reg         io_bus_bvalid_REG;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/PLIC.scala:85:28]
   wire        _claimCompletionMap_T_2 =
     io_bus_rready & io_bus_rvalid_REG & arReg_addr == 32'h200004;	// @[home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/PLIC.scala:21:22, :56:{25,39}, :84:28, src/main/scala/chisel3/util/Decoupled.scala:51:35]
-  wire        _GEN = _claimCompletionMap_T_2 & claimCompletion[1:0] == 2'h1;	// @[<stdin>:5979:38, home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/PLIC.scala:47:25, :53:32, :56:{25,51,79}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
-  wire        _GEN_0 = _claimCompletionMap_T_2 & claimCompletion[1:0] == 2'h2;	// @[<stdin>:5979:38, home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/PLIC.scala:47:25, :53:32, :56:{25,51,79}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+  wire        _GEN = _claimCompletionMap_T_2 & claimCompletion[1:0] == 2'h1;	// @[<stdin>:6006:38, home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/PLIC.scala:47:25, :53:32, :56:{25,51,79}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
+  wire        _GEN_0 = _claimCompletionMap_T_2 & claimCompletion[1:0] == 2'h2;	// @[<stdin>:6006:38, home/jiunian/Program/fpga/npc/npc_chisel/npc_chisel/src/peripheral/PLIC.scala:47:25, :53:32, :56:{25,51,79}, src/main/scala/chisel3/util/Decoupled.scala:51:35]
   wire [31:0] _GEN_1 =
     {{8{io_bus_wstrb[3]}},
      {8{io_bus_wstrb[2]}},

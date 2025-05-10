@@ -17,6 +17,7 @@
 #include "sim.h"
 #include "../../include/common.h"
 #include "../../include/cpu/isa-csr-def.h"
+#include <cstring>
 #include <difftest-def.h>
 #include <iostream>
 #include <new>

@@ -185,8 +185,8 @@ class CSRRegFile(config: RVConfig)
   }.elsewhen(io.redirectCmd.fire) {
     hadInterrupt := false.B
   }
-  io.intrCmd.ready := (raiseIntr || hadInterrupt) && io.redirectCmd.valid
-  val raiseIntrExcep = raiseExcep || raiseIntr
+  io.intrCmd.ready := (raiseIntr || hadInterrupt) && io.redirectCmd.valid && io.intrCmd.valid
+  val raiseIntrExcep = raiseExcep || (raiseIntr && io.intrCmd.valid)
   when(raiseIntrExcep) {
     mcause := causeNO
     mepc := Mux(raiseIntr, io.intrCmd.bits.pc, io.excepCmd.pc)
@@ -202,7 +202,7 @@ class CSRRegFile(config: RVConfig)
       RawClockedVoidFunctionCall(
         "diff_raise_intr",
         Option(Seq("causeNO", "epc"))
-      )(clock, enable = raiseIntr, causeNO, io.intrCmd.bits.pc)
+      )(clock, enable = raiseIntr && io.intrCmd.valid, causeNO, io.intrCmd.bits.pc)
     }
   }
 

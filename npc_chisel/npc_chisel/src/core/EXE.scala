@@ -57,6 +57,8 @@ class EXE(config: RVConfig, btbConfig: BTBConfig) extends Module {
   })
   val decodeBundle = io.fromID.bits.decodeBundle
   val interrupt = io.interCMD.ready
+  if (config.diff_enable)
+    io.toMEM.bits.flushForIntr := !io.fromID.bits.nop && interrupt
 
   // 确保当前指令只被发送一次
   val hasFired = RegEnable(false.B, false.B, io.toMEM.fire && io.fromID.fire)
@@ -246,7 +248,7 @@ class EXE(config: RVConfig, btbConfig: BTBConfig) extends Module {
   csru.io.opB <> opB
   val csrRes = csru.io.res
 
-  io.csrWritePort.wen := decodeBundle.csrWrite.asBool && !io.toMEM.bits.nop
+  io.csrWritePort.wen := decodeBundle.csrWrite.asBool && io.toMEM.fire && !io.toMEM.bits.nop
   io.csrWritePort.waddr := io.fromID.bits.funct12
   io.csrWritePort.wdata := csrRes
   if (config.simulation){
@@ -277,7 +279,7 @@ class EXE(config: RVConfig, btbConfig: BTBConfig) extends Module {
 
   // interrupt
   io.interCMD.bits.pc := io.fromID.bits.pc
-  io.interCMD.valid := true.B
+  io.interCMD.valid := !(io.fromID.bits.nop || hasFired || io.flushFromMEM)
 
   // pass the pipeline signal to next stage
   io.toMEM.bits.pc := io.fromID.bits.pc

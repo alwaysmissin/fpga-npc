@@ -14,6 +14,7 @@ import verification.DebugSignals
 import utils.csr._
 import chisel3.util.Cat
 import utils.id.ControlSignals.FuType
+import chisel3.util.RegEnable
 
 class WB(config: RVConfig) extends Module with CsrConsts {
   val io = IO(new Bundle {
@@ -50,7 +51,7 @@ class WB(config: RVConfig) extends Module with CsrConsts {
   // io.csrWritePort.wdata := Mux(io.fromMEM.bits.hasException, io.fromMEM.bits.pc, io.fromMEM.bits.csrWriteData)
   // io.csrCmd.hasExcep := io.fromMEM.bits.excepVec.asUInt.orR
   io.csrCmd.excepVec := io.fromMEM.bits.excepVec.map(_ && !io.fromMEM.bits.nop)
-  io.csrCmd.mret := io.fromMEM.bits.mret
+  io.csrCmd.mret := io.fromMEM.bits.mret && !io.fromMEM.bits.nop
   // io.csrCmd.funct12 := io.fromMEM.bits.funct12
   io.csrCmd.pc := io.fromMEM.bits.pc
 
@@ -60,8 +61,10 @@ class WB(config: RVConfig) extends Module with CsrConsts {
   if (config.debug_enable) {
     val done = RegInit(false.B)
     val pc_done = RegInit(0.U(config.xlen.W))
+    val flushForIntr = RegEnable(io.fromMEM.bits.flushForIntr, false.B, io.fromMEM.fire)
+    dontTouch(flushForIntr)
     when(io.fromMEM.valid) {
-      done := !io.fromMEM.bits.nop && io.fromMEM.bits.pc.orR
+      done := (!io.fromMEM.bits.nop || io.fromMEM.bits.flushForIntr) && io.fromMEM.bits.pc.orR
       pc_done := io.fromMEM.bits.pc
     } otherwise {
       done := false.B

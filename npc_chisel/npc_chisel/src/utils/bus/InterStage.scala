@@ -88,6 +88,7 @@ object InterStage {
     val nop = Output(Bool())
     val jumped = if (config.diff_enable) Output(Bool()) else null
     val inst = if (config.trace_enable) Output(UInt(config.xlen.W)) else null
+    val flushForIntr = if (config.diff_enable) Output(Bool()) else null
     val funct12 = Output(UInt(12.W))
     val mret = Output(Bool())
     val controlSignals = Output(new ExeMemSignalsBundle(config))
@@ -120,6 +121,7 @@ object InterStage {
     val excepVec = Output(Vec(16, Bool()))
     val jumped = if (config.diff_enable) Output(Bool()) else null
     val inst = if (config.trace_enable) Output(UInt(config.xlen.W)) else null
+    val flushForIntr = if (config.diff_enable) Output(Bool()) else null
     // val controlSignals = Output(new MemWbSignalsBundle(config))
   }
 }

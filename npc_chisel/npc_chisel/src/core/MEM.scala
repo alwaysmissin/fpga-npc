@@ -255,7 +255,10 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
   io.toWB.bits.excepVec(LoadAddressMisaligned) := !align && ren
   io.toWB.bits.excepVec(StoreAMOAddressMisaligned) := !align && wen
   io.toWB.bits.regWriteData := io.regWdata
-  if (config.diff_enable) io.toWB.bits.jumped := io.fromEXE.bits.jumped
+  if (config.diff_enable) {
+    io.toWB.bits.jumped := io.fromEXE.bits.jumped
+    io.toWB.bits.flushForIntr := io.fromEXE.bits.flushForIntr
+  }
   if (config.trace_enable) io.toWB.bits.inst := io.fromEXE.bits.inst
 
   if (config.simulation) {

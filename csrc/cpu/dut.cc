@@ -1,3 +1,4 @@
+#include "macro.h"
 #include <dlfcn.h>
 
 #include <common.h>
@@ -49,12 +50,12 @@ extern "C" void diff_skip(int skip_pc){
     difftest_skip_ref(skip_pc);
 }
 
-static int pc_before_intr_triggered = 0;
+static int pc_intr_triggered = 0;
 static int causeNo_intr_triggered = 0;
 extern "C" void diff_raise_intr(int causeNO, int epc){
-    pc_before_intr_triggered = *cpu.pc_mem;
+    pc_intr_triggered = *cpu.pc_exe;
     causeNo_intr_triggered = causeNO;
-    printf("[difftest] raise intr at pc = " FMT_WORD ", causeNO = 0x%08x\n", *cpu.pc_mem, causeNO);
+    // printf("[difftest] raise intr at pc = " FMT_WORD ", causeNO = 0x%08x\n", *cpu.pc_exe, causeNO);
     // if (ref_difftest_raise_intr)
     //     ref_difftest_raise_intr(causeNO);
 }
@@ -110,9 +111,7 @@ inline bool skip_checkcsrs(const word_t *cpu_csrs, int index){
 }
 
 static word_t diff_npc = 0;
-#ifdef CONFIG_DIFFTEST
 std::queue<csr_ctx*> csr_ctx_q;
-#endif
 bool difftest_checkregs(struct diff_context_t *ref_r, word_t pc){
     bool check = true;
     // static word_t npc = 0;
@@ -180,13 +179,20 @@ void difftest_step(word_t pc){
         return;
     }
     struct diff_context_t ref_r;
-    ref_difftest_exec(1);
-    if (*cpu.pc_done == pc_before_intr_triggered){
+    if (unlikely(
+        pc == pc_intr_triggered && 
+        top->rootp->ysyxSoCFull__DOT__asic__DOT__cpu__DOT__cpu__DOT__core__DOT__wbStage__DOT__flushForIntr))
+    {
+        ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
+        // printf("interrupt triggered at " FMT_WORD "\n", pc_intr_triggered);
         ref_difftest_raise_intr(causeNo_intr_triggered);
-        pc_before_intr_triggered = 0;
+        ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
+        pc_intr_triggered = 0;
         causeNo_intr_triggered = 0;
+    } else {
+        ref_difftest_exec(1);
+        ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
     }
-    ref_difftest_regcpy(&ref_r, DIFFTEST_TO_DUT);
     checkregs(&ref_r, pc);
 }
 
