@@ -61,10 +61,10 @@ class WB(config: RVConfig) extends Module with CsrConsts {
   if (config.debug_enable) {
     val done = RegInit(false.B)
     val pc_done = RegInit(0.U(config.xlen.W))
-    val flushForIntr = RegEnable(io.fromMEM.bits.flushForIntr, false.B, io.fromMEM.fire)
-    dontTouch(flushForIntr)
+    val flushForIntr = if (config.diff_enable) RegEnable(io.fromMEM.bits.flushForIntr, false.B, io.fromMEM.fire) else RegInit(false.B)
+    if (config.diff_enable) dontTouch(flushForIntr)
     when(io.fromMEM.valid) {
-      done := (!io.fromMEM.bits.nop || io.fromMEM.bits.flushForIntr) && io.fromMEM.bits.pc.orR
+      done := (!io.fromMEM.bits.nop || {if(config.diff_enable) io.fromMEM.bits.flushForIntr else false.B}) && io.fromMEM.bits.pc.orR
       pc_done := io.fromMEM.bits.pc
     } otherwise {
       done := false.B

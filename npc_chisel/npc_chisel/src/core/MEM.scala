@@ -274,14 +274,15 @@ class MEM(config: RVConfig) extends Module with ExceptionCodes {
   }
   if (config.diff_enable) {
     val addrRangesToSkip =
-      (vaddr >= 0x20000000L.U && vaddr < 0x21ffffffL.U) // skip device area and vga
+      (vaddr >= 0x20000000L.U && vaddr < 0x21ffffffL.U) ||
+      (vaddr >= 0x40000000L.U && vaddr < 0x43ffffffL.U) 
     val skip_enable =
       addrRangesToSkip && ((ren || wen) && io.req.fire) && !io.toWB.bits.nop
     dontTouch(skip_enable)
     RawClockedVoidFunctionCall(
       "diff_skip",
       Option(Seq("skip_pc"))
-    )(clock, enable = skip_enable, io.fromEXE.bits.pc)
+    )(clock, enable = skip_enable || (io.fromEXE.bits.isWFI && !io.toWB.bits.nop), io.fromEXE.bits.pc)
   }
 
   if (config.simulation) {

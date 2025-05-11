@@ -65,6 +65,7 @@ object InterStage {
     val inst = if (config.trace_enable) Output(UInt(config.xlen.W)) else null
     val ftrace =
       if (config.trace_enable) Output(new FtraceBundle(config)) else null
+    val isWFI = if (config.diff_enable) Output(Bool()) else null
   }
 
   class ExeMemSignalsBundle(config: RVConfig) extends Bundle {
@@ -89,6 +90,7 @@ object InterStage {
     val jumped = if (config.diff_enable) Output(Bool()) else null
     val inst = if (config.trace_enable) Output(UInt(config.xlen.W)) else null
     val flushForIntr = if (config.diff_enable) Output(Bool()) else null
+    val isWFI = if (config.diff_enable) Output(Bool()) else null
     val funct12 = Output(UInt(12.W))
     val mret = Output(Bool())
     val controlSignals = Output(new ExeMemSignalsBundle(config))

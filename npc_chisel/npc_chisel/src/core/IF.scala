@@ -31,8 +31,12 @@ class IF(config: RVConfig, btbConfig: BTBConfig) extends Module with ExceptionCo
       null
     }
   })
+  val reqFired = RegEnable(false.B, false.B, io.toID.fire)
+  when(io.ar.fire && !reqFired && !io.toID.fire) {
+    reqFired := true.B
+  }
   io.jumpBus.ready := io.toID.valid
-  io.excepCMD.ready := io.toID.fire
+  io.excepCMD.ready := io.toID.fire && !reqFired
 
   val npc = Wire(UInt(config.xlen.W))
   val PC = RegEnable(npc, config.PC_INIT - 4.U, io.toID.fire)
@@ -87,11 +91,7 @@ class IF(config: RVConfig, btbConfig: BTBConfig) extends Module with ExceptionCo
     instGetted := true.B
   }
 
-  val reqFired = RegEnable(false.B, false.B, io.toID.fire)
   io.ar.valid := (!reset.asBool && (!reqFired))
-  when(io.ar.fire && !reqFired && !io.toID.fire) {
-    reqFired := true.B
-  }
   io.ar.bits.addr := npc
   io.ar.bits.wr := false.B
   io.ar.bits.len := 0.U

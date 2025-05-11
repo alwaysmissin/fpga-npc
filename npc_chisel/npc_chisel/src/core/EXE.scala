@@ -104,7 +104,7 @@ class EXE(config: RVConfig, btbConfig: BTBConfig) extends Module {
   when(divider.io.req.fire && !io.toMEM.fire) {
     divReqFired := true.B
   }
-  multiplier.io.req.valid := decodeBundle.fuType === FuType.MUL && !mulReqFired && !io.fromID.bits.nop
+  multiplier.io.req.valid := decodeBundle.fuType === FuType.MUL && !mulReqFired && !io.toMEM.bits.nop
   multiplier.io.resp.ready := decodeBundle.fuType === FuType.MUL && io.toMEM.ready
   val mulSignedOpA = (decodeBundle.mulOp === MULOp.MUL) ||
     (decodeBundle.mulOp === MULOp.MULH) ||
@@ -279,7 +279,7 @@ class EXE(config: RVConfig, btbConfig: BTBConfig) extends Module {
 
   // interrupt
   io.interCMD.bits.pc := io.fromID.bits.pc
-  io.interCMD.valid := !(io.fromID.bits.nop || hasFired || io.flushFromMEM)
+  io.interCMD.valid := !(io.fromID.bits.nop || hasFired || io.flushFromMEM || multiplier.io.busy || divider.io.busy)
 
   // pass the pipeline signal to next stage
   io.toMEM.bits.pc := io.fromID.bits.pc
@@ -302,7 +302,10 @@ class EXE(config: RVConfig, btbConfig: BTBConfig) extends Module {
   io.toMEM.bits.excepVec := io.fromID.bits.excepVec
   // io.toMEM.bits.hasException  := (io.fromID.bits.hasException) && !io.toMEM.bits.nop
   // io.toMEM.bits.exceptionCode := io.fromID.bits.exceptionCode
-  if (config.diff_enable) io.toMEM.bits.jumped := io.jumpBus.fire
+  if (config.diff_enable) {
+    io.toMEM.bits.jumped := io.jumpBus.fire
+    io.toMEM.bits.isWFI := io.fromID.bits.isWFI
+  }
   if (config.trace_enable) io.toMEM.bits.inst <> io.fromID.bits.inst
 
   // TODO: flush here

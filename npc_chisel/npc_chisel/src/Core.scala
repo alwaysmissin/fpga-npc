@@ -123,6 +123,7 @@ class Core(config: RVConfig) extends Module {
 
   BoringUtils.bore(memStage.setMtval, Seq(csrRegs.setMtval))
   BoringUtils.bore(memStage.setMtval_val, Seq(csrRegs.setMtval_val))
+  BoringUtils.bore(csrRegs.privilege, Seq(idStage.privilege))
   // csrRegs.setMtval := BoringUtils.tapAndRead(memStage.setMtval)
   // csrRegs.setMtval_val := BoringUtils.tapAndRead(memStage.setMtval_val)
 

@@ -39,8 +39,10 @@ class Multiplier(config: RVConfig, latency: Int = 0) extends Module {
     val resp = Irrevocable(new Bundle {
       val P = UInt((config.xlen * 2).W)
     })
+    val busy = Output(Bool())
   })
   val busy = RegInit(false.B)
+  io.busy := busy
   val count = RegInit(0.U(log2Ceil(latency + 1).W))
   val result = Reg(UInt((config.xlen * 2).W))
   if (FPGAPlatform) {

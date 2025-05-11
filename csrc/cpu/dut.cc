@@ -120,18 +120,20 @@ bool difftest_checkregs(struct diff_context_t *ref_r, word_t pc){
         printf("[difftest] Error: pc is different at pc = " FMT_WORD " , REF = 0x%08x, DUT = 0x%08x\n", pc, diff_npc, pc);
     }
     // word_t *ctx_csrs = (word_t *)&(ref_r->mstatus);
-    // word_t **cpu_csrs = (word_t **)&cpu.mstatus;
+    word_t *ctx_csrs = (word_t *)&(ref_r->mstatus);
     for (int i = 1; i < NR_GPR; i ++){
         if (ref_r -> gpr[i] != gpr(i)){
             check = false;
             printf("[difftest] Error: reg $%s is different at pc = " FMT_WORD " , REF = 0x%08x, DUT = 0x%08x\n", reg_name(i), pc, ref_r -> gpr[i], gpr(i));
-            printf("mstatus: 0x%08x\n", ref_r -> mstatus.val);
+            word_t **cpu_csrs = (word_t **)&cpu.mstatus;
+            for (int j = 0;j < NR_CSR;j ++){
+                printf("$%s = 0x%08x(ref: 0x%08x)\n", csr_name(j), *cpu_csrs[j], ctx_csrs[j]);
+            }
         }
     }
     if (!csr_ctx_q.empty()){
         csr_ctx* csr_ctx_to_check = csr_ctx_q.front();
         if (csr_ctx_to_check->pc == pc){
-            word_t *ctx_csrs = (word_t *)&(ref_r->mstatus);
             word_t *cpu_csrs = (word_t *)&(csr_ctx_to_check->mstatus);
             // word_t **cpu_csrs = (word_t **)&(cpu.mstatus);
             for (int i = 0;i < NR_CSR;i ++){
@@ -161,6 +163,7 @@ static void checkregs(struct diff_context_t *ref, word_t pc){
 void difftest_step(word_t pc){
     word_t pc_done = *cpu.pc_done;
     if (!pcs_to_skip.empty() && pc_done == pcs_to_skip.front()){
+        // printf("skip " FMT_WORD "\n", pc_done);
         for (int i = 1; i < NR_GPR; i ++){
             ctx.gpr[i] = (word_t)gpr(i);
         }

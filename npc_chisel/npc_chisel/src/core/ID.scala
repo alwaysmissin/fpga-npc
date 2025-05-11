@@ -28,6 +28,7 @@ import utils.id.ControlSignals.FuType
 import utils.id.ControlSignals.BRUOp
 import utils.cache.BTBConfig
 import utils.BranchPredictionSelect
+import utils.csr.PRIV
 
 class ID(config: RVConfig, btbConfig: BTBConfig) extends Module with CsrConsts with ExceptionCodes {
   val io = IO(new Bundle {
@@ -120,7 +121,10 @@ class ID(config: RVConfig, btbConfig: BTBConfig) extends Module with CsrConsts w
   // ))
   io.toEXE.bits.excepVec := io.fromIF.bits.excepVec
   io.toEXE.bits.excepVec(IllegalInstruction) := !idu.io.legal
-  io.toEXE.bits.excepVec(MachineEnvironmentCall) := isECALL
+  val privilege = WireDefault(PRIV.Machine)
+  io.toEXE.bits.excepVec(UserEnvironmentCall) := isECALL && privilege === PRIV.User
+  io.toEXE.bits.excepVec(MachineEnvironmentCall) := isECALL && privilege === PRIV.Machine
+  io.toEXE.bits.excepVec(SupervisorEnvironmentCall) := isECALL && privilege === PRIV.Supervisor
 
   // bypass
   io.bypassPort.rs1 <> rs1Addr
@@ -196,6 +200,9 @@ class ID(config: RVConfig, btbConfig: BTBConfig) extends Module with CsrConsts w
       0.U,
       rs1Addr
     )
+  }  
+  if (config.diff_enable){
+    io.toEXE.bits.isWFI := io.fromIF.bits.inst === WFI.value.U
   }
   // if (config.trace_enable) {
   //     RawClockedVoidFunctionCall(

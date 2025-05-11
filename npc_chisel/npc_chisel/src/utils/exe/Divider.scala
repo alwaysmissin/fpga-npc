@@ -44,8 +44,10 @@ class Divider(config: RVConfig, latency: Int = 0) extends Module {
       val quotient = UInt(config.xlen.W)
       val remainder = UInt(config.xlen.W)
     })
+    val busy = Output(Bool())
   })
   val busy = RegInit(false.B)
+  io.busy := busy
   val count = RegInit(0.U(log2Ceil(latency + 1).W))
   if (FPGAPlatform) {
     val divider = Module(new DividerFPGA(latency = latency))
