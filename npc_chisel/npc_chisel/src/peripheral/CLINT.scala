@@ -18,18 +18,18 @@ class CLINT(config: RVConfig, tickCount: Int = 50) extends Module {
   val msip = RegInit(0.U(32.W))
   val mtimecmp = RegInit("hffff_ffff_ffff_ffff".U(64.W))
   val mtime = RegInit(0.U(64.W))
-  val incFlag = Wire(Bool())
-  if (FPGAPlatform) {
-    val tickCounter = RegInit(0.U(log2Up(tickCount).W))
-    tickCounter := Mux(
-      tickCounter === (tickCount - 1).U,
-      0.U,
-      tickCounter + 1.U
-    )
-    incFlag := tickCounter === (tickCount - 1).U
-  } else {
-    incFlag := true.B
-  }
+  val incFlag = WireDefault(true.B)
+  // if (FPGAPlatform) {
+  //   val tickCounter = RegInit(0.U(log2Up(tickCount).W))
+  //   tickCounter := Mux(
+  //     tickCounter === (tickCount - 1).U,
+  //     0.U,
+  //     tickCounter + 1.U
+  //   )
+  //   incFlag := tickCounter === (tickCount - 1).U
+  // } else {
+  //   incFlag := true.B
+  // }
 
   mtime := mtime + incFlag
 

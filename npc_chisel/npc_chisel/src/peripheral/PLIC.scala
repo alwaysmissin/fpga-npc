@@ -23,7 +23,7 @@ class PLIC(config: RVConfig, nrIntr: Int) extends Module {
   val wReg = RegNext(io.bus.w.bits)
 
 
-  val priority = List.fill(nrIntr)(RegInit(5.U(32.W)))
+  val priority = List.fill(nrIntr)(RegInit(0.U(32.W)))
   val priorityMap = priority.zipWithIndex.map{case (r, intr) => 
     RegMap((intr + 1) * 4, r)
   }.toMap
@@ -36,7 +36,7 @@ class PLIC(config: RVConfig, nrIntr: Int) extends Module {
   }.toMap
 
   // TODO: enable interrupt for test
-  val enable = List.fill(nrIntrWord)(RegInit(2.U(32.W)))
+  val enable = List.fill(nrIntrWord)(RegInit(0.U(32.W)))
   val enableMap = enable.zipWithIndex.map{case(r, intrWord) => 
     RegMap(0x2000 + intrWord * 4, r)  
   }.toMap

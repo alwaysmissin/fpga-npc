@@ -2403,7 +2403,7 @@ module CPU(	// src/CPU.scala:34:9
   input  [31:0] auto_master_out_rdata,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input  [1:0]  auto_master_out_rresp,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
   input         auto_master_out_rlast,	// rocket-chip/dependencies/diplomacy/diplomacy/src/diplomacy/lazymodule/LazyModuleImp.scala:100:25
-  input  [1:0]  interrupt	// src/CPU.scala:36:23
+  input  [4:0]  interrupt	// src/CPU.scala:36:23
 );
 
   wire [31:0] _cpu_io_master_awaddr;	// src/CPU.scala:39:21
@@ -5092,27 +5092,27 @@ endmodule
 module ysyxSoCASIC(	// src/SoC.scala:64:9
   input         clock,	// src/SoC.scala:64:9
                 reset,	// src/SoC.scala:64:9
-                uart_rx,	// src/SoC.scala:95:18
-  output        uart_tx,	// src/SoC.scala:95:18
-                sdram_clk,	// src/SoC.scala:97:19
-                sdram_cke,	// src/SoC.scala:97:19
-                sdram_cs,	// src/SoC.scala:97:19
-                sdram_ras,	// src/SoC.scala:97:19
-                sdram_cas,	// src/SoC.scala:97:19
-                sdram_we,	// src/SoC.scala:97:19
-  output [12:0] sdram_a,	// src/SoC.scala:97:19
-  output [1:0]  sdram_ba,	// src/SoC.scala:97:19
-  output [3:0]  sdram_dqm,	// src/SoC.scala:97:19
-  inout  [31:0] sdram_dq,	// src/SoC.scala:97:19
-  output [7:0]  gpio_out,	// src/SoC.scala:98:18
-  input  [7:0]  gpio_in,	// src/SoC.scala:98:18
-                ps2,	// src/SoC.scala:99:17
-  output [7:0]  vga_r,	// src/SoC.scala:100:17
-                vga_g,	// src/SoC.scala:100:17
-                vga_b,	// src/SoC.scala:100:17
-  output        vga_hsync,	// src/SoC.scala:100:17
-                vga_vsync,	// src/SoC.scala:100:17
-                vga_valid	// src/SoC.scala:100:17
+                uart_rx,	// src/SoC.scala:97:18
+  output        uart_tx,	// src/SoC.scala:97:18
+                sdram_clk,	// src/SoC.scala:99:19
+                sdram_cke,	// src/SoC.scala:99:19
+                sdram_cs,	// src/SoC.scala:99:19
+                sdram_ras,	// src/SoC.scala:99:19
+                sdram_cas,	// src/SoC.scala:99:19
+                sdram_we,	// src/SoC.scala:99:19
+  output [12:0] sdram_a,	// src/SoC.scala:99:19
+  output [1:0]  sdram_ba,	// src/SoC.scala:99:19
+  output [3:0]  sdram_dqm,	// src/SoC.scala:99:19
+  inout  [31:0] sdram_dq,	// src/SoC.scala:99:19
+  output [7:0]  gpio_out,	// src/SoC.scala:100:18
+  input  [7:0]  gpio_in,	// src/SoC.scala:100:18
+                ps2,	// src/SoC.scala:101:17
+  output [7:0]  vga_r,	// src/SoC.scala:102:17
+                vga_g,	// src/SoC.scala:102:17
+                vga_b,	// src/SoC.scala:102:17
+  output        vga_hsync,	// src/SoC.scala:102:17
+                vga_vsync,	// src/SoC.scala:102:17
+                vga_valid	// src/SoC.scala:102:17
 );
 
   wire        _cpu_reset_chain_io_q;	// rocket-chip/src/main/scala/util/ShiftReg.scala:45:23
@@ -5624,7 +5624,7 @@ module ysyxSoCASIC(	// src/SoC.scala:64:9
     .auto_master_out_rdata   (_axi4xbar_auto_anon_in_rdata),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
     .auto_master_out_rresp   (_axi4xbar_auto_anon_in_rresp),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
     .auto_master_out_rlast   (_axi4xbar_auto_anon_in_rlast),	// rocket-chip/src/main/scala/amba/axi4/Xbar.scala:241:30
-    .interrupt                     ({1'h0, _luart_interrupt})	// src/SoC.scala:36:25, :88:39
+    .interrupt                     ({5{_luart_interrupt}})	// src/SoC.scala:36:25, :90:39
   );	// src/SoC.scala:32:23
   APBUart16550 luart (	// src/SoC.scala:36:25
     .clock           (clock),
@@ -6111,33 +6111,33 @@ module sdramChisel(	// src/device/SDRAM.scala:132:7
   );	// src/util/TriState.scala:32:21
 endmodule
 
-module ysyxSoCFull(	// src/SoC.scala:119:9
-  input        clock,	// src/SoC.scala:119:9
-               reset,	// src/SoC.scala:119:9
-  output [7:0] externalPins_gpio_out,	// src/SoC.scala:156:26
-  input  [7:0] externalPins_gpio_in,	// src/SoC.scala:156:26
-               externalPins_ps2,	// src/SoC.scala:156:26
-  output [7:0] externalPins_vga_r,	// src/SoC.scala:156:26
-               externalPins_vga_g,	// src/SoC.scala:156:26
-               externalPins_vga_b,	// src/SoC.scala:156:26
-  output       externalPins_vga_hsync,	// src/SoC.scala:156:26
-               externalPins_vga_vsync,	// src/SoC.scala:156:26
-               externalPins_vga_valid,	// src/SoC.scala:156:26
-  input        externalPins_uart_rx,	// src/SoC.scala:156:26
-  output       externalPins_uart_tx	// src/SoC.scala:156:26
+module ysyxSoCFull(	// src/SoC.scala:121:9
+  input        clock,	// src/SoC.scala:121:9
+               reset,	// src/SoC.scala:121:9
+  output [7:0] externalPins_gpio_out,	// src/SoC.scala:158:26
+  input  [7:0] externalPins_gpio_in,	// src/SoC.scala:158:26
+               externalPins_ps2,	// src/SoC.scala:158:26
+  output [7:0] externalPins_vga_r,	// src/SoC.scala:158:26
+               externalPins_vga_g,	// src/SoC.scala:158:26
+               externalPins_vga_b,	// src/SoC.scala:158:26
+  output       externalPins_vga_hsync,	// src/SoC.scala:158:26
+               externalPins_vga_vsync,	// src/SoC.scala:158:26
+               externalPins_vga_valid,	// src/SoC.scala:158:26
+  input        externalPins_uart_rx,	// src/SoC.scala:158:26
+  output       externalPins_uart_tx	// src/SoC.scala:158:26
 );
 
-  wire        _asic_sdram_clk;	// src/SoC.scala:115:24
-  wire        _asic_sdram_cke;	// src/SoC.scala:115:24
-  wire        _asic_sdram_cs;	// src/SoC.scala:115:24
-  wire        _asic_sdram_ras;	// src/SoC.scala:115:24
-  wire        _asic_sdram_cas;	// src/SoC.scala:115:24
-  wire        _asic_sdram_we;	// src/SoC.scala:115:24
-  wire [12:0] _asic_sdram_a;	// src/SoC.scala:115:24
-  wire [1:0]  _asic_sdram_ba;	// src/SoC.scala:115:24
-  wire [3:0]  _asic_sdram_dqm;	// src/SoC.scala:115:24
-  wire [31:0] _io_dq_wire;	// src/SoC.scala:153:23
-  ysyxSoCASIC asic (	// src/SoC.scala:115:24
+  wire        _asic_sdram_clk;	// src/SoC.scala:117:24
+  wire        _asic_sdram_cke;	// src/SoC.scala:117:24
+  wire        _asic_sdram_cs;	// src/SoC.scala:117:24
+  wire        _asic_sdram_ras;	// src/SoC.scala:117:24
+  wire        _asic_sdram_cas;	// src/SoC.scala:117:24
+  wire        _asic_sdram_we;	// src/SoC.scala:117:24
+  wire [12:0] _asic_sdram_a;	// src/SoC.scala:117:24
+  wire [1:0]  _asic_sdram_ba;	// src/SoC.scala:117:24
+  wire [3:0]  _asic_sdram_dqm;	// src/SoC.scala:117:24
+  wire [31:0] _io_dq_wire;	// src/SoC.scala:155:23
+  ysyxSoCASIC asic (	// src/SoC.scala:117:24
     .clock     (clock),
     .reset     (reset),
     .uart_rx   (externalPins_uart_rx),
@@ -6161,19 +6161,19 @@ module ysyxSoCFull(	// src/SoC.scala:119:9
     .vga_hsync (externalPins_vga_hsync),
     .vga_vsync (externalPins_vga_vsync),
     .vga_valid (externalPins_vga_valid)
-  );	// src/SoC.scala:115:24
-  sdramChisel sdram (	// src/SoC.scala:153:23
-    .io_clk (_asic_sdram_clk),	// src/SoC.scala:115:24
-    .io_cke (_asic_sdram_cke),	// src/SoC.scala:115:24
-    .io_cs  (_asic_sdram_cs),	// src/SoC.scala:115:24
-    .io_ras (_asic_sdram_ras),	// src/SoC.scala:115:24
-    .io_cas (_asic_sdram_cas),	// src/SoC.scala:115:24
-    .io_we  (_asic_sdram_we),	// src/SoC.scala:115:24
-    .io_a   (_asic_sdram_a),	// src/SoC.scala:115:24
-    .io_ba  (_asic_sdram_ba),	// src/SoC.scala:115:24
-    .io_dqm (_asic_sdram_dqm),	// src/SoC.scala:115:24
+  );	// src/SoC.scala:117:24
+  sdramChisel sdram (	// src/SoC.scala:155:23
+    .io_clk (_asic_sdram_clk),	// src/SoC.scala:117:24
+    .io_cke (_asic_sdram_cke),	// src/SoC.scala:117:24
+    .io_cs  (_asic_sdram_cs),	// src/SoC.scala:117:24
+    .io_ras (_asic_sdram_ras),	// src/SoC.scala:117:24
+    .io_cas (_asic_sdram_cas),	// src/SoC.scala:117:24
+    .io_we  (_asic_sdram_we),	// src/SoC.scala:117:24
+    .io_a   (_asic_sdram_a),	// src/SoC.scala:117:24
+    .io_ba  (_asic_sdram_ba),	// src/SoC.scala:117:24
+    .io_dqm (_asic_sdram_dqm),	// src/SoC.scala:117:24
     .io_dq  (_io_dq_wire)
-  );	// src/SoC.scala:153:23
+  );	// src/SoC.scala:155:23
 endmodule
 
 module ysyxSoCTop(	// src/Top.scala:15:7

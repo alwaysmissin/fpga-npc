@@ -19,6 +19,8 @@ typedef word_t vaddr_t;
 typedef uint32_t paddr_t;
 #include <debug.h>
 
+#define CONFIG_LIGHTSSS
+
 #define FMT_WORD "0x%08" PRIx32
 
 #define EXIT_FAILURE 1
